@@ -27,18 +27,18 @@ Construir una web app completa de gestión editorial que permita:
 - [x] Conexión a base de datos
 - [x] Validaciones básicas
 
-#### 🔄 **1.2 API de Artículos** (SIGUIENTE)
-- [ ] **1.2.1** Crear controlador de artículos
-- [ ] **1.2.2** Rutas CRUD para artículos
-- [ ] **1.2.3** Validaciones de artículos
-- [ ] **1.2.4** Filtros por estado y autor
-- [ ] **1.2.5** Subida de archivos (opcional)
+#### ✅ **1.2 API de Artículos** (COMPLETADO)
+- [x] **1.2.1** Crear controlador de artículos
+- [x] **1.2.2** Rutas CRUD para artículos
+- [x] **1.2.3** Validaciones de artículos
+- [x] **1.2.4** Filtros por estado y autor
+- [x] **1.2.5** Paginación y manejo de estados
 
-#### 📝 **1.3 API de Revisiones**
-- [ ] **1.3.1** Asignar revisores a artículos
-- [ ] **1.3.2** CRUD de revisiones
-- [ ] **1.3.3** Estados de revisión
-- [ ] **1.3.4** Historial de revisiones
+#### ✅ **1.3 API de Revisiones** (COMPLETADO)
+- [x] **1.3.1** Asignar revisores a artículos
+- [x] **1.3.2** CRUD de revisiones
+- [x] **1.3.3** Estados de revisión
+- [x] **1.3.4** Historial de revisiones
 
 #### 🔔 **1.4 API de Notificaciones**
 - [ ] **1.4.1** Sistema de notificaciones internas

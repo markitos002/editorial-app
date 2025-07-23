@@ -12,6 +12,7 @@
     "test": "node test-api.js",
     "test:usuarios": "node test-api.js",
     "test:articulos": "node test-articulos.js",
+    "test:revisiones": "node test-revisiones.js",
     "test:endpoints": "echo 'Usa test-endpoints.http con REST Client extension'",
     "verify:db": "node verify-database.js",
     "test:connection": "node test-connection.js",
