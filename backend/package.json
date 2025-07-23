@@ -20,6 +20,7 @@
     "test:revisiones": "node test-revisiones.js",
     "test:notificaciones": "node test-notificaciones.js",
     "test:auth": "node test-auth.js",
+    "test:protected": "node test-protected-routes.js",
     "test:endpoints": "echo 'Usa test-endpoints.http con REST Client extension'",
     "verify:db": "node verify-database.js",
     "test:connection": "node test-connection.js",

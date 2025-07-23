@@ -109,6 +109,10 @@ const crearArticulo = async (req, res) => {
     
     const resultado = await pool.query(query, [titulo, resumen, contenido, autor_id]);
     
+    if (!resultado.rows || resultado.rows.length === 0) {
+      return res.status(500).json({ mensaje: 'Error al crear artículo: no se pudo insertar' });
+    }
+    
     // Obtener el artículo completo con información del autor
     const articuloCompleto = await pool.query(`
       SELECT 
@@ -120,7 +124,10 @@ const crearArticulo = async (req, res) => {
       WHERE a.id = $1
     `, [resultado.rows[0].id]);
 
-    res.status(201).json(articuloCompleto.rows[0]);
+    res.status(201).json({
+      mensaje: 'Artículo creado exitosamente',
+      articulo: articuloCompleto.rows[0]
+    });
   } catch (error) {
     console.error('Error al crear artículo:', error);
     res.status(500).json({ mensaje: 'Error al crear artículo', error: error.message });

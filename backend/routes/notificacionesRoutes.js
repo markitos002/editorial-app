@@ -14,17 +14,17 @@ const {
 } = require('../controllers/notificacionesController');
 
 // Rutas protegidas para notificaciones (todas requieren autenticación)
-router.get('/', obtenerNotificaciones);                           // GET /api/notificaciones - Obtener todas las notificaciones con filtros
-router.get('/:id', obtenerNotificacionPorId);                     // GET /api/notificaciones/:id - Obtener notificación específica
-router.post('/', crearNotificacion);                              // POST /api/notificaciones - Crear nueva notificación
-router.delete('/:id', eliminarNotificacion);                      // DELETE /api/notificaciones/:id - Eliminar notificación
+router.get('/', verificarToken, verificarRol('editor', 'admin'), obtenerNotificaciones);                           // GET /api/notificaciones - Obtener todas las notificaciones con filtros
+router.get('/:id', verificarToken, obtenerNotificacionPorId);                     // GET /api/notificaciones/:id - Obtener notificación específica
+router.post('/', verificarToken, verificarRol('editor', 'admin'), crearNotificacion);                              // POST /api/notificaciones - Crear nueva notificación
+router.delete('/:id', verificarToken, eliminarNotificacion);                      // DELETE /api/notificaciones/:id - Eliminar notificación
 
 // Rutas para manejo de estado de lectura
-router.patch('/:id/marcar-leida', marcarComoLeida);               // PATCH /api/notificaciones/:id/marcar-leida
-router.patch('/:id/marcar-no-leida', marcarComoNoLeida);          // PATCH /api/notificaciones/:id/marcar-no-leida
+router.patch('/:id/marcar-leida', verificarToken, marcarComoLeida);               // PATCH /api/notificaciones/:id/marcar-leida
+router.patch('/:id/marcar-no-leida', verificarToken, marcarComoNoLeida);          // PATCH /api/notificaciones/:id/marcar-no-leida
 
 // Rutas específicas por usuario
-router.get('/usuario/:usuario_id', obtenerNotificacionesPorUsuario);       // GET /api/notificaciones/usuario/:usuario_id
-router.patch('/usuario/:usuario_id/marcar-todas-leidas', marcarTodasComoLeidas); // PATCH /api/notificaciones/usuario/:usuario_id/marcar-todas-leidas
+router.get('/usuario/:usuario_id', verificarToken, obtenerNotificacionesPorUsuario);       // GET /api/notificaciones/usuario/:usuario_id
+router.patch('/usuario/:usuario_id/marcar-todas-leidas', verificarToken, marcarTodasComoLeidas); // PATCH /api/notificaciones/usuario/:usuario_id/marcar-todas-leidas
 
 module.exports = router;
