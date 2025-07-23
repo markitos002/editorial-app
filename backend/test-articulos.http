@@ -1,0 +1,91 @@
+# Archivo para probar endpoints de Artículos - API Editorial
+# Usa la extensión REST Client de VS Code
+
+### Variables
+@baseUrl = http://localhost:4000
+@apiUrl = {{baseUrl}}/api
+
+### 1. Obtener todos los artículos
+GET {{apiUrl}}/articulos
+Content-Type: application/json
+
+### 2. Obtener artículos con filtros (por estado)
+GET {{apiUrl}}/articulos?estado=enviado&page=1&limit=5
+Content-Type: application/json
+
+### 3. Crear un nuevo artículo (necesitas un usuario existente como autor)
+POST {{apiUrl}}/articulos
+Content-Type: application/json
+
+{
+  "titulo": "Avances en Inteligencia Artificial",
+  "resumen": "Este artículo explora los últimos avances en el campo de la inteligencia artificial y su impacto en la sociedad moderna.",
+  "contenido": "La inteligencia artificial ha experimentado un crecimiento exponencial en los últimos años. Los algoritmos de machine learning, especialmente las redes neuronales profundas, han demostrado capacidades extraordinarias en tareas como reconocimiento de imágenes, procesamiento de lenguaje natural y toma de decisiones complejas. Este artículo examina las tendencias actuales y las implicaciones futuras de estas tecnologías.",
+  "autor_id": 1
+}
+
+### 4. Crear otro artículo para pruebas
+POST {{apiUrl}}/articulos
+Content-Type: application/json
+
+{
+  "titulo": "Sostenibilidad en la Era Digital",
+  "resumen": "Análisis del impacto ambiental de las tecnologías digitales y estrategias para un desarrollo sostenible.",
+  "contenido": "El crecimiento acelerado de las tecnologías digitales ha traído beneficios significativos a la humanidad, pero también ha generado nuevos desafíos ambientales. El consumo energético de los centros de datos, la obsolescencia programada de dispositivos electrónicos y la generación de residuos electrónicos son problemas que requieren atención urgente. Este artículo propone estrategias para lograr un equilibrio entre innovación tecnológica y sostenibilidad ambiental.",
+  "autor_id": 1
+}
+
+### 5. Obtener artículo por ID (cambiar el ID según el resultado de la creación)
+GET {{apiUrl}}/articulos/1
+Content-Type: application/json
+
+### 6. Actualizar un artículo
+PUT {{apiUrl}}/articulos/1
+Content-Type: application/json
+
+{
+  "titulo": "Avances en Inteligencia Artificial - Edición Actualizada",
+  "resumen": "Este artículo actualizado explora los últimos avances en IA incluyendo GPT-4 y modelos multimodales.",
+  "estado": "en_revision"
+}
+
+### 7. Cambiar estado de un artículo
+PATCH {{apiUrl}}/articulos/1/estado
+Content-Type: application/json
+
+{
+  "estado": "aprobado",
+  "observaciones": "Excelente artículo, bien fundamentado y actualizado. Aprobado para publicación."
+}
+
+### 8. Obtener artículos filtrados por autor
+GET {{apiUrl}}/articulos?autor_id=1
+Content-Type: application/json
+
+### 9. Obtener artículos con paginación
+GET {{apiUrl}}/articulos?page=1&limit=2
+Content-Type: application/json
+
+### 10. Eliminar un artículo
+DELETE {{apiUrl}}/articulos/2
+Content-Type: application/json
+
+### 11. Intentar obtener artículo eliminado (debería devolver 404)
+GET {{apiUrl}}/articulos/2
+Content-Type: application/json
+
+### 12. Probar error - crear artículo sin campos requeridos
+POST {{apiUrl}}/articulos
+Content-Type: application/json
+
+{
+  "titulo": "Artículo Incompleto"
+}
+
+### 13. Probar error - estado inválido
+PATCH {{apiUrl}}/articulos/1/estado
+Content-Type: application/json
+
+{
+  "estado": "estado_inexistente"
+}

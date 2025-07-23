@@ -12,7 +12,10 @@ app.use(express.json());
 
 // Rutas
 const usuariosRoutes = require('./routes/usuariosRoutes');
+const articulosRoutes = require('./routes/articulosRoutes');
+
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/articulos', articulosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
