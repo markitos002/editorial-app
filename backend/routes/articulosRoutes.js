@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const articulosController = require('../controllers/articulosController');
+const { verificarToken, verificarRol, autenticacionOpcional } = require('../middlewares/auth');
 
-// Rutas CRUD básicas
-router.get('/', articulosController.obtenerArticulos);
-router.get('/:id', articulosController.obtenerArticuloPorId);
-router.post('/', articulosController.crearArticulo);
-router.put('/:id', articulosController.actualizarArticulo);
-router.delete('/:id', articulosController.eliminarArticulo);
+// Rutas públicas (solo lectura)
+router.get('/', autenticacionOpcional, articulosController.obtenerArticulos);
+router.get('/:id', autenticacionOpcional, articulosController.obtenerArticuloPorId);
 
-// Ruta específica para cambiar estado
-router.patch('/:id/estado', articulosController.cambiarEstadoArticulo);
+// Rutas protegidas (requieren autenticación)
+router.post('/', verificarToken, verificarRol('autor', 'editor', 'admin'), articulosController.crearArticulo);
+router.put('/:id', verificarToken, verificarRol('autor', 'editor', 'admin'), articulosController.actualizarArticulo);
+router.delete('/:id', verificarToken, verificarRol('autor', 'editor', 'admin'), articulosController.eliminarArticulo);
+
+// Ruta específica para cambiar estado (solo editores y admins)
+router.patch('/:id/estado', verificarToken, verificarRol('editor', 'admin'), articulosController.cambiarEstadoArticulo);
 
 module.exports = router;

@@ -4,7 +4,12 @@
   "main": "index.js",
   "description": "Backend del sistema de gestión editorial",
   "author": "Marco Avila",
-  "keywords": ["express", "postgresql", "api", "editorial"],
+  "keywords": [
+    "express",
+    "postgresql",
+    "api",
+    "editorial"
+  ],
   "license": "ISC",
   "scripts": {
     "start": "node app.js",
@@ -14,15 +19,18 @@
     "test:articulos": "node test-articulos.js",
     "test:revisiones": "node test-revisiones.js",
     "test:notificaciones": "node test-notificaciones.js",
+    "test:auth": "node test-auth.js",
     "test:endpoints": "echo 'Usa test-endpoints.http con REST Client extension'",
     "verify:db": "node verify-database.js",
     "test:connection": "node test-connection.js",
     "setup:db": "echo 'Ejecuta setup-database.sql en tu cliente PostgreSQL'"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3"
   },
   "devDependencies": {

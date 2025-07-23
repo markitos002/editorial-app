@@ -1,6 +1,7 @@
 // routes/notificacionesRoutes.js
 const express = require('express');
 const router = express.Router();
+const { verificarToken, verificarRol } = require('../middlewares/auth');
 const {
   obtenerNotificaciones,
   obtenerNotificacionPorId,
@@ -12,7 +13,7 @@ const {
   obtenerNotificacionesPorUsuario
 } = require('../controllers/notificacionesController');
 
-// Rutas para notificaciones
+// Rutas protegidas para notificaciones (todas requieren autenticación)
 router.get('/', obtenerNotificaciones);                           // GET /api/notificaciones - Obtener todas las notificaciones con filtros
 router.get('/:id', obtenerNotificacionPorId);                     // GET /api/notificaciones/:id - Obtener notificación específica
 router.post('/', crearNotificacion);                              // POST /api/notificaciones - Crear nueva notificación
