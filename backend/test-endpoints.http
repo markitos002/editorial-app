@@ -1,0 +1,66 @@
+# Archivo para probar endpoints de la API de Editorial
+# Usa la extensión REST Client de VS Code o cualquier cliente HTTP como Postman
+
+### Variables
+@baseUrl = http://localhost:4000
+@apiUrl = {{baseUrl}}/api
+
+### Test de conexión
+GET {{baseUrl}}
+
+### 1. Obtener todos los usuarios
+GET {{apiUrl}}/usuarios
+Content-Type: application/json
+
+### 2. Crear un nuevo usuario
+POST {{apiUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez",
+  "email": "juan.perez@example.com",
+  "contrasena": "123456",
+  "rol": "editor"
+}
+
+### 3. Crear otro usuario para pruebas
+POST {{apiUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "María García",
+  "email": "maria.garcia@example.com",
+  "contrasena": "password123",
+  "rol": "admin"
+}
+
+### 4. Obtener usuario por ID (cambiar el ID según lo que devuelva la creación)
+GET {{apiUrl}}/usuarios/1
+Content-Type: application/json
+
+### 5. Actualizar usuario
+PUT {{apiUrl}}/usuarios/1
+Content-Type: application/json
+
+{
+  "nombre": "Juan Carlos Pérez",
+  "email": "juan.carlos@example.com",
+  "contrasena": "nuevacontrasena",
+  "rol": "admin"
+}
+
+### 6. Eliminar usuario
+DELETE {{apiUrl}}/usuarios/2
+Content-Type: application/json
+
+### 7. Intentar obtener usuario eliminado (debería devolver 404)
+GET {{apiUrl}}/usuarios/2
+Content-Type: application/json
+
+### 8. Probar error - crear usuario sin datos requeridos
+POST {{apiUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Usuario Incompleto"
+}

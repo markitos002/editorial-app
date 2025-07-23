@@ -6,12 +6,13 @@ const db = require('./db'); // Esto importa y ejecuta la conexión automáticame
 
 const app = express();
 
-const usuariosRoutes = require('./routes/usuariosRoutes');
-app.use('/api/usuarios', usuariosRoutes);
-
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Rutas
+const usuariosRoutes = require('./routes/usuariosRoutes');
+app.use('/api/usuarios', usuariosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
