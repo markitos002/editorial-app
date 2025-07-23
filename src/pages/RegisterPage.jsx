@@ -144,7 +144,7 @@ const RegisterPage = () => {
         <VStack spacing={8}>
           <VStack spacing={2} textAlign="center">
             <Heading size="xl" color="blue.500">
-              Editorial App
+              Revista Manos al Cuidado
             </Heading>
             <Text color="gray.600">
               Crear nueva cuenta

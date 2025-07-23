@@ -43,7 +43,7 @@ const DashboardPage = () => {
           <Flex align="center">
             <HStack spacing={4}>
               <Heading size="lg" color="blue.500">
-                Editorial App
+                Revista Manos al Cuidado
               </Heading>
             </HStack>
             
