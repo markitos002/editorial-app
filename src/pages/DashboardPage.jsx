@@ -21,11 +21,13 @@ import {
   Flex,
   Spacer
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getRoleColor, getRoleDisplayName, formatDateShort, getInitials } from '../utils/helpers';
 
 const DashboardPage = () => {
   const { user, logout, isAdmin, isEditor, isReviewer } = useAuth();
+  const navigate = useNavigate();
   
   // Colores para modo claro/oscuro
   const bgColor = useColorModeValue('gray.50', 'gray.900');
@@ -145,13 +147,10 @@ const DashboardPage = () => {
                     colorScheme="blue" 
                     size="lg" 
                     w="100%"
-                    isDisabled
+                    onClick={() => navigate('/articulos')}
                   >
                     📝 Nuevo Artículo
                   </Button>
-                  <Text fontSize="sm" color="gray.500" mt={2} textAlign="center">
-                    Próximamente
-                  </Text>
                 </GridItem>
                 
                 <GridItem>
@@ -160,13 +159,10 @@ const DashboardPage = () => {
                     variant="outline" 
                     size="lg" 
                     w="100%"
-                    isDisabled
+                    onClick={() => navigate('/articulos')}
                   >
                     📋 Mis Artículos
                   </Button>
-                  <Text fontSize="sm" color="gray.500" mt={2} textAlign="center">
-                    Próximamente
-                  </Text>
                 </GridItem>
                 
                 {isReviewer() && (
@@ -226,10 +222,17 @@ const DashboardPage = () => {
                 </HStack>
                 
                 <HStack>
-                  <Badge colorScheme="yellow" variant="solid">
-                    🚧 Frontend
+                  <Badge colorScheme="green" variant="solid">
+                    ✓ Gestión de Artículos
                   </Badge>
-                  <Text fontSize="sm">En desarrollo - Fase 2.1</Text>
+                  <Text fontSize="sm">Crear y gestionar artículos funcionando</Text>
+                </HStack>
+                
+                <HStack>
+                  <Badge colorScheme="yellow" variant="solid">
+                    🚧 Sistema de Revisiones
+                  </Badge>
+                  <Text fontSize="sm">En desarrollo - Próximamente</Text>
                 </HStack>
               </VStack>
             </CardBody>

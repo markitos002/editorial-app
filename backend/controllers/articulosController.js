@@ -56,6 +56,33 @@ const obtenerArticulos = async (req, res) => {
   }
 };
 
+// Obtener mis artículos (del usuario autenticado)
+const obtenerMisArticulos = async (req, res) => {
+  try {
+    const autorId = req.usuario.id; // Del middleware de autenticación
+    
+    const query = `
+      SELECT 
+        a.*,
+        u.nombre as autor_nombre,
+        u.email as autor_email
+      FROM articulos a
+      LEFT JOIN usuarios u ON a.autor_id = u.id
+      WHERE a.autor_id = $1
+      ORDER BY a.creado_en DESC
+    `;
+    
+    const resultado = await pool.query(query, [autorId]);
+
+    res.json({
+      articulos: resultado.rows
+    });
+  } catch (error) {
+    console.error('Error al obtener mis artículos:', error);
+    res.status(500).json({ mensaje: 'Error al obtener mis artículos', error: error.message });
+  }
+};
+
 // Obtener un artículo por ID
 const obtenerArticuloPorId = async (req, res) => {
   try {
@@ -86,28 +113,30 @@ const obtenerArticuloPorId = async (req, res) => {
 // Crear un nuevo artículo
 const crearArticulo = async (req, res) => {
   try {
-    const { titulo, resumen, contenido, autor_id } = req.body;
+    const { titulo, resumen, contenido, palabras_clave, area_tematica } = req.body;
+    const autorId = req.usuario.id; // Del middleware de autenticación
 
     // Validaciones
-    if (!titulo || !resumen || !contenido || !autor_id) {
+    if (!titulo || !resumen) {
       return res.status(400).json({ 
-        mensaje: 'Todos los campos son requeridos: titulo, resumen, contenido, autor_id' 
+        mensaje: 'Título y resumen son campos requeridos' 
       });
     }
 
-    // Verificar que el autor existe
-    const autorExiste = await pool.query('SELECT id FROM usuarios WHERE id = $1', [autor_id]);
-    if (autorExiste.rows.length === 0) {
-      return res.status(400).json({ mensaje: 'El autor especificado no existe' });
-    }
-
     const query = `
-      INSERT INTO articulos (titulo, resumen, contenido, autor_id, estado) 
-      VALUES ($1, $2, $3, $4, 'enviado') 
+      INSERT INTO articulos (titulo, resumen, contenido, palabras_clave, area_tematica, autor_id, estado) 
+      VALUES ($1, $2, $3, $4, $5, $6, 'enviado') 
       RETURNING *
     `;
     
-    const resultado = await pool.query(query, [titulo, resumen, contenido, autor_id]);
+    const resultado = await pool.query(query, [
+      titulo, 
+      resumen, 
+      contenido || '', 
+      Array.isArray(palabras_clave) ? palabras_clave : [], 
+      area_tematica || 'cuidados-enfermeria',
+      autorId
+    ]);
     
     if (!resultado.rows || resultado.rows.length === 0) {
       return res.status(500).json({ mensaje: 'Error al crear artículo: no se pudo insertar' });
@@ -290,6 +319,7 @@ const cambiarEstadoArticulo = async (req, res) => {
 
 module.exports = {
   obtenerArticulos,
+  obtenerMisArticulos,
   obtenerArticuloPorId,
   crearArticulo,
   actualizarArticulo,

@@ -5,6 +5,7 @@ const { verificarToken, verificarRol, autenticacionOpcional } = require('../midd
 
 // Rutas públicas (solo lectura)
 router.get('/', autenticacionOpcional, articulosController.obtenerArticulos);
+router.get('/mis-articulos', verificarToken, articulosController.obtenerMisArticulos);
 router.get('/:id', autenticacionOpcional, articulosController.obtenerArticuloPorId);
 
 // Rutas protegidas (requieren autenticación)

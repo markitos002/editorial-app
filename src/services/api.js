@@ -120,7 +120,52 @@ export const usersAPI = {
   }
 };
 
-// Servicios de Artículos
+// Servicios de Artículos (Editorial)
+export const articulosAPI = {
+  // Obtener mis artículos (autor)
+  getMisArticulos: async () => {
+    const response = await api.get('/articulos/mis-articulos');
+    return response.data;
+  },
+
+  // Obtener todos los artículos (para revisores/editores)
+  getTodos: async (params = {}) => {
+    const response = await api.get('/articulos', { params });
+    return response.data;
+  },
+
+  // Obtener artículo por ID
+  getById: async (id) => {
+    const response = await api.get(`/articulos/${id}`);
+    return response.data;
+  },
+
+  // Crear nuevo artículo
+  crear: async (articleData) => {
+    const response = await api.post('/articulos', articleData);
+    return response.data;
+  },
+
+  // Actualizar artículo
+  actualizar: async (id, articleData) => {
+    const response = await api.put(`/articulos/${id}`, articleData);
+    return response.data;
+  },
+
+  // Cambiar estado del artículo
+  cambiarEstado: async (id, estado) => {
+    const response = await api.patch(`/articulos/${id}/estado`, { estado });
+    return response.data;
+  },
+
+  // Eliminar artículo
+  eliminar: async (id) => {
+    const response = await api.delete(`/articulos/${id}`);
+    return response.data;
+  }
+};
+
+// Servicios de Artículos (compatibilidad)
 export const articlesAPI = {
   // Obtener todos los artículos (con filtros)
   getArticles: async (params = {}) => {

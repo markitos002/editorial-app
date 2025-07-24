@@ -33,10 +33,10 @@ const AppNavigation = () => {
     },
     {
       label: 'Mis Artículos',
-      path: '/articles',
+      path: '/articulos',
       icon: '📝',
       roles: ['admin', 'editor', 'revisor', 'autor'],
-      disabled: true
+      disabled: false
     },
     {
       label: 'Nuevo Artículo',
