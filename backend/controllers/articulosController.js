@@ -113,6 +113,9 @@ const obtenerArticuloPorId = async (req, res) => {
 // Crear un nuevo artículo
 const crearArticulo = async (req, res) => {
   try {
+    console.log('Datos recibidos:', req.body);
+    console.log('Archivo recibido:', req.file);
+    
     const { titulo, resumen, palabras_clave, area_tematica } = req.body;
     const autorId = req.usuario.id; // Del middleware de autenticación
     const archivo = req.file; // Del middleware de multer
@@ -131,6 +134,17 @@ const crearArticulo = async (req, res) => {
       });
     }
 
+    // Procesar palabras clave
+    let palabrasClaveArray = [];
+    if (palabras_clave) {
+      try {
+        palabrasClaveArray = JSON.parse(palabras_clave);
+      } catch (error) {
+        console.log('Error parseando palabras clave, usando como string:', error);
+        palabrasClaveArray = typeof palabras_clave === 'string' ? [palabras_clave] : [];
+      }
+    }
+
     const query = `
       INSERT INTO articulos (
         titulo, resumen, palabras_clave, area_tematica, autor_id, estado,
@@ -143,7 +157,7 @@ const crearArticulo = async (req, res) => {
     const resultado = await pool.query(query, [
       titulo, 
       resumen, 
-      Array.isArray(palabras_clave) ? palabras_clave : [], 
+      palabrasClaveArray, 
       area_tematica || 'cuidados-enfermeria',
       autorId,
       archivo.originalname,
