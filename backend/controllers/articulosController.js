@@ -113,8 +113,9 @@ const obtenerArticuloPorId = async (req, res) => {
 // Crear un nuevo artículo
 const crearArticulo = async (req, res) => {
   try {
-    const { titulo, resumen, contenido, palabras_clave, area_tematica } = req.body;
+    const { titulo, resumen, palabras_clave, area_tematica } = req.body;
     const autorId = req.usuario.id; // Del middleware de autenticación
+    const archivo = req.file; // Del middleware de multer
 
     // Validaciones
     if (!titulo || !resumen) {
@@ -123,19 +124,32 @@ const crearArticulo = async (req, res) => {
       });
     }
 
+    // Validar que se haya subido un archivo
+    if (!archivo) {
+      return res.status(400).json({ 
+        mensaje: 'Es necesario adjuntar un archivo con el contenido del artículo' 
+      });
+    }
+
     const query = `
-      INSERT INTO articulos (titulo, resumen, contenido, palabras_clave, area_tematica, autor_id, estado) 
-      VALUES ($1, $2, $3, $4, $5, $6, 'enviado') 
+      INSERT INTO articulos (
+        titulo, resumen, palabras_clave, area_tematica, autor_id, estado,
+        archivo_nombre, archivo_path, archivo_mimetype, archivo_size
+      ) 
+      VALUES ($1, $2, $3, $4, $5, 'enviado', $6, $7, $8, $9) 
       RETURNING *
     `;
     
     const resultado = await pool.query(query, [
       titulo, 
       resumen, 
-      contenido || '', 
       Array.isArray(palabras_clave) ? palabras_clave : [], 
       area_tematica || 'cuidados-enfermeria',
-      autorId
+      autorId,
+      archivo.originalname,
+      archivo.path,
+      archivo.mimetype,
+      archivo.size
     ]);
     
     if (!resultado.rows || resultado.rows.length === 0) {

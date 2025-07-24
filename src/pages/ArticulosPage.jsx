@@ -43,12 +43,14 @@ const ArticulosPage = () => {
   const { user } = useAuth();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isDetalleOpen, onOpen: onDetalleOpen, onClose: onDetalleClose } = useDisclosure();
   
   // Estados
   const [articulos, setArticulos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [articuloSeleccionado, setArticuloSeleccionado] = useState(null);
   
   // Formulario para nuevo artículo
   const [formData, setFormData] = useState({
@@ -56,7 +58,7 @@ const ArticulosPage = () => {
     resumen: '',
     palabras_clave: '',
     area_tematica: 'cuidados-enfermeria',
-    contenido: ''
+    archivo: null
   });
   
   // Colores para modo claro/oscuro
@@ -84,11 +86,19 @@ const ArticulosPage = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, files } = e.target;
+    
+    if (name === 'archivo') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: files ? files[0] : null
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -105,15 +115,44 @@ const ArticulosPage = () => {
       return;
     }
 
+    if (!formData.archivo) {
+      toast({
+        title: 'Archivo requerido',
+        description: 'Por favor selecciona un archivo con el contenido del artículo',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       
-      const articuloData = {
-        ...formData,
-        palabras_clave: formData.palabras_clave.split(',').map(k => k.trim()).filter(k => k)
-      };
+      // Crear FormData para enviar archivo
+      const formDataToSend = new FormData();
+      formDataToSend.append('titulo', formData.titulo);
+      formDataToSend.append('resumen', formData.resumen);
+      formDataToSend.append('area_tematica', formData.area_tematica);
+      formDataToSend.append('archivo', formData.archivo);
       
-      await articulosAPI.crear(articuloData);
+      // Procesar palabras clave
+      const palabrasClave = formData.palabras_clave.split(',').map(k => k.trim()).filter(k => k);
+      formDataToSend.append('palabras_clave', JSON.stringify(palabrasClave));
+      
+      // Llamada directa a la API con FormData
+      const response = await fetch('/api/articulos', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('editorial_token')}`
+        },
+        body: formDataToSend
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.mensaje || 'Error al enviar artículo');
+      }
       
       toast({
         title: 'Artículo enviado',
@@ -129,8 +168,13 @@ const ArticulosPage = () => {
         resumen: '',
         palabras_clave: '',
         area_tematica: 'cuidados-enfermeria',
-        contenido: ''
+        archivo: null
       });
+      
+      // Limpiar el input de archivo
+      const fileInput = document.querySelector('input[name="archivo"]');
+      if (fileInput) fileInput.value = '';
+      
       onClose();
       
       // Recargar artículos
@@ -140,13 +184,62 @@ const ArticulosPage = () => {
       console.error('Error enviando artículo:', error);
       toast({
         title: 'Error',
-        description: error.response?.data?.mensaje || 'Error al enviar el artículo',
+        description: error.message || 'Error al enviar el artículo',
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleVerDetalles = (articulo) => {
+    setArticuloSeleccionado(articulo);
+    onDetalleOpen();
+  };
+
+  const descargarArchivo = async (articuloId) => {
+    try {
+      const token = localStorage.getItem('editorial_token');
+      const response = await fetch(`/api/articulos/${articuloId}/archivo`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al descargar el archivo');
+      }
+
+      // Crear blob y descargar
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = articuloSeleccionado?.archivo_nombre || 'articulo.docx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      toast({
+        title: 'Descarga iniciada',
+        description: 'El archivo se está descargando',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
+    } catch (error) {
+      console.error('Error descargando archivo:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo descargar el archivo',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -231,7 +324,11 @@ const ArticulosPage = () => {
                         </Td>
                         <Td>{formatDateShort(articulo.creado_en)}</Td>
                         <Td>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleVerDetalles(articulo)}
+                          >
                             Ver Detalles
                           </Button>
                         </Td>
@@ -244,6 +341,102 @@ const ArticulosPage = () => {
           </Card>
         </VStack>
       </Container>
+
+      {/* Modal para ver detalles del artículo */}
+      <Modal isOpen={isDetalleOpen} onClose={onDetalleClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Detalles del Artículo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            {articuloSeleccionado && (
+              <VStack spacing={4} align="stretch">
+                <Box>
+                  <Text fontWeight="bold" mb={2}>Título:</Text>
+                  <Text>{articuloSeleccionado.titulo}</Text>
+                </Box>
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>Estado:</Text>
+                  <Badge colorScheme={getStatusColor(articuloSeleccionado.estado)}>
+                    {getStatusDisplayName(articuloSeleccionado.estado)}
+                  </Badge>
+                </Box>
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>Área Temática:</Text>
+                  <Badge variant="outline">
+                    {areas_tematicas.find(a => a.value === articuloSeleccionado.area_tematica)?.label || articuloSeleccionado.area_tematica}
+                  </Badge>
+                </Box>
+
+                {articuloSeleccionado.palabras_clave && articuloSeleccionado.palabras_clave.length > 0 && (
+                  <Box>
+                    <Text fontWeight="bold" mb={2}>Palabras Clave:</Text>
+                    <HStack wrap="wrap" spacing={2}>
+                      {articuloSeleccionado.palabras_clave.map((palabra, index) => (
+                        <Badge key={index} colorScheme="blue" variant="subtle">
+                          {palabra}
+                        </Badge>
+                      ))}
+                    </HStack>
+                  </Box>
+                )}
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>Resumen:</Text>
+                  <Text whiteSpace="pre-wrap">{articuloSeleccionado.resumen}</Text>
+                </Box>
+
+                {articuloSeleccionado.archivo_nombre && (
+                  <Box>
+                    <Text fontWeight="bold" mb={2}>Archivo adjunto:</Text>
+                    <HStack>
+                      <Text>{articuloSeleccionado.archivo_nombre}</Text>
+                      <Button 
+                        size="sm" 
+                        colorScheme="blue" 
+                        variant="outline"
+                        onClick={() => descargarArchivo(articuloSeleccionado.id)}
+                      >
+                        📄 Descargar
+                      </Button>
+                    </HStack>
+                    {articuloSeleccionado.archivo_size && (
+                      <Text fontSize="sm" color="gray.500">
+                        Tamaño: {(articuloSeleccionado.archivo_size / 1024 / 1024).toFixed(2)} MB
+                      </Text>
+                    )}
+                  </Box>
+                )}
+
+                <Box>
+                  <Text fontWeight="bold" mb={2}>Fecha de Envío:</Text>
+                  <Text>{formatDateShort(articuloSeleccionado.creado_en)}</Text>
+                </Box>
+
+                {articuloSeleccionado.autor_nombre && (
+                  <Box>
+                    <Text fontWeight="bold" mb={2}>Autor:</Text>
+                    <Text>{articuloSeleccionado.autor_nombre}</Text>
+                  </Box>
+                )}
+
+                <HStack w="100%" justify="end" spacing={3} pt={4}>
+                  <Button variant="outline" onClick={onDetalleClose}>
+                    Cerrar
+                  </Button>
+                  {articuloSeleccionado.estado === 'enviado' && (
+                    <Button colorScheme="blue" variant="outline">
+                      Editar Artículo
+                    </Button>
+                  )}
+                </HStack>
+              </VStack>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
 
       {/* Modal para nuevo artículo */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -300,15 +493,23 @@ const ArticulosPage = () => {
                   </Select>
                 </FormControl>
 
-                <FormControl>
-                  <FormLabel>Contenido del artículo</FormLabel>
-                  <Textarea
-                    name="contenido"
-                    value={formData.contenido}
+                <FormControl isRequired>
+                  <FormLabel>Archivo del artículo</FormLabel>
+                  <Input
+                    type="file"
+                    name="archivo"
                     onChange={handleInputChange}
-                    placeholder="Contenido completo del artículo..."
-                    rows={8}
+                    accept=".doc,.docx,.pdf,.txt"
+                    pt={1}
                   />
+                  <Text fontSize="sm" color="gray.500" mt={1}>
+                    Formatos permitidos: .doc, .docx, .pdf, .txt (máximo 10MB)
+                  </Text>
+                  {formData.archivo && (
+                    <Text fontSize="sm" color="green.500" mt={1}>
+                      ✓ Archivo seleccionado: {formData.archivo.name}
+                    </Text>
+                  )}
                 </FormControl>
 
                 <HStack w="100%" justify="end" spacing={3}>
