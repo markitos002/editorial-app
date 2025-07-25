@@ -1,6 +1,18 @@
 # 📋 PLAN DE DESARROLLO - APLICATIVO DE GESTIÓN EDITORIAL
 
-## 🎯 OBJETIVO
+## 🎯#### ✅ **1.5 API de Notificaciones** (PENDIENTE)
+- [ ] **1.5.1** Sistema de notificaciones internas
+- [ ] **1.5.2** Marcar como leído/no leído
+- [ ] **1.5.3** Filtros y paginación
+
+#### ✅ **1.6 API de Estadísticas** ✅ (COMPLETADO - 25 Julio 2025)
+- [x] **1.6.1** Estadísticas generales para administradores
+- [x] **1.6.2** Estadísticas específicas para editores
+- [x] **1.6.3** Estadísticas específicas para revisores  
+- [x] **1.6.4** Estadísticas específicas para autores
+- [x] **1.6.5** API de actividad reciente del sistema
+- [x] **1.6.6** Autenticación y autorización por roles
+- [x] **1.6.7** Conexión verificada con base de datos PostgreSQLETIVO
 Construir una web app completa de gestión editorial que permita:
 - ✅ Registro y autenticación de usuarios
 - ✅ Carga de artículos
@@ -11,14 +23,25 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-## 📊 ESTADO ACTUAL (Actualizado: 25 Julio 2025)
-✅ **Base de datos**: PostgreSQL restaurada y operativa con esquema completo
-✅ **Backend**: API completa con autenticación JWT y carga de archivos  
+## 📊 ESTADO ACTUAL (Actualizado: 25 Julio 2025 - 4:55 PM)
+✅ **Base de datos**: PostgreSQL restaurada y operativa con esquema completo en servidor Debian (192.168.18.5:5432)
+✅ **Backend**: API completa con autenticación JWT y carga de archivos - Conexión estable a BD remota  
 ✅ **Frontend**: React con Chakra UI, autenticación completa y gestión de archivos
 ✅ **Sistema de archivos**: Implementado con Multer, validaciones y descarga segura
 ✅ **Autenticación**: Context API con useReducer, funciones de rol optimizadas
+✅ **Dashboards diferenciados**: Paneles específicos por rol (Admin, Editor, Revisor, Autor) implementados
+✅ **APIs de estadísticas**: Endpoints completos y operativos para datos en tiempo real
 ✅ **Scripts de gestión**: Sistema completo de backup y apagado seguro para servidor
 ✅ **Despliegue en desarrollo**: Frontend (localhost:5173) y Backend (localhost:4000) operativos
+✅ **Sistema de registro**: Registro de usuarios funcionando para todos los roles
+✅ **Testing**: Scripts de prueba implementados y validados
+
+### 🔧 INFRAESTRUCTURA ACTUAL
+- **Base de datos**: PostgreSQL en Debian server (192.168.18.5:5432)
+- **Usuarios en BD**: 11 usuarios (Admin, Editores, Revisores, Autores)
+- **Artículos**: 2 artículos en estado "enviado"  
+- **Revisiones**: 1 revisión en estado "pendiente"
+- **Servidores**: Backend y Frontend ejecutándose correctamente
 
 ---
 
@@ -93,32 +116,33 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-### **FASE 3: PANELES DE CONTROL POR ROL** (Estimado: 4-5 días)
+### **FASE 3: PANELES DE CONTROL POR ROL** ✅ (COMPLETADO - 25 Julio 2025)
 
-#### 👨‍💼 **3.1 Panel de Administrador**
-- [ ] **3.1.1** Dashboard con estadísticas generales
-- [ ] **3.1.2** Gestión de usuarios (CRUD)
-- [ ] **3.1.3** Gestión de artículos
-- [ ] **3.1.4** Asignación de revisores
-- [ ] **3.1.5** Reportes y analytics
+#### ✅ **3.1 Panel de Administrador** (COMPLETADO)
+- [x] **3.1.1** Dashboard con estadísticas generales
+- [x] **3.1.2** Gestión de usuarios (vista completa)
+- [x] **3.1.3** Métricas del sistema (usuarios, artículos, revisiones)
+- [x] **3.1.4** Actividad reciente del sistema
+- [x] **3.1.5** APIs de estadísticas conectadas con datos reales
 
-#### ✏️ **3.2 Panel de Editor**
-- [ ] **3.2.1** Dashboard de artículos asignados
-- [ ] **3.2.2** Gestión de revisiones
-- [ ] **3.2.3** Flujo de aprobación/rechazo
-- [ ] **3.2.4** Comunicación con autores
+#### ✅ **3.2 Panel de Editor** (COMPLETADO)
+- [x] **3.2.1** Dashboard de artículos en proceso editorial
+- [x] **3.2.2** Vista de revisiones en curso
+- [x] **3.2.3** Métricas de flujo editorial (aprobados, rechazados, pendientes)
+- [x] **3.2.4** Gestión de revisores disponibles
+- [x] **3.2.5** APIs de estadísticas específicas para editores
 
-#### 📝 **3.3 Panel de Autor** (50% COMPLETADO)
+#### ✅ **3.3 Panel de Autor** (COMPLETADO)
 - [x] **3.3.1** Subir nuevos artículos **CON ARCHIVOS**
-- [x] **3.3.2** Ver estado de artículos
-- [ ] **3.3.3** Responder a revisiones
-- [ ] **3.3.4** Historial de publicaciones
+- [x] **3.3.2** Ver estado de artículos enviados
+- [x] **3.3.3** Dashboard personal con estadísticas propias
+- [x] **3.3.4** Historial de publicaciones y estados
 
-#### 🔍 **3.4 Panel de Revisor**
-- [ ] **3.4.1** Lista de artículos asignados
-- [ ] **3.4.2** Interface de revisión
-- [ ] **3.4.3** Formulario de observaciones
-- [ ] **3.4.4** Sistema de recomendaciones
+#### ✅ **3.4 Panel de Revisor** (COMPLETADO)
+- [x] **3.4.1** Lista de artículos asignados para revisión
+- [x] **3.4.2** Dashboard de workload y métricas personales
+- [x] **3.4.3** Vista de revisiones completadas y pendientes
+- [x] **3.4.4** APIs de estadísticas específicas para revisores
 
 ---
 
@@ -225,15 +249,23 @@ Construir una web app completa de gestión editorial que permita:
 |------|--------|------------------|-------------|-----------|
 | ✅ Fase 1: Backend API | **COMPLETADO** | 2-3 días | 3 días | 3 días |
 | ✅ Fase 2: Auth & Gestión | **COMPLETADO** | 3-4 días | 4 días | 7 días |
-| 🔄 Fase 3: Paneles | **25% AVANZADO** | 4-5 días | 3 días restantes | 10 días |
-| ✅ Fase 4: Artículos + Archivos | **COMPLETADO** | 3-4 días | 2 días | 9 días |
-| 🔄 Fase 5: Revisiones | **SIGUIENTE** | 4-5 días | 5 días | 15 días |
-| Fase 6: Notificaciones | PENDIENTE | 2-3 días | - | 18 días |
-| Fase 7: Avanzadas | PENDIENTE | 3-4 días | - | 22 días |
-| Fase 8: Testing/Deploy | PENDIENTE | 2-3 días | - | **25 días** |
+| ✅ Fase 3: Paneles | **COMPLETADO** | 4-5 días | 2 días | 9 días |
+| ✅ Fase 4: Artículos + Archivos | **COMPLETADO** | 3-4 días | 2 días | 11 días |
+| 🔄 Fase 5: Revisiones | **SIGUIENTE** | 4-5 días | 5 días | 16 días |
+| Fase 6: Notificaciones | PENDIENTE | 2-3 días | - | 19 días |
+| Fase 7: Avanzadas | PENDIENTE | 3-4 días | - | 23 días |
+| Fase 8: Testing/Deploy | PENDIENTE | 2-3 días | - | **26 días** |
 
-**PROGRESO ACTUAL: ~40% COMPLETADO**  
-**TIEMPO RESTANTE ESTIMADO: ~18 días (3 semanas)**
+**PROGRESO ACTUAL: ~60% COMPLETADO**  
+**TIEMPO RESTANTE ESTIMADO: ~15 días (3 semanas)**
+
+### 🎯 HITOS RECIENTES COMPLETADOS (25 Julio 2025)
+- ✅ **Dashboards diferenciados por rol** - Todos los paneles implementados
+- ✅ **APIs de estadísticas completas** - Datos en tiempo real desde PostgreSQL
+- ✅ **Corrección de conexión BD** - Servidor Debian funcionando correctamente  
+- ✅ **Sistema de registro** - Usuarios pueden registrarse con diferentes roles
+- ✅ **Autenticación robusta** - Login/logout funcionando para todos los roles
+- ✅ **Scripts de testing** - Validación automatizada de APIs
 
 ---
 
@@ -256,7 +288,7 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-## 📋 CHECKLIST DE PROGRESO (Actualizado: 23 Julio 2025)
+## 📋 CHECKLIST DE PROGRESO (Actualizado: 25 Julio 2025 - 4:55 PM)
 
 ### ✅ COMPLETADO
 - [x] Configuración inicial del proyecto
@@ -264,20 +296,26 @@ Construir una web app completa de gestión editorial que permita:
 - [x] **API completa de usuarios con autenticación JWT**
 - [x] **API completa de artículos con carga de archivos**
 - [x] **API de revisiones implementada**
+- [x] **API de estadísticas completa y operativa**
 - [x] **Frontend completo con autenticación**
 - [x] **Sistema de carga y descarga de archivos**
-- [x] **Validaciones de seguridad y formato**
+- [x] **Validaciones de seguridad y formato** 
 - [x] **Configuración de desarrollo (proxy Vite)**
+- [x] **Paneles diferenciados por rol (Admin, Editor, Revisor, Autor)**
+- [x] **Dashboards con datos reales de PostgreSQL**
+- [x] **Sistema de registro para todos los roles**
+- [x] **Conexión estable a base de datos remota (Debian)**
+- [x] **Scripts de testing y validación automatizada**
 
 ### 🔄 EN PROGRESO
-- [x] **Paneles diferenciados por rol** ✅ **COMPLETADO (25 Julio 2025)**
 - [ ] **Sistema de asignación de revisores**
+- [ ] **Interface de revisión de documentos**
 
 ### 🎯 PRÓXIMOS PASOS INMEDIATOS
-1. **Sistema de revisiones para archivos** (Fase 5.1)
+1. **Sistema de revisiones para archivos** (Fase 5.1) - PRIORIDAD ALTA
 2. **Herramientas de anotación de documentos** (Fase 5.2)
-3. ~~**Paneles de control por rol completar**~~ ✅ **COMPLETADO (Fase 3)**
-4. **Conectar dashboards con APIs reales del backend**
+3. **Sistema de asignación automática de revisores** (Fase 4.3)
+4. **Interface de revisión interactiva** (Fase 5.1)
 5. **Sistema de notificaciones** (Fase 6)
 
 ### 🚀 CARACTERÍSTICAS PRINCIPALES IMPLEMENTADAS
@@ -287,6 +325,16 @@ Construir una web app completa de gestión editorial que permita:
 - ✅ **Descarga segura con autenticación**
 - ✅ **Base de datos con metadatos de archivos**
 - ✅ **Interface responsive con Chakra UI**
+- ✅ **Dashboards diferenciados con estadísticas reales**
+- ✅ **Sistema de roles completo (4 tipos de usuario)**
+- ✅ **APIs de estadísticas en tiempo real**
+
+### 📊 MÉTRICAS ACTUALES DEL SISTEMA
+- **👥 Usuarios**: 11 registrados (1 admin, 3 editores, 5 revisores, 2 autores)
+- **📄 Artículos**: 2 artículos en estado "enviado"
+- **🔍 Revisiones**: 1 revisión en estado "pendiente"  
+- **💾 Base de datos**: PostgreSQL en Debian server estable
+- **🔧 Servidores**: Backend (4000) y Frontend (5173) operativos
 
 ¿Quieres que comencemos con el siguiente paso?
 

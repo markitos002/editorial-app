@@ -11,11 +11,14 @@ async function obtenerToken() {
       contrasena: 'admin123'
     });
     
-    if (response.data.success) {
+    console.log('📋 Respuesta completa del login:', response.data);
+    
+    if (response.data.token) {
       console.log('✅ Login exitoso como admin');
       return response.data.token;
     } else {
-      console.log('❌ Error en login:', response.data.mensaje);
+      console.log('❌ Error en login: No se recibió token');
+      console.log('   Respuesta:', response.data);
       return null;
     }
   } catch (error) {
