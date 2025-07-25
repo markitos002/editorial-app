@@ -1,5 +1,5 @@
 // context/AuthContext.jsx - Versión simplificada
-import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import { createContext, useContext, useReducer, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = useCallback(async (credentials) => {
+  const login = async (credentials) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
     
     try {
@@ -133,9 +133,9 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: false, error: errorMessage };
     }
-  }, []);
+  };
 
-  const register = useCallback(async (userData) => {
+  const register = async (userData) => {
     dispatch({ type: AUTH_ACTIONS.REGISTER_START });
     
     try {
@@ -153,9 +153,9 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: false, error: errorMessage };
     }
-  }, []);
+  };
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
     try {
       await authAPI.logout();
     } catch (error) {
@@ -163,36 +163,19 @@ export const AuthProvider = ({ children }) => {
     } finally {
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
     }
-  }, []);
+  };
 
-  const clearError = useCallback(() => {
+  const clearError = () => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
-  }, []);
+  };
 
-  const hasRole = useCallback((requiredRoles) => {
+  const hasRole = (requiredRoles) => {
     if (!state.user) return false;
     if (typeof requiredRoles === 'string') {
       return state.user.rol === requiredRoles;
     }
     return requiredRoles.includes(state.user.rol);
-  }, [state.user]);
-
-  // Funciones de conveniencia para roles específicos
-  const isAdmin = useCallback(() => {
-    return state.user?.rol === 'admin';
-  }, [state.user]);
-
-  const isEditor = useCallback(() => {
-    return state.user?.rol === 'editor';
-  }, [state.user]);
-
-  const isReviewer = useCallback(() => {
-    return state.user?.rol === 'revisor';
-  }, [state.user]);
-
-  const isAuthor = useCallback(() => {
-    return state.user?.rol === 'autor';
-  }, [state.user]);
+  };
 
   const value = {
     ...state,
@@ -200,11 +183,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     clearError,
-    hasRole,
-    isAdmin,
-    isEditor,
-    isReviewer,
-    isAuthor
+    hasRole
   };
 
   return (

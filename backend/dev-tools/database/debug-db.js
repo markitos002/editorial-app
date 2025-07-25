@@ -33,8 +33,6 @@ async function testDB() {
                 console.log(`- ${row.column_name}: ${row.data_type} (${row.is_nullable})`);
             });
         }
-        }
-        
         // Intentar insertar un usuario de prueba (comentado)
         /*
         console.log('\nIntentando insertar usuario de prueba...');
