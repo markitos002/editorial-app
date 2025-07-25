@@ -53,6 +53,13 @@ const AppNavigation = () => {
       disabled: true
     },
     {
+      label: 'Asignar Revisores',
+      path: '/asignaciones',
+      icon: '👨‍⚖️',
+      roles: ['admin', 'editor'],
+      disabled: false
+    },
+    {
       label: 'Usuarios',
       path: '/users',
       icon: '👥',

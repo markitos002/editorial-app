@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ArticulosPage from './pages/ArticulosPage';
+import AsignacionesPage from './pages/AsignacionesPage';
 
 // Tema personalizado para Chakra UI
 const theme = extendTheme({
@@ -99,6 +100,15 @@ const AppContent = () => {
               <Box p={8}>
                 <h2>Revisar Artículos - Próximamente</h2>
               </Box>
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/asignaciones" 
+          element={
+            <ProtectedRoute requiredRoles={['admin', 'editor']}>
+              <AsignacionesPage />
             </ProtectedRoute>
           } 
         />
