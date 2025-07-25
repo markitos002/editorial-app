@@ -11,11 +11,14 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-## 📊 ESTADO ACTUAL (Actualizado: 23 Julio 2025)
-✅ **Base de datos**: Configurada con tablas completas + campos de archivos
-✅ **Backend**: API completa con autenticación JWT y carga de archivos
-✅ **Frontend**: Sistema completo de autenticación y gestión de artículos con archivos
+## 📊 ESTADO ACTUAL (Actualizado: 25 Julio 2025)
+✅ **Base de datos**: PostgreSQL restaurada y operativa con esquema completo
+✅ **Backend**: API completa con autenticación JWT y carga de archivos  
+✅ **Frontend**: React con Chakra UI, autenticación completa y gestión de archivos
 ✅ **Sistema de archivos**: Implementado con Multer, validaciones y descarga segura
+✅ **Autenticación**: Context API con useReducer, funciones de rol optimizadas
+✅ **Scripts de gestión**: Sistema completo de backup y apagado seguro para servidor
+✅ **Despliegue en desarrollo**: Frontend (localhost:5173) y Backend (localhost:4000) operativos
 
 ---
 
@@ -57,20 +60,22 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-### **FASE 2: FRONTEND - AUTENTICACIÓN Y GESTIÓN** ✅ (COMPLETADO - 23 Julio 2025)
+### **FASE 2: FRONTEND - AUTENTICACIÓN Y GESTIÓN** ✅ (COMPLETADO - 25 Julio 2025)
 
 #### ✅ **2.1 Sistema de Login** (COMPLETADO)
 - [x] **2.1.1** Formulario de login
 - [x] **2.1.2** Formulario de registro
-- [x] **2.1.3** Manejo de estado de autenticación
-- [x] **2.1.4** Persistencia de sesión
-- [x] **2.1.5** Logout
+- [x] **2.1.3** Manejo de estado de autenticación con Context API
+- [x] **2.1.4** Persistencia de sesión con localStorage
+- [x] **2.1.5** Logout seguro
+- [x] **2.1.6** **OPTIMIZACIÓN CON useCallback PARA EVITAR RE-RENDERS**
 
 #### ✅ **2.2 Navegación y Layout** (COMPLETADO)
 - [x] **2.2.1** Navbar responsive
 - [x] **2.2.2** Sidebar para navegación
 - [x] **2.2.3** Rutas protegidas (React Router)
 - [x] **2.2.4** Layouts diferenciados por rol
+- [x] **2.2.5** **FUNCIONES DE ROL (isAdmin, isEditor, isReviewer, isAuthor)**
 
 #### ✅ **2.3 Gestión de Artículos con Archivos** (COMPLETADO)
 - [x] **2.3.1** **FORMULARIO DE CARGA CON ARCHIVOS**
@@ -79,6 +84,7 @@ Construir una web app completa de gestión editorial que permita:
 - [x] **2.3.4** **VISTA DE ARTÍCULOS CON METADATOS**
 - [x] **2.3.5** **SISTEMA DE DESCARGA DE ARCHIVOS**
 - [x] **2.3.6** **MANEJO DE ERRORES Y FEEDBACK**
+- [x] **2.3.7** **HMR (HOT MODULE REPLACEMENT) OPTIMIZADO**
 
 #### ✅ **2.4 Gestión de Perfil** (COMPLETADO)
 - [x] **2.4.1** Ver perfil de usuario
@@ -264,14 +270,15 @@ Construir una web app completa de gestión editorial que permita:
 - [x] **Configuración de desarrollo (proxy Vite)**
 
 ### 🔄 EN PROGRESO
-- [ ] **Paneles diferenciados por rol (25% completado)**
+- [x] **Paneles diferenciados por rol** ✅ **COMPLETADO (25 Julio 2025)**
 - [ ] **Sistema de asignación de revisores**
 
 ### 🎯 PRÓXIMOS PASOS INMEDIATOS
 1. **Sistema de revisiones para archivos** (Fase 5.1)
 2. **Herramientas de anotación de documentos** (Fase 5.2)
-3. **Paneles de control por rol completar** (Fase 3)
-4. **Sistema de notificaciones** (Fase 6)
+3. ~~**Paneles de control por rol completar**~~ ✅ **COMPLETADO (Fase 3)**
+4. **Conectar dashboards con APIs reales del backend**
+5. **Sistema de notificaciones** (Fase 6)
 
 ### 🚀 CARACTERÍSTICAS PRINCIPALES IMPLEMENTADAS
 - ✅ **Autenticación JWT completa**
@@ -320,5 +327,148 @@ archivo_size INTEGER           -- Tamaño en bytes
 ### 📊 **Métricas Actuales**
 - **Archivos de prueba:** 1 documento Word subido exitosamente
 - **Espacio usado:** ~2MB en desarrollo
+
+---
+
+## 🛠️ SCRIPTS DE GESTIÓN DEL SISTEMA (NUEVOS - 25 Julio 2025)
+
+### 📋 **Scripts Creados para Gestión PostgreSQL en Debian**
+
+#### 🔧 **1. safe_shutdown.sh** - Apagado Seguro del Sistema
+```bash
+# Ubicación: backend/dev-tools/scripts/safe_shutdown.sh
+# Funcionalidad:
+- Backup automático de la base de datos antes del apagado
+- Verificación de conexiones activas
+- Detención segura de servicios PostgreSQL
+- Log de operaciones con timestamps
+```
+
+#### 🚀 **2. safe_startup.sh** - Inicio Seguro del Sistema  
+```bash
+# Ubicación: backend/dev-tools/scripts/safe_startup.sh
+# Funcionalidad:
+- Verificación del estado del sistema antes del inicio
+- Inicio seguro de PostgreSQL
+- Verificación de conectividad a la base de datos "editorialdata"
+- Validación de usuario "markitos"
+```
+
+#### 💾 **3. auto_backup.sh** - Backup Automático
+```bash
+# Ubicación: backend/dev-tools/scripts/auto_backup.sh
+# Funcionalidad:
+- Backups automáticos programables
+- Rotación de backups (mantiene últimos 7 días)
+- Compresión automática
+- Logs de respaldo detallados
+```
+
+#### 🎛️ **4. editorial_system.sh** - Sistema de Menú Interactivo
+```bash
+# Ubicación: backend/dev-tools/scripts/editorial_system.sh
+# Funcionalidad:
+- Menú principal para gestión completa del sistema
+- Opciones: Backup, Restaurar, Estado, Inicio/Apagado seguro
+- Interface amigable para administradores
+- Integración con todos los scripts
+```
+
+#### 🔐 **5. setup_postgresql_auth.sh** - Configuración de Autenticación
+```bash
+# Ubicación: backend/dev-tools/scripts/setup_postgresql_auth.sh
+# Funcionalidad:
+- Solución de problemas de autenticación peer
+- Configuración automática de permisos
+- Fallback a método de autenticación md5
+- Verificación de conectividad con base "editorialdata"
+```
+
+### ⚙️ **Características Técnicas de los Scripts**
+- **Compatibilidad:** Optimizados para Debian/Ubuntu Linux
+- **Seguridad:** Verificaciones de permisos y autenticación dual
+- **Logs:** Sistema completo de logging con timestamps
+- **Error Handling:** Manejo robusto de errores y recuperación
+- **Database:** Configurados específicamente para "editorialdata" y usuario "markitos"
+
+### 🎯 **Uso en Producción**
+1. **Instalación:** Ejecutar `install_scripts.sh` para permisos y configuración
+2. **Cron Jobs:** Scripts preparados para automatización via crontab
+3. **Monitoreo:** Logs centralizados en `/var/log/editorial-system/`
+4. **Mantenimiento:** Backup automático diario configurado
+
+---
+
+## 🎨 DASHBOARDS DIFERENCIADOS POR ROL (NUEVOS - 25 Julio 2025)
+
+### 📋 **Funcionalidad Implementada**
+
+#### 👑 **Dashboard de Administrador** 
+```javascript
+// src/components/dashboards/AdminDashboard.jsx
+// Características:
+- Estadísticas globales del sistema (usuarios, artículos, revisiones)
+- Alertas del sistema y notificaciones críticas
+- Gestión completa de usuarios (crear, editar, roles)
+- Panel de gestión editorial (artículos, revisiones, configuración)
+- Actividad reciente del sistema
+- Métricas de rendimiento (almacenamiento, carga servidor, BD)
+```
+
+#### ✏️ **Dashboard de Editor**
+```javascript
+// src/components/dashboards/EditorDashboard.jsx
+// Características:
+- Estadísticas editoriales (artículos en revisión, aprobados, rechazados)
+- Tareas prioritarias y alertas específicas
+- Tabs organizados: Artículos Pendientes, Gestión Revisores, Listos para Publicar
+- Herramientas específicas: flujo editorial, plantillas, comunicaciones
+- Métricas de rendimiento editorial (tiempo revisión, tasa aprobación)
+```
+
+#### 🔍 **Dashboard de Revisor**
+```javascript
+// src/components/dashboards/ReviewerDashboard.jsx
+// Características:
+- Estadísticas personales (pendientes, completadas, tiempo promedio)
+- Recordatorios importantes y fechas límite
+- Artículos asignados con detalles expandibles (acordeón)
+- Herramientas de revisión (plantillas, criterios, historial)
+- Métricas de rendimiento personal
+- Historial de revisiones completadas
+```
+
+#### 📝 **Dashboard de Autor**
+```javascript
+// src/components/dashboards/AuthorDashboard.jsx
+// Características:
+- Estadísticas personales (borradores, enviados, publicados, tasa aceptación)
+- Notificaciones importantes sobre sus artículos
+- Tabs organizados: Mis Artículos, Borradores, Estadísticas
+- Seguimiento detallado del estado de artículos
+- Herramientas de autor (plantillas, guías, perfil)
+- Consejos personalizados basados en rendimiento
+```
+
+### ⚙️ **Características Técnicas de los Dashboards**
+- **Arquitectura:** Componentes separados por rol para mantener separación de responsabilidades
+- **Responsivo:** Diseño adaptativo usando Chakra UI Grid y GridItem
+- **Navegación:** Integración completa con React Router para navegación contextual
+- **Estado:** Conectados con AuthContext para verificación de roles en tiempo real
+- **Iconografía:** React Icons para una interfaz moderna y consistente
+- **Datos:** Estructura preparada para conectar con APIs reales (actualmente usa datos mock)
+
+### 🔄 **Integración con Sistema Existente**
+- **DashboardPage.jsx modificado:** Ahora renderiza componentes específicos según el rol del usuario
+- **Funciones de rol:** Utiliza isAdmin(), isEditor(), isReviewer(), isAuthor() del AuthContext optimizado
+- **Navegación contextual:** Cada dashboard redirige a rutas específicas de su rol
+- **Datos simulados:** Preparados para conectar con endpoints reales del backend
+
+### 🎯 **Para Próxima Fase**
+1. **Conectar con APIs reales:** Reemplazar datos mock con llamadas al backend
+2. **Notificaciones en tiempo real:** Integrar WebSockets para actualizaciones live
+3. **Personalización:** Permitir a usuarios configurar widgets y layouts
+4. **Métricas avanzadas:** Implementar gráficos y reportes interactivos
+5. **Acciones bulk:** Operaciones masivas desde los dashboards
 - **Tiempo de carga:** <1s para archivos <5MB
 - **Tiempo de descarga:** <500ms para archivos promedio
