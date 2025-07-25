@@ -22,12 +22,14 @@ const articulosRoutes = require('./routes/articulosRoutes');
 const revisionesRoutes = require('./routes/revisionesRoutes');
 const notificacionesRoutes = require('./routes/notificacionesRoutes');
 const authRoutes = require('./routes/authRoutes');
+const estadisticasRoutes = require('./routes/estadisticasRoutes');
 
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/articulos', articulosRoutes);
 app.use('/api/revisiones', revisionesRoutes);
 app.use('/api/notificaciones', notificacionesRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/estadisticas', estadisticasRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

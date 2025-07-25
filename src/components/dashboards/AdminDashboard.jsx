@@ -30,12 +30,13 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { estadisticasAPI } from '../../services/estadisticasAPI';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const cardBg = useColorModeValue('white', 'gray.800');
   
-  // Estados para estadísticas (datos mock por ahora)
+  // Estados para estadísticas (datos reales desde API)
   const [stats, setStats] = useState({
     totalUsuarios: 0,
     totalArticulos: 0,
@@ -43,17 +44,57 @@ const AdminDashboard = () => {
     revisionesCompletas: 0,
     usuariosActivos: 0
   });
+  
+  const [actividadReciente, setActividadReciente] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simular carga de estadísticas
-    // TODO: Conectar con API real
-    setStats({
-      totalUsuarios: 12,
-      totalArticulos: 45,
-      articulosPendientes: 8,
-      revisionesCompletas: 23,
-      usuariosActivos: 5
-    });
+    const cargarDatos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Cargar estadísticas generales
+        const estadisticasResponse = await estadisticasAPI.getEstadisticasGenerales();
+        if (estadisticasResponse.success) {
+          setStats(estadisticasResponse.data);
+        }
+
+        // Cargar actividad reciente
+        const actividadResponse = await estadisticasAPI.getActividadReciente();
+        if (actividadResponse.success) {
+          setActividadReciente(actividadResponse.data);
+        }
+
+      } catch (error) {
+        console.error('Error al cargar datos del dashboard:', error);
+        setError('Error al cargar los datos. Usando datos de ejemplo.');
+        
+        // Fallback a datos simulados en caso de error
+        setStats({
+          totalUsuarios: 12,
+          totalArticulos: 45,
+          articulosPendientes: 8,
+          revisionesCompletas: 23,
+          usuariosActivos: 5
+        });
+        
+        setActividadReciente([
+          {
+            fecha: new Date().toISOString(),
+            tipo: 'articulo',
+            titulo: 'Ejemplo de artículo',
+            autor: 'Usuario de prueba',
+            estado: 'enviado'
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarDatos();
   }, []);
 
   return (
