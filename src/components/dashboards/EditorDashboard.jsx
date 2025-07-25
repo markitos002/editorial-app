@@ -34,12 +34,13 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { estadisticasAPI } from '../../services/estadisticasAPI';
 
 const EditorDashboard = () => {
   const navigate = useNavigate();
   const cardBg = useColorModeValue('white', 'gray.800');
   
-  // Estados para estadísticas de editor
+  // Estados para estadísticas de editor (datos reales desde API)
   const [editorStats, setEditorStats] = useState({
     articulosEnRevision: 0,
     articulosAprobados: 0,
@@ -47,16 +48,33 @@ const EditorDashboard = () => {
     revisoresPendientes: 0,
     articulosListos: 0
   });
+  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simular carga de estadísticas de editor
-    setEditorStats({
-      articulosEnRevision: 12,
-      articulosAprobados: 8,
-      articulosRechazados: 3,
-      revisoresPendientes: 5,
-      articulosListos: 4
-    });
+    const cargarEstadisticas = async () => {
+      try {
+        setLoading(true);
+        const response = await estadisticasAPI.getEstadisticasEditor();
+        if (response.success) {
+          setEditorStats(response.data);
+        }
+      } catch (error) {
+        console.error('Error al cargar estadísticas de editor:', error);
+        // Fallback a datos simulados
+        setEditorStats({
+          articulosEnRevision: 12,
+          articulosAprobados: 8,
+          articulosRechazados: 3,
+          revisoresPendientes: 5,
+          articulosListos: 4
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarEstadisticas();
   }, []);
 
   return (

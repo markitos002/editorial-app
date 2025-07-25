@@ -26,7 +26,9 @@ import {
   useColorModeValue,
   Alert,
   AlertIcon,
-  Progress
+  Progress,
+  Spinner,
+  Center
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -99,8 +101,29 @@ const AdminDashboard = () => {
 
   return (
     <Box>
-      {/* Estadísticas principales */}
-      <Grid templateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={6} mb={8}>
+      {/* Indicador de carga */}
+      {loading && (
+        <Center py={8}>
+          <VStack spacing={4}>
+            <Spinner size="xl" color="blue.500" />
+            <Text>Cargando estadísticas...</Text>
+          </VStack>
+        </Center>
+      )}
+
+      {/* Mensaje de error */}
+      {error && (
+        <Alert status="warning" mb={6}>
+          <AlertIcon />
+          {error}
+        </Alert>
+      )}
+
+      {/* Contenido principal */}
+      {!loading && (
+        <>
+          {/* Estadísticas principales */}
+          <Grid templateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={6} mb={8}>
         <GridItem>
           <Card bg={cardBg}>
             <CardBody>
@@ -259,29 +282,47 @@ const AdminDashboard = () => {
               <Tr>
                 <Th>Fecha</Th>
                 <Th>Evento</Th>
-                <Th>Usuario</Th>
+                <Th>Usuario/Título</Th>
                 <Th>Estado</Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>25/07/2025 09:30</Td>
-                <Td>Artículo enviado</Td>
-                <Td>Dr. García López</Td>
-                <Td><Badge colorScheme="blue">Nuevo</Badge></Td>
-              </Tr>
-              <Tr>
-                <Td>25/07/2025 08:15</Td>
-                <Td>Revisión completada</Td>
-                <Td>Dra. Martínez</Td>
-                <Td><Badge colorScheme="green">Completado</Badge></Td>
-              </Tr>
-              <Tr>
-                <Td>24/07/2025 16:45</Td>
-                <Td>Usuario registrado</Td>
-                <Td>Prof. Rodríguez</Td>
-                <Td><Badge colorScheme="purple">Activo</Badge></Td>
-              </Tr>
+              {actividadReciente.length > 0 ? (
+                actividadReciente.map((actividad, index) => (
+                  <Tr key={index}>
+                    <Td>{new Date(actividad.fecha).toLocaleDateString('es-ES')}</Td>
+                    <Td>
+                      {actividad.tipo === 'articulo' && '📄 Artículo enviado'}
+                      {actividad.tipo === 'revision' && '🔍 Revisión completada'}
+                      {actividad.tipo === 'usuario' && '👤 Usuario registrado'}
+                    </Td>
+                    <Td>
+                      {actividad.tipo === 'articulo' && `${actividad.titulo} - ${actividad.autor}`}
+                      {actividad.tipo === 'revision' && `${actividad.titulo} - ${actividad.revisor}`}
+                      {actividad.tipo === 'usuario' && `${actividad.nombre} (${actividad.rol})`}
+                    </Td>
+                    <Td>
+                      <Badge 
+                        colorScheme={
+                          actividad.estado === 'enviado' ? 'blue' :
+                          actividad.estado === 'completada' ? 'green' :
+                          actividad.estado === 'aprobado' ? 'green' :
+                          actividad.estado === 'rechazado' ? 'red' :
+                          'purple'
+                        }
+                      >
+                        {actividad.estado || 'activo'}
+                      </Badge>
+                    </Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={4} textAlign="center" color="gray.500">
+                    No hay actividad reciente registrada
+                  </Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </CardBody>
@@ -318,6 +359,8 @@ const AdminDashboard = () => {
           </Grid>
         </CardBody>
       </Card>
+      </>
+      )}
     </Box>
   );
 };
