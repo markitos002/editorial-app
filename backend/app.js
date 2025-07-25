@@ -24,6 +24,7 @@ const notificacionesRoutes = require('./routes/notificacionesRoutes');
 const authRoutes = require('./routes/authRoutes');
 const estadisticasRoutes = require('./routes/estadisticasRoutes');
 const asignacionesRoutes = require('./routes/asignacionesRoutes');
+const revisionDocumentosRoutes = require('./routes/revisionDocumentosRoutes');
 
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/articulos', articulosRoutes);
@@ -32,6 +33,7 @@ app.use('/api/notificaciones', notificacionesRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/estadisticas', estadisticasRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
+app.use('/api/revision-documentos', revisionDocumentosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
