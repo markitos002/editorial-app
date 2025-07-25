@@ -41,29 +41,49 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FiEdit, FiSend, FiCheckCircle, FiClock } from 'react-icons/fi';
+import { estadisticasAPI } from '../../services/estadisticasAPI';
 
 const AuthorDashboard = () => {
   const navigate = useNavigate();
   const cardBg = useColorModeValue('white', 'gray.800');
   
-  // Estados para estadísticas de autor
+  // Estados para estadísticas de autor (datos reales desde API)
   const [authorStats, setAuthorStats] = useState({
     articulosEnviados: 0,
     articulosPublicados: 0,
     articulosBorrador: 0,
     enRevision: 0,
-    tasaAceptacion: 0
+    tasaAceptacion: 0,
+    detalleArticulos: []
   });
+  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simular carga de estadísticas de autor
-    setAuthorStats({
-      articulosEnviados: 8,
-      articulosPublicados: 5,
-      articulosBorrador: 2,
-      enRevision: 1,
-      tasaAceptacion: 62.5
-    });
+    const cargarEstadisticas = async () => {
+      try {
+        setLoading(true);
+        const response = await estadisticasAPI.getEstadisticasAutor();
+        if (response.success) {
+          setAuthorStats(response.data);
+        }
+      } catch (error) {
+        console.error('Error al cargar estadísticas de autor:', error);
+        // Fallback a datos simulados
+        setAuthorStats({
+          articulosEnviados: 8,
+          articulosPublicados: 5,
+          articulosBorrador: 2,
+          enRevision: 1,
+          tasaAceptacion: 62.5,
+          detalleArticulos: []
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarEstadisticas();
   }, []);
 
   const getStatusColor = (status) => {

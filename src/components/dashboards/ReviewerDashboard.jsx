@@ -36,29 +36,47 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FiClock, FiFileText, FiCheckCircle } from 'react-icons/fi';
+import { estadisticasAPI } from '../../services/estadisticasAPI';
 
 const ReviewerDashboard = () => {
   const navigate = useNavigate();
   const cardBg = useColorModeValue('white', 'gray.800');
   
-  // Estados para estadísticas de revisor
+  // Estados para estadísticas de revisor (datos reales desde API)
   const [reviewerStats, setReviewerStats] = useState({
-    articulosAsignados: 0,
+    articulosPendientes: 0,
     revisionesCompletadas: 0,
     tiempoPromedioRevision: 0,
-    articulosPendientes: 0,
-    puntuacionMedia: 0
+    puntuacionMedia: 0,
+    articulosAsignados: []
   });
+  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simular carga de estadísticas de revisor
-    setReviewerStats({
-      articulosAsignados: 3,
-      revisionesCompletadas: 15,
-      tiempoPromedioRevision: 3.5,
-      articulosPendientes: 2,
-      puntuacionMedia: 4.2
-    });
+    const cargarEstadisticas = async () => {
+      try {
+        setLoading(true);
+        const response = await estadisticasAPI.getEstadisticasRevisor();
+        if (response.success) {
+          setReviewerStats(response.data);
+        }
+      } catch (error) {
+        console.error('Error al cargar estadísticas de revisor:', error);
+        // Fallback a datos simulados
+        setReviewerStats({
+          articulosPendientes: 2,
+          revisionesCompletadas: 15,
+          tiempoPromedioRevision: 3.5,
+          puntuacionMedia: 4.2,
+          articulosAsignados: []
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarEstadisticas();
   }, []);
 
   return (

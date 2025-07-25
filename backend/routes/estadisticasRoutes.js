@@ -2,10 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const estadisticasController = require('../controllers/estadisticasController');
-const authMiddleware = require('../middlewares/auth');
+const { verificarToken } = require('../middlewares/auth');
 
 // Middleware de autenticación para todas las rutas
-router.use(authMiddleware);
+router.use(verificarToken);
 
 // Ruta para estadísticas generales (solo admin)
 router.get('/generales', (req, res, next) => {

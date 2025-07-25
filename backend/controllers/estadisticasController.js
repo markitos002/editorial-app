@@ -67,13 +67,13 @@ const estadisticasController = {
     try {
       const estadisticas = {};
 
-      // Artículos en revisión
+      // Artículos en revisión (usando estados reales)
       const enRevisionResult = await db.query(
-        "SELECT COUNT(*) as total FROM articulos WHERE estado = 'en_revision'"
+        "SELECT COUNT(*) as total FROM articulos WHERE estado IN ('en_revision', 'enviado')"
       );
       estadisticas.articulosEnRevision = parseInt(enRevisionResult.rows[0].total);
 
-      // Artículos aprobados este mes
+      // Artículos aprobados este mes (puede estar vacío)
       const aprobadosResult = await db.query(
         "SELECT COUNT(*) as total FROM articulos WHERE estado = 'aprobado' AND DATE_TRUNC('month', fecha_actualizacion) = DATE_TRUNC('month', CURRENT_DATE)"
       );
@@ -85,9 +85,9 @@ const estadisticasController = {
       );
       estadisticas.articulosRechazados = parseInt(rechazadosResult.rows[0].total);
 
-      // Revisores activos
+      // Revisores activos (usando estados reales de revisiones)
       const revisoresResult = await db.query(
-        "SELECT COUNT(DISTINCT u.id) as total FROM usuarios u INNER JOIN revisiones r ON u.id = r.revisor_id WHERE r.estado IN ('asignada', 'en_progreso')"
+        "SELECT COUNT(DISTINCT u.id) as total FROM usuarios u INNER JOIN revisiones r ON u.id = r.revisor_id WHERE r.estado IN ('pendiente', 'en_progreso')"
       );
       estadisticas.revisoresPendientes = parseInt(revisoresResult.rows[0].total);
 
@@ -125,25 +125,25 @@ const estadisticasController = {
       const revisorId = req.usuario.id;
       const estadisticas = {};
 
-      // Artículos asignados pendientes
+      // Artículos asignados pendientes (usando estados reales)
       const pendientesResult = await db.query(
-        "SELECT COUNT(*) as total FROM revisiones WHERE revisor_id = $1 AND estado IN ('asignada', 'en_progreso')",
+        "SELECT COUNT(*) as total FROM revisiones WHERE revisor_id = $1 AND estado IN ('pendiente', 'en_progreso')",
         [revisorId]
       );
       estadisticas.articulosPendientes = parseInt(pendientesResult.rows[0].total);
 
-      // Revisiones completadas
+      // Revisiones completadas (usando campo correcto)
       const completadasResult = await db.query(
         "SELECT COUNT(*) as total FROM revisiones WHERE revisor_id = $1 AND estado = 'completada'",
         [revisorId]
       );
       estadisticas.revisionesCompletadas = parseInt(completadasResult.rows[0].total);
 
-      // Tiempo promedio de revisión (en días)
+      // Tiempo promedio de revisión (usando campo correcto fecha_completado)
       const tiempoResult = await db.query(
-        `SELECT AVG(EXTRACT(DAY FROM (fecha_completada - fecha_asignacion))) as promedio 
+        `SELECT AVG(EXTRACT(DAY FROM (fecha_completado - fecha_asignacion))) as promedio 
          FROM revisiones 
-         WHERE revisor_id = $1 AND estado = 'completada' AND fecha_completada IS NOT NULL`,
+         WHERE revisor_id = $1 AND estado = 'completada' AND fecha_completado IS NOT NULL`,
         [revisorId]
       );
       estadisticas.tiempoPromedioRevision = tiempoResult.rows[0].promedio ? 
@@ -152,15 +152,15 @@ const estadisticasController = {
       // Puntuación media (simulada por ahora)
       estadisticas.puntuacionMedia = 4.2;
 
-      // Artículos asignados con detalles
+      // Artículos asignados con detalles (usando usuario_id correcto)
       const asignadosResult = await db.query(
         `SELECT a.id, a.titulo, a.resumen, u.nombre as autor_nombre, 
-                r.fecha_asignacion, r.fecha_limite, r.estado as revision_estado
+                r.fecha_asignacion, r.estado as revision_estado
          FROM articulos a
          INNER JOIN revisiones r ON a.id = r.articulo_id
-         INNER JOIN usuarios u ON a.autor_id = u.id
-         WHERE r.revisor_id = $1 AND r.estado IN ('asignada', 'en_progreso')
-         ORDER BY r.fecha_limite ASC`,
+         INNER JOIN usuarios u ON a.usuario_id = u.id
+         WHERE r.revisor_id = $1 AND r.estado IN ('pendiente', 'en_progreso')
+         ORDER BY r.fecha_asignacion ASC`,
         [revisorId]
       );
       estadisticas.articulosAsignados = asignadosResult.rows;
@@ -187,51 +187,51 @@ const estadisticasController = {
       const autorId = req.usuario.id;
       const estadisticas = {};
 
-      // Artículos enviados
+      // Artículos enviados (usando usuario_id correcto)
       const enviadosResult = await db.query(
-        "SELECT COUNT(*) as total FROM articulos WHERE autor_id = $1",
+        "SELECT COUNT(*) as total FROM articulos WHERE usuario_id = $1",
         [autorId]
       );
       estadisticas.articulosEnviados = parseInt(enviadosResult.rows[0].total);
 
       // Artículos publicados
       const publicadosResult = await db.query(
-        "SELECT COUNT(*) as total FROM articulos WHERE autor_id = $1 AND estado = 'publicado'",
+        "SELECT COUNT(*) as total FROM articulos WHERE usuario_id = $1 AND estado = 'publicado'",
         [autorId]
       );
       estadisticas.articulosPublicados = parseInt(publicadosResult.rows[0].total);
 
       // Artículos en borrador
       const borradorResult = await db.query(
-        "SELECT COUNT(*) as total FROM articulos WHERE autor_id = $1 AND estado = 'borrador'",
+        "SELECT COUNT(*) as total FROM articulos WHERE usuario_id = $1 AND estado = 'borrador'",
         [autorId]
       );
       estadisticas.articulosBorrador = parseInt(borradorResult.rows[0].total);
 
-      // Artículos en revisión
+      // Artículos en revisión (usando estados reales)
       const revisionResult = await db.query(
-        "SELECT COUNT(*) as total FROM articulos WHERE autor_id = $1 AND estado IN ('enviado', 'en_revision')",
+        "SELECT COUNT(*) as total FROM articulos WHERE usuario_id = $1 AND estado IN ('enviado', 'en_revision')",
         [autorId]
       );
       estadisticas.enRevision = parseInt(revisionResult.rows[0].total);
 
       // Tasa de aceptación
       const aprobadosResult = await db.query(
-        "SELECT COUNT(*) as total FROM articulos WHERE autor_id = $1 AND estado IN ('aprobado', 'publicado')",
+        "SELECT COUNT(*) as total FROM articulos WHERE usuario_id = $1 AND estado IN ('aprobado', 'publicado')",
         [autorId]
       );
       const aprobados = parseInt(aprobadosResult.rows[0].total);
       estadisticas.tasaAceptacion = estadisticas.articulosEnviados > 0 ? 
         ((aprobados / estadisticas.articulosEnviados) * 100).toFixed(1) : 0;
 
-      // Artículos con detalles
+      // Artículos con detalles (usando usuario_id y fecha_completado correcto)
       const articulosResult = await db.query(
-        `SELECT a.*, r.estado as revision_estado, r.comentarios, 
-                r.fecha_completada, u.nombre as revisor_nombre
+        `SELECT a.*, r.estado as revision_estado, r.observaciones as comentarios, 
+                r.fecha_completado, u.nombre as revisor_nombre
          FROM articulos a
          LEFT JOIN revisiones r ON a.id = r.articulo_id
          LEFT JOIN usuarios u ON r.revisor_id = u.id
-         WHERE a.autor_id = $1
+         WHERE a.usuario_id = $1
          ORDER BY a.fecha_creacion DESC`,
         [autorId]
       );
@@ -258,23 +258,23 @@ const estadisticasController = {
     try {
       const actividades = [];
 
-      // Artículos recientes
+      // Artículos recientes (usando usuario_id correcto)
       const articulosRecientes = await db.query(
-        `SELECT a.titulo, u.nombre as autor, a.fecha_creacion, a.estado, 'articulo' as tipo
+        `SELECT a.titulo, u.nombre as autor, a.fecha_creacion as fecha, a.estado, 'articulo' as tipo
          FROM articulos a
-         INNER JOIN usuarios u ON a.autor_id = u.id
+         INNER JOIN usuarios u ON a.usuario_id = u.id
          ORDER BY a.fecha_creacion DESC
          LIMIT 5`
       );
 
-      // Revisiones recientes
+      // Revisiones recientes (usando fecha_completado correcto)
       const revisionesRecientes = await db.query(
-        `SELECT a.titulo, u.nombre as revisor, r.fecha_completada as fecha, r.estado, 'revision' as tipo
+        `SELECT a.titulo, u.nombre as revisor, r.fecha_completado as fecha, r.estado, 'revision' as tipo
          FROM revisiones r
          INNER JOIN articulos a ON r.articulo_id = a.id
          INNER JOIN usuarios u ON r.revisor_id = u.id
-         WHERE r.fecha_completada IS NOT NULL
-         ORDER BY r.fecha_completada DESC
+         WHERE r.fecha_completado IS NOT NULL
+         ORDER BY r.fecha_completado DESC
          LIMIT 5`
       );
 
