@@ -6,10 +6,16 @@ const { generarToken } = require('../middlewares/auth.js');
 // Registro de nuevo usuario
 const registro = async (req, res) => {
   try {
+    console.log('=== INICIO REGISTRO ===');
+    console.log('Body recibido:', req.body);
+    
     const { nombre, email, contrasena, rol = 'autor' } = req.body;
+    
+    console.log('Datos extraídos:', { nombre, email, contrasena: '***', rol });
 
     // Validaciones básicas
     if (!nombre || !email || !contrasena) {
+      console.log('Faltan campos requeridos');
       return res.status(400).json({
         mensaje: 'Todos los campos son requeridos: nombre, email, contrasena'
       });
@@ -52,14 +58,16 @@ const registro = async (req, res) => {
 
     // Hash de la contraseña
     const saltRounds = 12;
-    const contrasenaHash = await bcrypt.hash(contrasena, saltRounds);
+    console.log('Hasheando contraseña...'); 
+    const passwordHash = await bcrypt.hash(contrasena, saltRounds);
 
     // Crear usuario
+    console.log('Creando usuario con query SQL...');
     const nuevoUsuario = await pool.query(`
-      INSERT INTO usuarios (nombre, email, contrasena, rol) 
+      INSERT INTO usuarios (nombre, email, password, rol) 
       VALUES ($1, $2, $3, $4) 
-      RETURNING id, nombre, email, rol, creado_en
-    `, [nombre, email.toLowerCase(), contrasenaHash, rol]);
+      RETURNING id, nombre, email, rol, fecha_creacion
+    `, [nombre, email.toLowerCase(), passwordHash, rol]);
 
     const usuario = nuevoUsuario.rows[0];
 
@@ -74,7 +82,7 @@ const registro = async (req, res) => {
         nombre: usuario.nombre,
         email: usuario.email,
         rol: usuario.rol,
-        creado_en: usuario.creado_en
+        fecha_creacion: usuario.fecha_creacion
       },
       token
     });
@@ -102,7 +110,7 @@ const login = async (req, res) => {
 
     // Buscar usuario por email
     const resultado = await pool.query(
-      'SELECT id, nombre, email, contrasena, rol, activo FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, password, rol, activo FROM usuarios WHERE email = $1',
       [email.toLowerCase()]
     );
 
@@ -122,7 +130,7 @@ const login = async (req, res) => {
     }
 
     // Verificar contraseña
-    const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena);
+    const contrasenaValida = await bcrypt.compare(contrasena, usuario.password);
     
     if (!contrasenaValida) {
       return res.status(401).json({
@@ -130,11 +138,11 @@ const login = async (req, res) => {
       });
     }
 
-    // Actualizar última conexión
-    await pool.query(
-      'UPDATE usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
-      [usuario.id]
-    );
+    // Actualizar última conexión (comentado temporalmente)
+    // await pool.query(
+    //   'UPDATE usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
+    //   [usuario.id]
+    // );
 
     // Generar token JWT
     const token = generarToken(usuario);
@@ -167,8 +175,8 @@ const obtenerPerfil = async (req, res) => {
 
     const resultado = await pool.query(`
       SELECT 
-        id, nombre, email, rol, activo, creado_en, ultimo_acceso,
-        (SELECT COUNT(*) FROM articulos WHERE autor_id = $1) as total_articulos,
+        id, nombre, email, rol, activo, fecha_creacion,
+        (SELECT COUNT(*) FROM articulos WHERE usuario_id = $1) as total_articulos,
         (SELECT COUNT(*) FROM revisiones WHERE revisor_id = $1) as total_revisiones
       FROM usuarios 
       WHERE id = $1
@@ -189,8 +197,7 @@ const obtenerPerfil = async (req, res) => {
         email: usuario.email,
         rol: usuario.rol,
         activo: usuario.activo,
-        creado_en: usuario.creado_en,
-        ultimo_acceso: usuario.ultimo_acceso,
+        fecha_creacion: usuario.fecha_creacion,
         estadisticas: {
           total_articulos: parseInt(usuario.total_articulos),
           total_revisiones: parseInt(usuario.total_revisiones)
@@ -228,7 +235,7 @@ const cambiarContrasena = async (req, res) => {
 
     // Obtener usuario actual
     const resultado = await pool.query(
-      'SELECT contrasena FROM usuarios WHERE id = $1',
+      'SELECT password FROM usuarios WHERE id = $1',
       [id]
     );
 
@@ -241,7 +248,7 @@ const cambiarContrasena = async (req, res) => {
     // Verificar contraseña actual
     const contrasenaValida = await bcrypt.compare(
       contrasena_actual, 
-      resultado.rows[0].contrasena
+      resultado.rows[0].password
     );
 
     if (!contrasenaValida) {
@@ -256,7 +263,7 @@ const cambiarContrasena = async (req, res) => {
 
     // Actualizar contraseña
     await pool.query(
-      'UPDATE usuarios SET contrasena = $1 WHERE id = $2',
+      'UPDATE usuarios SET password = $1 WHERE id = $2',
       [nuevaContrasenaHash, id]
     );
 
@@ -279,13 +286,13 @@ const logout = async (req, res) => {
     // En esta implementación simple, el logout es manejado por el frontend
     // eliminando el token del almacenamiento local
     
-    // Opcional: actualizar última actividad
-    if (req.usuario) {
-      await pool.query(
-        'UPDATE usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
-        [req.usuario.id]
-      );
-    }
+    // Opcional: actualizar última actividad (comentado temporalmente)
+    // if (req.usuario) {
+    //   await pool.query(
+    //     'UPDATE usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
+    //     [req.usuario.id]
+    //   );
+    // }
 
     res.json({
       mensaje: 'Logout exitoso'

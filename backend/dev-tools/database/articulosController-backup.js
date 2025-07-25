@@ -3,7 +3,7 @@ const pool = require('../db');
 // Obtener todos los artículos
 const obtenerArticulos = async (req, res) => {
   try {
-    const { estado, usuario_id, page = 1, limit = 10 } = req.query;
+    const { estado, autor_id, page = 1, limit = 10 } = req.query;
     let query = `
       SELECT 
         a.*,
@@ -11,7 +11,7 @@ const obtenerArticulos = async (req, res) => {
         u.email as autor_email,
         COUNT(*) OVER() as total_count
       FROM articulos a
-      LEFT JOIN usuarios u ON a.usuario_id = u.id
+      LEFT JOIN usuarios u ON a.autor_id = u.id
     `;
     const params = [];
     const whereConditions = [];
@@ -22,9 +22,9 @@ const obtenerArticulos = async (req, res) => {
       params.push(estado);
     }
 
-    if (usuario_id) {
-      whereConditions.push(`a.usuario_id = $${params.length + 1}`);
-      params.push(usuario_id);
+    if (autor_id) {
+      whereConditions.push(`a.autor_id = $${params.length + 1}`);
+      params.push(autor_id);
     }
 
     if (whereConditions.length > 0) {
@@ -33,7 +33,7 @@ const obtenerArticulos = async (req, res) => {
 
     // Paginación
     const offset = (page - 1) * limit;
-    query += ` ORDER BY a.fecha_creacion DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    query += ` ORDER BY a.creado_en DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
 
     const resultado = await pool.query(query, params);
@@ -67,9 +67,9 @@ const obtenerMisArticulos = async (req, res) => {
         u.nombre as autor_nombre,
         u.email as autor_email
       FROM articulos a
-      LEFT JOIN usuarios u ON a.usuario_id = u.id
-      WHERE a.usuario_id = $1
-      ORDER BY a.fecha_creacion DESC
+      LEFT JOIN usuarios u ON a.autor_id = u.id
+      WHERE a.autor_id = $1
+      ORDER BY a.creado_en DESC
     `;
     
     const resultado = await pool.query(query, [autorId]);
@@ -93,7 +93,7 @@ const obtenerArticuloPorId = async (req, res) => {
         u.nombre as autor_nombre,
         u.email as autor_email
       FROM articulos a
-      LEFT JOIN usuarios u ON a.usuario_id = u.id
+      LEFT JOIN usuarios u ON a.autor_id = u.id
       WHERE a.id = $1
     `;
     
@@ -119,7 +119,7 @@ const crearArticulo = async (req, res) => {
     console.log('Usuario autenticado:', req.usuario);
     
     const { titulo, resumen, palabras_clave, area_tematica } = req.body;
-    const usuarioId = req.usuario.id; // Del middleware de autenticación
+    const autorId = req.usuario.id; // Del middleware de autenticación
     const archivo = req.file; // Del middleware de multer
 
     // Validaciones
@@ -152,10 +152,10 @@ const crearArticulo = async (req, res) => {
     console.log('Procesando palabras clave...');
     const query = `
       INSERT INTO articulos (
-        titulo, resumen, palabras_clave, usuario_id, estado,
+        titulo, resumen, palabras_clave, area_tematica, autor_id, estado,
         archivo_nombre, archivo_path, archivo_mimetype, archivo_size
       ) 
-      VALUES ($1, $2, $3, $4, 'enviado', $5, $6, $7, $8) 
+      VALUES ($1, $2, $3, $4, $5, 'enviado', $6, $7, $8, $9) 
       RETURNING *
     `;
     
@@ -164,7 +164,8 @@ const crearArticulo = async (req, res) => {
       titulo, 
       resumen, 
       palabrasClaveArray, 
-      usuarioId,
+      area_tematica || 'cuidados-enfermeria',
+      autorId,
       archivo.originalname,
       archivo.path,
       archivo.mimetype,
@@ -175,7 +176,8 @@ const crearArticulo = async (req, res) => {
       titulo, 
       resumen, 
       palabrasClaveArray, 
-      usuarioId,
+      area_tematica || 'cuidados-enfermeria',
+      autorId,
       archivo.originalname,
       archivo.path,
       archivo.mimetype,
@@ -193,7 +195,7 @@ const crearArticulo = async (req, res) => {
         u.nombre as autor_nombre,
         u.email as autor_email
       FROM articulos a
-      LEFT JOIN usuarios u ON a.usuario_id = u.id
+      LEFT JOIN usuarios u ON a.autor_id = u.id
       WHERE a.id = $1
     `, [resultado.rows[0].id]);
 
@@ -272,7 +274,7 @@ const actualizarArticulo = async (req, res) => {
         u.nombre as autor_nombre,
         u.email as autor_email
       FROM articulos a
-      LEFT JOIN usuarios u ON a.usuario_id = u.id
+      LEFT JOIN usuarios u ON a.autor_id = u.id
       WHERE a.id = $1
     `, [id]);
 
@@ -347,7 +349,7 @@ const cambiarEstadoArticulo = async (req, res) => {
         u.nombre as autor_nombre,
         u.email as autor_email
       FROM articulos a
-      LEFT JOIN usuarios u ON a.usuario_id = u.id
+      LEFT JOIN usuarios u ON a.autor_id = u.id
       WHERE a.id = $1
     `, [id]);
 

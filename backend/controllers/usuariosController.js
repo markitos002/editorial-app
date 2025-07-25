@@ -33,7 +33,7 @@ const crearUsuario = async (req, res) => {
   try {
     const { nombre, email, contrasena, rol } = req.body;
     const resultado = await pool.query(
-      'INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO usuarios (nombre, email, password, rol) VALUES ($1, $2, $3, $4) RETURNING *',
       [nombre, email, contrasena, rol]
     );
 
@@ -50,7 +50,7 @@ const actualizarUsuario = async (req, res) => {
     const { id } = req.params;
     const { nombre, email, contrasena, rol } = req.body;
     const resultado = await pool.query(
-      'UPDATE usuarios SET nombre = $1, email = $2, contrasena = $3, rol = $4 WHERE id = $5 RETURNING *',
+      'UPDATE usuarios SET nombre = $1, email = $2, password = $3, rol = $4 WHERE id = $5 RETURNING *',
       [nombre, email, contrasena, rol, id]
     );
 

@@ -10,6 +10,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Middleware de logging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`, req.body);
+  next();
+});
+
 // Rutas
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const articulosRoutes = require('./routes/articulosRoutes');

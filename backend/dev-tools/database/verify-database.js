@@ -60,7 +60,7 @@ async function verificarBaseDatos() {
     };
     
     const insertResult = await client.query(
-      'INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO usuarios (nombre, email, password, rol) VALUES ($1, $2, $3, $4) RETURNING *',
       [testUser.nombre, testUser.email, testUser.contrasena, testUser.rol]
     );
     

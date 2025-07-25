@@ -1,5 +1,5 @@
 // context/AuthContext.jsx
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { authAPI } from '../services/api';
 
 // Estados de autenticación
@@ -118,25 +118,29 @@ export const AuthProvider = ({ children }) => {
 
   // Verificar token al cargar la aplicación
   useEffect(() => {
-    const token = localStorage.getItem('editorial_token');
-    const userData = localStorage.getItem('editorial_user');
-    
-    if (token && userData) {
-      try {
-        const user = JSON.parse(userData);
-        // Verificar que el token sigue siendo válido
-        verifyTokenOnLoad();
-      } catch (error) {
-        // Si hay error parseando los datos, hacer logout
-        dispatch({ type: AUTH_ACTIONS.LOGOUT });
+    const initializeAuth = async () => {
+      const token = localStorage.getItem('editorial_token');
+      const userData = localStorage.getItem('editorial_user');
+      
+      if (token && userData) {
+        try {
+          const user = JSON.parse(userData);
+          // Verificar que el token sigue siendo válido
+          await verifyTokenOnLoad();
+        } catch (error) {
+          // Si hay error parseando los datos, hacer logout
+          dispatch({ type: AUTH_ACTIONS.LOGOUT });
+        }
+      } else {
+        dispatch({ type: AUTH_ACTIONS.VERIFY_TOKEN_ERROR, payload: null });
       }
-    } else {
-      dispatch({ type: AUTH_ACTIONS.VERIFY_TOKEN_ERROR, payload: null });
-    }
-  }, []);
+    };
+
+    initializeAuth();
+  }, [verifyTokenOnLoad]); // Incluir verifyTokenOnLoad en las dependencias
 
   // Función de login
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
     
     try {
@@ -154,7 +158,7 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: false, error: errorMessage };
     }
-  };
+  }, []);
 
   // Función de registro
   const register = async (userData) => {
@@ -178,7 +182,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Función de logout
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authAPI.logout();
     } catch (error) {
@@ -187,10 +191,10 @@ export const AuthProvider = ({ children }) => {
     } finally {
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
     }
-  };
+  }, []);
 
   // Verificar token en carga inicial (sin dependencias)
-  const verifyTokenOnLoad = async () => {
+  const verifyTokenOnLoad = useCallback(async () => {
     dispatch({ type: AUTH_ACTIONS.VERIFY_TOKEN_START });
     
     try {
@@ -207,7 +211,7 @@ export const AuthProvider = ({ children }) => {
       });
       return false;
     }
-  };
+  }, []); // Sin dependencias para evitar recreación
 
   // Verificar token
   const verifyToken = async () => {
@@ -256,18 +260,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Limpiar errores
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
-  };
+  }, []);
 
   // Funciones utilitarias
-  const hasRole = (requiredRoles) => {
+  const hasRole = useCallback((requiredRoles) => {
     if (!state.user) return false;
     if (typeof requiredRoles === 'string') {
       return state.user.rol === requiredRoles;
     }
     return requiredRoles.includes(state.user.rol);
-  };
+  }, [state.user]);
 
   const isAdmin = () => hasRole('admin');
   const isEditor = () => hasRole(['editor', 'admin']);
