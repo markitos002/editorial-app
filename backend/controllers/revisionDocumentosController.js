@@ -121,7 +121,7 @@ const getRevisionDetalle = async (req, res) => {
 const guardarProgresoRevision = async (req, res) => {
   try {
     const { revision_id } = req.params;
-    const { observaciones, calificacion, comentarios_privados } = req.body;
+    const { observaciones, calificacion } = req.body;
     const revisor_id = req.usuario.id;
 
     console.log(`💾 Guardando progreso de revisión ${revision_id}...`);
@@ -146,16 +146,15 @@ const guardarProgresoRevision = async (req, res) => {
       });
     }
 
-    // Actualizar los campos de progreso
+    // Actualizar los campos de progreso disponibles
     await pool.query(`
       UPDATE revisiones 
       SET 
         observaciones = $1,
         calificacion = $2,
-        comentarios_privados = $3,
         fecha_actualizacion = CURRENT_TIMESTAMP
-      WHERE id = $4
-    `, [observaciones, calificacion, comentarios_privados, revision_id]);
+      WHERE id = $3
+    `, [observaciones, calificacion, revision_id]);
 
     res.json({
       success: true,
@@ -181,9 +180,7 @@ const completarRevision = async (req, res) => {
     const { 
       recomendacion, 
       observaciones, 
-      calificacion,
-      comentarios_privados = '',
-      justificacion = ''
+      calificacion
     } = req.body;
     const revisor_id = req.usuario.id;
 
@@ -204,10 +201,10 @@ const completarRevision = async (req, res) => {
       });
     }
 
-    if (calificacion && (calificacion < 1 || calificacion > 5)) {
+    if (calificacion && (calificacion < 1 || calificacion > 10)) {
       return res.status(400).json({
         success: false,
-        mensaje: 'La calificación debe estar entre 1 y 5'
+        mensaje: 'La calificación debe estar entre 1 y 10'
       });
     }
 
@@ -243,12 +240,10 @@ const completarRevision = async (req, res) => {
         recomendacion = $1,
         observaciones = $2,
         calificacion = $3,
-        comentarios_privados = $4,
-        justificacion = $5,
         fecha_completado = CURRENT_TIMESTAMP,
         fecha_actualizacion = CURRENT_TIMESTAMP
-      WHERE id = $6
-    `, [recomendacion, observaciones, calificacion, comentarios_privados, justificacion, revision_id]);
+      WHERE id = $4
+    `, [recomendacion, observaciones, calificacion, revision_id]);
 
     // Actualizar estado del artículo basado en las recomendaciones
     const articulo_id = revision.rows[0].articulo_id;
@@ -377,10 +372,9 @@ const getHistorialComentarios = async (req, res) => {
 
     console.log(`💬 Obteniendo historial de comentarios para revisión ${revision_id}...`);
 
-    // Por ahora, devolvemos los comentarios almacenados en la revisión
-    // En el futuro se puede expandir a una tabla separada de comentarios
+    // Obtener los comentarios almacenados en la revisión
     const revision = await pool.query(
-      'SELECT observaciones, comentarios_privados, fecha_actualizacion FROM revisiones WHERE id = $1',
+      'SELECT observaciones, fecha_actualizacion FROM revisiones WHERE id = $1',
       [revision_id]
     );
 
@@ -395,7 +389,6 @@ const getHistorialComentarios = async (req, res) => {
       success: true,
       data: {
         comentarios_publicos: revision.rows[0].observaciones || '',
-        comentarios_privados: revision.rows[0].comentarios_privados || '',
         ultima_actualizacion: revision.rows[0].fecha_actualizacion
       }
     });

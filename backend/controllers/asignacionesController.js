@@ -292,10 +292,54 @@ const cancelarAsignacion = async (req, res) => {
   }
 };
 
+// Obtener asignaciones activas (para editores/admins)
+const getAsignacionesActivas = async (req, res) => {
+  try {
+    console.log('📋 Obteniendo asignaciones activas...');
+    
+    const asignaciones = await pool.query(`
+      SELECT 
+        r.id as revision_id,
+        r.estado,
+        r.fecha_asignacion,
+        r.fecha_actualizacion,
+        r.calificacion,
+        a.id as articulo_id,
+        a.titulo,
+        a.estado as articulo_estado,
+        u_autor.nombre as autor_nombre,
+        u_autor.email as autor_email,
+        u_revisor.nombre as revisor_nombre,
+        u_revisor.email as revisor_email
+      FROM revisiones r
+      JOIN articulos a ON r.articulo_id = a.id
+      JOIN usuarios u_autor ON a.usuario_id = u_autor.id
+      JOIN usuarios u_revisor ON r.revisor_id = u_revisor.id
+      WHERE r.estado IN ('pendiente', 'en_progreso')
+      ORDER BY r.fecha_asignacion DESC
+    `);
+
+    res.json({
+      success: true,
+      data: asignaciones.rows,
+      mensaje: `${asignaciones.rows.length} asignaciones activas encontradas`
+    });
+
+  } catch (error) {
+    console.error('Error al obtener asignaciones activas:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al obtener asignaciones activas',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getRevisoresDisponibles,
   getArticulosSinAsignar,
   asignarRevisor,
   getAsignaciones,
+  getAsignacionesActivas,
   cancelarAsignacion
 };

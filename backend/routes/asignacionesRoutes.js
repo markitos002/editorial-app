@@ -7,6 +7,7 @@ const {
   getArticulosSinAsignar,
   asignarRevisor,
   getAsignaciones,
+  getAsignacionesActivas,
   cancelarAsignacion
 } = require('../controllers/asignacionesController');
 
@@ -28,6 +29,7 @@ const verificarRolEditor = (req, res, next) => {
 router.get('/revisores-disponibles', verificarRolEditor, getRevisoresDisponibles);
 router.get('/articulos-sin-asignar', verificarRolEditor, getArticulosSinAsignar);
 router.get('/asignaciones', verificarRolEditor, getAsignaciones);
+router.get('/activas', verificarRolEditor, getAsignacionesActivas);
 router.post('/asignar', verificarRolEditor, asignarRevisor);
 router.put('/cancelar/:revision_id', verificarRolEditor, cancelarAsignacion);
 

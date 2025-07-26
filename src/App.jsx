@@ -8,6 +8,9 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ArticulosPage from './pages/ArticulosPage';
 import AsignacionesPage from './pages/AsignacionesPage';
+import RevisionPage from './pages/RevisionPage';
+import RevisionDetallePage from './pages/RevisionDetallePage';
+import FormularioRevision from './components/FormularioRevision';
 
 // Tema personalizado para Chakra UI
 const theme = extendTheme({
@@ -97,9 +100,34 @@ const AppContent = () => {
           path="/reviews" 
           element={
             <ProtectedRoute requiredRoles={['admin', 'editor', 'revisor']}>
-              <Box p={8}>
-                <h2>Revisar Artículos - Próximamente</h2>
-              </Box>
+              <RevisionPage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/revision" 
+          element={
+            <ProtectedRoute requiredRoles={['revisor']}>
+              <RevisionPage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/revision/:revisionId/detalle" 
+          element={
+            <ProtectedRoute requiredRoles={['revisor', 'admin', 'editor']}>
+              <RevisionDetallePage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/revision/:revisionId" 
+          element={
+            <ProtectedRoute requiredRoles={['revisor']}>
+              <FormularioRevision />
             </ProtectedRoute>
           } 
         />

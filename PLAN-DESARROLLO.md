@@ -23,7 +23,7 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-## 📊 ESTADO ACTUAL (Actualizado: 25 Julio 2025 - 4:55 PM)
+## 📊 ESTADO ACTUAL (Actualizado: 25 Julio 2025 - 6:30 PM)
 ✅ **Base de datos**: PostgreSQL restaurada y operativa con esquema completo en servidor Debian (192.168.18.5:5432)
 ✅ **Backend**: API completa con autenticación JWT y carga de archivos - Conexión estable a BD remota  
 ✅ **Frontend**: React con Chakra UI, autenticación completa y gestión de archivos
@@ -34,13 +34,16 @@ Construir una web app completa de gestión editorial que permita:
 ✅ **Scripts de gestión**: Sistema completo de backup y apagado seguro para servidor
 ✅ **Despliegue en desarrollo**: Frontend (localhost:5173) y Backend (localhost:4000) operativos
 ✅ **Sistema de registro**: Registro de usuarios funcionando para todos los roles
-✅ **Testing**: Scripts de prueba implementados y validados
+✅ **Sistema de asignación de revisores**: Backend y frontend completo, totalmente operativo
+✅ **Sistema de revisión de documentos**: Backend completo, frontend implementado, APIs funcionales
+✅ **Testing**: Scripts de prueba implementados, validados y actualizados
 
 ### 🔧 INFRAESTRUCTURA ACTUAL
 - **Base de datos**: PostgreSQL en Debian server (192.168.18.5:5432)
 - **Usuarios en BD**: 11 usuarios (Admin, Editores, Revisores, Autores)
 - **Artículos**: 2 artículos en estado "enviado"  
-- **Revisiones**: 1 revisión en estado "pendiente"
+- **Asignaciones**: 3 asignaciones activas en funcionamiento
+- **Revisiones**: Sistema completo operativo con 1 revisión en progreso
 - **Servidores**: Backend y Frontend ejecutándose correctamente
 
 ---
@@ -146,16 +149,50 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-### **FASE 4: GESTIÓN DE ARTÍCULOS** ✅ (COMPLETADO - 23 Julio 2025)
+### **FASE 4: FUNCIONALIDADES PRIORITARIAS** ✅ (COMPLETADO - 25 Julio 2025)
 
-#### ✅ **4.1 Carga de Artículos** (COMPLETADO)
-- [x] **4.1.1** **FORMULARIO DE CARGA CON ARCHIVOS**
-- [x] **4.1.2** **VALIDACIONES DE FORMATO (.doc, .docx, .pdf, .txt)**
-- [x] **4.1.3** **PREVIEW Y METADATOS DEL ARCHIVO**
-- [x] **4.1.4** **Metadatos (título, resumen, palabras clave)**
+#### ✅ **PRIORIDAD 1: Sistema de Asignación de Revisores** ✅ (COMPLETADO)
+- [x] **4.1.1** Backend: Controller y rutas para asignaciones
+- [x] **4.1.2** APIs: Obtener revisores disponibles
+- [x] **4.1.3** APIs: Obtener artículos sin asignar  
+- [x] **4.1.4** APIs: Crear, consultar y cancelar asignaciones
+- [x] **4.1.5** Frontend: Página de asignaciones con interfaz completa
+- [x] **4.1.6** Frontend: Modal de asignación con validaciones
+- [x] **4.1.7** Frontend: Tablas de datos con información detallada
+- [x] **4.1.8** Integración: Navegación y rutas protegidas
+- [x] **4.1.9** Testing: Scripts de prueba completos y validados
 
-#### ✅ **4.2 Estados del Artículo** (COMPLETADO)
-- [x] **4.2.1** Flujo de estados (enviado → en revisión → aprobado/rechazado)
+#### ✅ **PRIORIDAD 2: Sistema de Revisión de Documentos** ✅ (COMPLETADO)
+- [x] **4.2.1** Backend: Controller para revisión de documentos
+- [x] **4.2.2** APIs: Obtener revisiones asignadas al revisor
+- [x] **4.2.3** APIs: Obtener detalles de revisión específica
+- [x] **4.2.4** APIs: Guardar progreso de revisión (borrador)
+- [x] **4.2.5** APIs: Completar revisión con recomendación final
+- [x] **4.2.6** APIs: Historial de comentarios y descarga de documentos
+- [x] **4.2.7** Frontend: Página principal de revisiones
+- [x] **4.2.8** Frontend: Componente de formulario de revisión detallado
+- [x] **4.2.9** Frontend: Interfaz de progreso y validaciones
+- [x] **4.2.10** Integración: Navegación específica para revisores
+- [x] **4.2.11** Testing: Scripts de prueba del flujo completo
+
+#### 🎯 **PRIORIDAD 3: Gestión de Comentarios y Observaciones** (PENDIENTE)
+- [ ] **4.3.1** Sistema de comentarios públicos vs privados
+- [ ] **4.3.2** Thread de conversación entre revisor y autor
+- [ ] **4.3.3** Resolución de observaciones
+- [ ] **4.3.4** Historial completo de intercambios
+
+---
+
+### **FASE 5: GESTIÓN DE ARTÍCULOS** ✅ (COMPLETADO - 23 Julio 2025)
+
+#### ✅ **5.1 Carga de Artículos** (COMPLETADO)
+- [x] **5.1.1** **FORMULARIO DE CARGA CON ARCHIVOS**
+- [x] **5.1.2** **VALIDACIONES DE FORMATO (.doc, .docx, .pdf, .txt)**
+- [x] **5.1.3** **PREVIEW Y METADATOS DEL ARCHIVO**
+- [x] **5.1.4** **Metadatos (título, resumen, palabras clave)**
+
+#### ✅ **5.2 Estados del Artículo** (COMPLETADO)
+- [x] **5.2.1** Flujo de estados (enviado → en revisión → aprobado/rechazado)
 - [x] **4.2.2** Visualización de estados
 - [x] **4.2.3** Historial de cambios
 

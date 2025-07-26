@@ -46,11 +46,18 @@ const AppNavigation = () => {
       disabled: true
     },
     {
+      label: 'Mis Revisiones',
+      path: '/revision',
+      icon: '📝',
+      roles: ['revisor'],
+      disabled: false
+    },
+    {
       label: 'Revisar Artículos',
       path: '/reviews',
       icon: '🔍',
-      roles: ['admin', 'editor', 'revisor'],
-      disabled: true
+      roles: ['admin', 'editor'],
+      disabled: false
     },
     {
       label: 'Asignar Revisores',
@@ -100,8 +107,8 @@ const AppNavigation = () => {
   const NavigationContent = () => (
     <VStack spacing={2} align="stretch">
       <Box mb={4}>
-        <Text fontSize="lg" fontWeight="bold" color="blue.500">
-          Editorial App
+        <Text fontSize="lg" fontWeight="bold" color="purple.600">
+          Manos al Cuidado
         </Text>
         <Text fontSize="sm" color="gray.500">
           {user?.nombre}

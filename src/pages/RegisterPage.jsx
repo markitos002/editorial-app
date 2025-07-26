@@ -290,7 +290,7 @@ const RegisterPage = () => {
           </Card>
 
           <Text textAlign="center" color="gray.500" fontSize="sm">
-            © 2025 Editorial App. Sistema de gestión académica.
+            © 2025 Manos al Cuidado. Sistema de gestión académica.
           </Text>
         </VStack>
       </Container>

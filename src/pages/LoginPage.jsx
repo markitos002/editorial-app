@@ -80,10 +80,10 @@ const LoginPage = () => {
       <Container maxW="md">
         <VStack spacing={8}>
           <VStack spacing={2} textAlign="center">
-            <Heading size="xl" color="blue.500">
+            <Heading size="xl" color="purple.600">
               Revista Manos al Cuidado
             </Heading>
-            <Text color="gray.600">
+            <Text color="gray.700">
               Sistema de Gestión Editorial
             </Text>
           </VStack>
@@ -159,7 +159,7 @@ const LoginPage = () => {
           </Card>
 
           <Text textAlign="center" color="gray.500" fontSize="sm">
-            © 2025 Editorial App. Sistema de gestión académica.
+            © 2025 Manos al Cuidado. Sistema de gestión académica.
           </Text>
         </VStack>
       </Container>
