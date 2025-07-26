@@ -15,6 +15,7 @@ import { HamburgerIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import NotificacionesCenter from './NotificacionesCenter';
+import BusquedaRapida from './busqueda/BusquedaRapida';
 
 const AppNavigation = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -36,6 +37,13 @@ const AppNavigation = () => {
       label: 'Mis Artículos',
       path: '/articulos',
       icon: '📝',
+      roles: ['admin', 'editor', 'revisor', 'autor'],
+      disabled: false
+    },
+    {
+      label: 'Búsqueda',
+      path: '/busqueda',
+      icon: '🔍',
       roles: ['admin', 'editor', 'revisor', 'autor'],
       disabled: false
     },
@@ -119,6 +127,11 @@ const AppNavigation = () => {
           </VStack>
           <NotificacionesCenter />
         </HStack>
+      </Box>
+
+      {/* Búsqueda rápida */}
+      <Box mb={4}>
+        <BusquedaRapida size="sm" />
       </Box>
 
       {menuItems
