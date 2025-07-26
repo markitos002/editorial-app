@@ -33,7 +33,7 @@ const busquedaController = {
             a.resumen,
             a.estado,
             a.fecha_creacion,
-            u.nombre as autor_nombre,
+            u.nombre as autor,
             u.email as autor_email,
             u.nombre as autor_usuario_nombre,
             CASE 
@@ -70,10 +70,11 @@ const busquedaController = {
             'comentario' as tipo_resultado,
             c.id,
             c.contenido,
-            c.tipo_comentario,
+            c.tipo as tipo_comentario,
             c.estado,
             c.fecha_creacion,
-            c.articulo_id,
+            c.revision_id,
+            r.articulo_id,
             a.titulo as articulo_titulo,
             u.nombre as autor_comentario,
             CASE 
@@ -82,7 +83,8 @@ const busquedaController = {
               ELSE 0
             END as relevancia
           FROM comentarios c
-          LEFT JOIN articulos a ON c.articulo_id = a.id
+          LEFT JOIN revisiones r ON c.revision_id = r.id
+          LEFT JOIN articulos a ON r.articulo_id = a.id
           LEFT JOIN usuarios u ON c.usuario_id = u.id
           WHERE LOWER(c.contenido) LIKE $1
           ${usuario_id ? 'AND c.usuario_id = $3' : ''}
@@ -216,15 +218,15 @@ const busquedaController = {
         paramCount++;
       }
       
-      // Filtro por revisor asignado
-      if (revisor_id) {
-        whereConditions.push(`EXISTS (
-          SELECT 1 FROM asignaciones_revision ar 
-          WHERE ar.articulo_id = a.id AND ar.revisor_id = $${paramCount}
-        )`);
-        queryParams.push(revisor_id);
-        paramCount++;
-      }
+      // Filtro por revisor asignado - Removido porque no hay tabla de asignaciones
+      // if (revisor_id) {
+      //   whereConditions.push(`EXISTS (
+      //     SELECT 1 FROM asignaciones_revision ar 
+      //     WHERE ar.articulo_id = a.id AND ar.revisor_id = $${paramCount}
+      //   )`);
+      //   queryParams.push(revisor_id);
+      //   paramCount++;
+      // }
       
       // Validar campo de ordenamiento
       const camposPermitidos = ['fecha_creacion', 'titulo', 'estado'];
@@ -237,16 +239,14 @@ const busquedaController = {
       const query = `
         SELECT 
           a.*,
-          u.nombre as autor_usuario_nombre,
-          u.email as autor_usuario_email,
-          COUNT(c.id) as total_comentarios,
-          COUNT(CASE WHEN c.estado = 'activo' THEN 1 END) as comentarios_activos,
-          STRING_AGG(DISTINCT ur.nombre, ', ') as revisores_asignados
+          u.nombre as autor,
+          u.email as autor_email,
+          COUNT(DISTINCT c.id) as total_comentarios,
+          COUNT(DISTINCT CASE WHEN c.estado = 'activo' THEN c.id END) as comentarios_activos
         FROM articulos a
         LEFT JOIN usuarios u ON a.usuario_id = u.id
-        LEFT JOIN comentarios c ON a.id = c.articulo_id
-        LEFT JOIN asignaciones_revision ar ON a.id = ar.articulo_id
-        LEFT JOIN usuarios ur ON ar.revisor_id = ur.id
+        LEFT JOIN revisiones r ON a.id = r.articulo_id
+        LEFT JOIN comentarios c ON r.id = c.revision_id
         WHERE ${whereClause}
         GROUP BY a.id, u.nombre, u.email
         ORDER BY a.${campoOrden} ${direccionOrden}
@@ -261,7 +261,6 @@ const busquedaController = {
         SELECT COUNT(DISTINCT a.id) as total
         FROM articulos a
         LEFT JOIN usuarios u ON a.usuario_id = u.id
-        LEFT JOIN asignaciones_revision ar ON a.id = ar.articulo_id
         WHERE ${whereClause}
       `;
       
@@ -406,23 +405,23 @@ const busquedaController = {
       const autoresResult = await pool.query(autoresQuery);
       opciones.autores = autoresResult.rows;
       
-      // Revisores activos (solo para admin/editor)
-      if (['admin', 'editor'].includes(req.usuario.rol)) {
-        const revisoresQuery = `
-          SELECT DISTINCT 
-            u.id, 
-            u.nombre, 
-            COUNT(ar.id) as revisiones_count
-          FROM usuarios u
-          LEFT JOIN asignaciones_revision ar ON u.id = ar.revisor_id
-          WHERE u.rol IN ('revisor', 'editor', 'admin') AND u.activo = true
-          GROUP BY u.id, u.nombre
-          ORDER BY revisiones_count DESC
-          LIMIT 20
-        `;
-        const revisoresResult = await pool.query(revisoresQuery);
-        opciones.revisores = revisoresResult.rows;
-      }
+      // Revisores activos - Removido porque no hay tabla de asignaciones
+      // if (['admin', 'editor'].includes(req.usuario.rol)) {
+      //   const revisoresQuery = `
+      //     SELECT DISTINCT 
+      //       u.id, 
+      //       u.nombre, 
+      //       COUNT(ar.id) as revisiones_count
+      //     FROM usuarios u
+      //     LEFT JOIN asignaciones_revision ar ON u.id = ar.revisor_id
+      //     WHERE u.rol IN ('revisor', 'editor', 'admin') AND u.activo = true
+      //     GROUP BY u.id, u.nombre
+      //     ORDER BY revisiones_count DESC
+      //     LIMIT 20
+      //   `;
+      //   const revisoresResult = await pool.query(revisoresQuery);
+      //   opciones.revisores = revisoresResult.rows;
+      // }
       
       res.json({
         success: true,

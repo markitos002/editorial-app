@@ -60,7 +60,7 @@ async function probarBusquedaGlobal() {
     if (response.data.resultados.articulos?.length > 0) {
       console.log('\n📝 Artículos encontrados:');
       response.data.resultados.articulos.slice(0, 3).forEach((articulo, index) => {
-        console.log(`${index + 1}. "${articulo.titulo}" - ${articulo.autor_nombre}`);
+        console.log(`${index + 1}. "${articulo.titulo}" - ${articulo.autor}`);
         console.log(`   Estado: ${articulo.estado} | Relevancia: ${articulo.relevancia}`);
       });
     }
@@ -92,7 +92,7 @@ async function probarBusquedaArticulos() {
       console.log('\n📝 Artículos encontrados:');
       response.data.articulos.forEach((articulo, index) => {
         console.log(`${index + 1}. "${articulo.titulo}"`);
-        console.log(`   Autor: ${articulo.autor_nombre} | Estado: ${articulo.estado}`);
+        console.log(`   Autor: ${articulo.autor} | Estado: ${articulo.estado}`);
         console.log(`   Comentarios: ${articulo.total_comentarios} | Fecha: ${new Date(articulo.fecha_creacion).toLocaleDateString('es-ES')}`);
         if (articulo.revisores_asignados) {
           console.log(`   Revisores: ${articulo.revisores_asignados}`);
@@ -200,7 +200,7 @@ async function probarBusquedaConFiltros() {
       console.log('\n📝 Artículos filtrados:');
       response.data.articulos.forEach((articulo, index) => {
         console.log(`${index + 1}. "${articulo.titulo}" - ${articulo.estado}`);
-        console.log(`   Autor: ${articulo.autor_nombre} | Fecha: ${new Date(articulo.fecha_creacion).toLocaleDateString('es-ES')}`);
+        console.log(`   Autor: ${articulo.autor} | Fecha: ${new Date(articulo.fecha_creacion).toLocaleDateString('es-ES')}`);
       });
     }
     
