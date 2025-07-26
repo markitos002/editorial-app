@@ -14,10 +14,11 @@ import {
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import NotificacionesCenter from './NotificacionesCenter';
 
 const AppNavigation = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user, isAdmin, isEditor, isReviewer } = useAuth();
+  const { user, usuario, isAdmin, isEditor, isReviewer } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -107,12 +108,17 @@ const AppNavigation = () => {
   const NavigationContent = () => (
     <VStack spacing={2} align="stretch">
       <Box mb={4}>
-        <Text fontSize="lg" fontWeight="bold" color="purple.600">
-          Revista Manos al Cuidado
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          {user?.nombre}
-        </Text>
+        <HStack justify="space-between" align="center" mb={2}>
+          <VStack align="start" spacing={0}>
+            <Text fontSize="lg" fontWeight="bold" color="purple.600">
+              Revista Manos al Cuidado
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              {usuario?.nombre}
+            </Text>
+          </VStack>
+          <NotificacionesCenter />
+        </HStack>
       </Box>
 
       {menuItems

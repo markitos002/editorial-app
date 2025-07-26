@@ -596,3 +596,92 @@ archivo_size INTEGER           -- Tamaño en bytes
 5. **Acciones bulk:** Operaciones masivas desde los dashboards
 - **Tiempo de carga:** <1s para archivos <5MB
 - **Tiempo de descarga:** <500ms para archivos promedio
+
+---
+
+## 💬 SISTEMA DE COMENTARIOS IMPLEMENTADO (26 Julio 2025)
+
+### 🔧 **Arquitectura del Sistema**
+- **Backend:** `comentariosController.js` con 6 endpoints principales
+- **Base de datos:** Tabla `comentarios` con soporte para threading
+- **Frontend:** `SistemaComentarios.jsx` con interfaz completa
+- **Página detallada:** `RevisionDetallePage.jsx` con pestañas
+
+### 🔐 **Tipos de Comentarios y Permisos**
+- **Públicos:** Visibles para autor y revisores
+- **Privados:** Solo para revisores y editores  
+- **Internos:** Solo para staff editorial (editores/admins)
+- **Threading:** Sistema de respuestas anidadas
+- **Estados:** Activo/Resuelto para seguimiento
+
+### 📡 **APIs Implementadas**
+```
+GET    /api/comentarios/revision/:id           # Obtener comentarios
+POST   /api/comentarios/revision/:id           # Crear comentario
+PUT    /api/comentarios/:id                    # Actualizar comentario
+DELETE /api/comentarios/:id                    # Eliminar comentario
+PATCH  /api/comentarios/:id/toggle-estado     # Cambiar estado
+GET    /api/comentarios/revision/:id/estadisticas # Estadísticas
+```
+
+### 🎨 **Características de la Interfaz**
+- **Responsive:** Adaptable a todos los dispositivos
+- **Codificación visual:** Verde (público), Amarillo (privado), Morado (interno)
+- **Threading visual:** Sangría e indicadores para respuestas
+- **Estados visuales:** Marcadores para comentarios resueltos
+- **Edición in-line:** Actualización de comentarios sin modal
+
+---
+
+## 🔒 SISTEMA DE RESTRICCIÓN DE ROLES (26 Julio 2025)
+
+### 🛡️ **Medidas de Seguridad**
+- **Registro público:** Solo permite roles 'autor' y 'revisor'
+- **Endpoint administrativo:** `/api/usuarios/admin/crear` protegido
+- **Validación backend:** Rechaza intentos de crear editores vía registro público
+- **Panel administrativo:** `GestionUsuariosPage.jsx` solo para admins
+
+### 🔧 **Implementación Técnica**
+```javascript
+// Restricción en authController.js
+const rolesPermitidosRegistro = ['autor', 'revisor'];
+if (!rolesPermitidosRegistro.includes(rol)) {
+  return res.status(400).json({
+    mensaje: `Rol no permitido para registro público. Solo se permiten: ${rolesPermitidosRegistro.join(', ')}`
+  });
+}
+```
+
+### 🧪 **Testing de Seguridad**
+- **Registro autor/revisor:** ✅ PERMITIDO
+- **Registro editor/admin:** 🚫 BLOQUEADO  
+- **Creación por admin:** ✅ FUNCIONANDO
+- **Scripts de prueba:** Validación automatizada completa
+
+### 📊 **Beneficios Logrados**
+- **Control total:** Solo admins pueden crear roles privilegiados
+- **Facilidad de uso:** Registro público sin complicaciones
+- **Escalabilidad:** Sistema preparado para crecimiento controlado
+- **Auditoría:** Registro de quién crea usuarios con qué roles
+
+---
+
+## 📈 PROGRESO GENERAL DEL PROYECTO
+
+### ✅ **COMPLETADO (90% del MVP)**
+1. **Autenticación y autorización completa**
+2. **Sistema de carga y gestión de archivos**  
+3. **Dashboards diferenciados por rol**
+4. **APIs de estadísticas en tiempo real**
+5. **Sistema de asignación de revisores**
+6. **Sistema de revisión de documentos**
+7. **Sistema de comentarios con threading**
+8. **Restricciones de seguridad por roles**
+9. **Panel administrativo de usuarios**
+
+### 🎯 **PRÓXIMAS PRIORITIES (10% restante para MVP completo)**
+1. **Sistema de Notificaciones** (Priority 4)
+2. **Reportes y Analytics** (Priority 5)
+3. **Optimizaciones UX** (Priority 6)
+
+**🚀 El sistema está casi completo para el MVP y completamente operativo para uso en desarrollo.**

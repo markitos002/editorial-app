@@ -1,4 +1,4 @@
-// controllers/notificacionesController.js
+// controllers/notificacionesController-updated.js - Controlador actualizado con la estructura correcta
 const pool = require('../db/index.js');
 
 // Obtener todas las notificaciones con filtros y paginación
@@ -8,7 +8,7 @@ const obtenerNotificaciones = async (req, res) => {
       page = 1, 
       limit = 10, 
       usuario_id, 
-      leido,
+      leida,
       fecha_desde,
       fecha_hasta 
     } = req.query;
@@ -26,20 +26,20 @@ const obtenerNotificaciones = async (req, res) => {
       paramCount++;
     }
 
-    if (leido !== undefined) {
-      whereConditions.push(`n.leido = $${paramCount}`);
-      queryParams.push(leido === 'true');
+    if (leida !== undefined) {
+      whereConditions.push(`n.leida = $${paramCount}`);
+      queryParams.push(leida === 'true');
       paramCount++;
     }
 
     if (fecha_desde) {
-      whereConditions.push(`n.creado_en >= $${paramCount}`);
+      whereConditions.push(`n.fecha_creacion >= $${paramCount}`);
       queryParams.push(fecha_desde);
       paramCount++;
     }
 
     if (fecha_hasta) {
-      whereConditions.push(`n.creado_en <= $${paramCount}`);
+      whereConditions.push(`n.fecha_creacion <= $${paramCount}`);
       queryParams.push(fecha_hasta);
       paramCount++;
     }
@@ -51,11 +51,13 @@ const obtenerNotificaciones = async (req, res) => {
       SELECT 
         n.*,
         u.nombre as usuario_nombre,
-        u.email as usuario_email
+        u.email as usuario_email,
+        a.titulo as articulo_titulo
       FROM notificaciones n
       LEFT JOIN usuarios u ON n.usuario_id = u.id
+      LEFT JOIN articulos a ON n.articulo_id = a.id
       ${whereClause}
-      ORDER BY n.creado_en DESC
+      ORDER BY n.fecha_creacion DESC
       LIMIT $${paramCount} OFFSET $${paramCount + 1}
     `;
 
@@ -74,6 +76,7 @@ const obtenerNotificaciones = async (req, res) => {
     const total = parseInt(totalResult.rows[0].total);
 
     res.json({
+      success: true,
       notificaciones: resultado.rows,
       pagination: {
         current_page: parseInt(page),
@@ -84,7 +87,11 @@ const obtenerNotificaciones = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al obtener notificaciones:', error);
-    res.status(500).json({ mensaje: 'Error al obtener notificaciones', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al obtener notificaciones', 
+      error: error.message 
+    });
   }
 };
 
@@ -97,52 +104,72 @@ const obtenerNotificacionPorId = async (req, res) => {
       SELECT 
         n.*,
         u.nombre as usuario_nombre,
-        u.email as usuario_email
+        u.email as usuario_email,
+        a.titulo as articulo_titulo
       FROM notificaciones n
       LEFT JOIN usuarios u ON n.usuario_id = u.id
+      LEFT JOIN articulos a ON n.articulo_id = a.id
       WHERE n.id = $1
     `;
 
     const resultado = await pool.query(query, [id]);
 
     if (resultado.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Notificación no encontrada' });
+      return res.status(404).json({ 
+        success: false,
+        mensaje: 'Notificación no encontrada' 
+      });
     }
 
-    res.json(resultado.rows[0]);
+    res.json({
+      success: true,
+      notificacion: resultado.rows[0]
+    });
   } catch (error) {
     console.error('Error al obtener notificación:', error);
-    res.status(500).json({ mensaje: 'Error al obtener notificación', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al obtener notificación', 
+      error: error.message 
+    });
   }
 };
 
 // Crear una nueva notificación
 const crearNotificacion = async (req, res) => {
   try {
-    const { usuario_id, mensaje } = req.body;
+    const { usuario_id, titulo, mensaje, tipo = 'info', articulo_id, revision_id } = req.body;
 
     // Validaciones
-    if (!usuario_id || !mensaje) {
+    if (!usuario_id || !titulo || !mensaje) {
       return res.status(400).json({ 
-        mensaje: 'Todos los campos son requeridos: usuario_id, mensaje' 
+        success: false,
+        mensaje: 'Todos los campos son requeridos: usuario_id, titulo, mensaje' 
       });
     }
 
     // Verificar que el usuario existe
     const usuarioExiste = await pool.query('SELECT id FROM usuarios WHERE id = $1', [usuario_id]);
     if (usuarioExiste.rows.length === 0) {
-      return res.status(400).json({ mensaje: 'El usuario especificado no existe' });
+      return res.status(400).json({ 
+        success: false,
+        mensaje: 'El usuario especificado no existe' 
+      });
     }
 
     const query = `
-      INSERT INTO notificaciones (usuario_id, mensaje) 
-      VALUES ($1, $2) 
+      INSERT INTO notificaciones (usuario_id, titulo, mensaje, tipo, articulo_id, revision_id) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
       RETURNING *
     `;
     
     const resultado = await pool.query(query, [
       usuario_id, 
-      mensaje
+      titulo,
+      mensaje,
+      tipo,
+      articulo_id,
+      revision_id
     ]);
     
     // Obtener la notificación completa con información del usuario
@@ -150,19 +177,26 @@ const crearNotificacion = async (req, res) => {
       SELECT 
         n.*,
         u.nombre as usuario_nombre,
-        u.email as usuario_email
+        u.email as usuario_email,
+        a.titulo as articulo_titulo
       FROM notificaciones n
       LEFT JOIN usuarios u ON n.usuario_id = u.id
+      LEFT JOIN articulos a ON n.articulo_id = a.id
       WHERE n.id = $1
     `, [resultado.rows[0].id]);
 
     res.status(201).json({
+      success: true,
       mensaje: 'Notificación creada exitosamente',
       notificacion: notificacionCompleta.rows[0]
     });
   } catch (error) {
     console.error('Error al crear notificación:', error);
-    res.status(500).json({ mensaje: 'Error al crear notificación', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al crear notificación', 
+      error: error.message 
+    });
   }
 };
 
@@ -174,10 +208,13 @@ const marcarComoLeida = async (req, res) => {
     // Verificar que la notificación existe
     const notificacionExiste = await pool.query('SELECT id FROM notificaciones WHERE id = $1', [id]);
     if (notificacionExiste.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Notificación no encontrada' });
+      return res.status(404).json({ 
+        success: false,
+        mensaje: 'Notificación no encontrada' 
+      });
     }
 
-    const query = 'UPDATE notificaciones SET leido = true WHERE id = $1 RETURNING *';
+    const query = 'UPDATE notificaciones SET leida = true WHERE id = $1 RETURNING *';
     const resultado = await pool.query(query, [id]);
 
     // Obtener la notificación completa actualizada
@@ -185,19 +222,26 @@ const marcarComoLeida = async (req, res) => {
       SELECT 
         n.*,
         u.nombre as usuario_nombre,
-        u.email as usuario_email
+        u.email as usuario_email,
+        a.titulo as articulo_titulo
       FROM notificaciones n
       LEFT JOIN usuarios u ON n.usuario_id = u.id
+      LEFT JOIN articulos a ON n.articulo_id = a.id
       WHERE n.id = $1
     `, [id]);
 
     res.json({
+      success: true,
       mensaje: 'Notificación marcada como leída',
       notificacion: notificacionCompleta.rows[0]
     });
   } catch (error) {
     console.error('Error al marcar notificación como leída:', error);
-    res.status(500).json({ mensaje: 'Error al marcar notificación como leída', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al marcar notificación como leída', 
+      error: error.message 
+    });
   }
 };
 
@@ -209,10 +253,13 @@ const marcarComoNoLeida = async (req, res) => {
     // Verificar que la notificación existe
     const notificacionExiste = await pool.query('SELECT id FROM notificaciones WHERE id = $1', [id]);
     if (notificacionExiste.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Notificación no encontrada' });
+      return res.status(404).json({ 
+        success: false,
+        mensaje: 'Notificación no encontrada' 
+      });
     }
 
-    const query = 'UPDATE notificaciones SET leido = false WHERE id = $1 RETURNING *';
+    const query = 'UPDATE notificaciones SET leida = false WHERE id = $1 RETURNING *';
     const resultado = await pool.query(query, [id]);
 
     // Obtener la notificación completa actualizada
@@ -220,19 +267,26 @@ const marcarComoNoLeida = async (req, res) => {
       SELECT 
         n.*,
         u.nombre as usuario_nombre,
-        u.email as usuario_email
+        u.email as usuario_email,
+        a.titulo as articulo_titulo
       FROM notificaciones n
       LEFT JOIN usuarios u ON n.usuario_id = u.id
+      LEFT JOIN articulos a ON n.articulo_id = a.id
       WHERE n.id = $1
     `, [id]);
 
     res.json({
+      success: true,
       mensaje: 'Notificación marcada como no leída',
       notificacion: notificacionCompleta.rows[0]
     });
   } catch (error) {
     console.error('Error al marcar notificación como no leída:', error);
-    res.status(500).json({ mensaje: 'Error al marcar notificación como no leída', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al marcar notificación como no leída', 
+      error: error.message 
+    });
   }
 };
 
@@ -244,19 +298,27 @@ const marcarTodasComoLeidas = async (req, res) => {
     // Verificar que el usuario existe
     const usuarioExiste = await pool.query('SELECT id FROM usuarios WHERE id = $1', [usuario_id]);
     if (usuarioExiste.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+      return res.status(404).json({ 
+        success: false,
+        mensaje: 'Usuario no encontrado' 
+      });
     }
 
-    const query = 'UPDATE notificaciones SET leido = true WHERE usuario_id = $1 AND leido = false';
+    const query = 'UPDATE notificaciones SET leida = true WHERE usuario_id = $1 AND leida = false';
     const resultado = await pool.query(query, [usuario_id]);
 
     res.json({
+      success: true,
       mensaje: `Se marcaron ${resultado.rowCount} notificaciones como leídas`,
       notificaciones_actualizadas: resultado.rowCount
     });
   } catch (error) {
     console.error('Error al marcar todas las notificaciones como leídas:', error);
-    res.status(500).json({ mensaje: 'Error al marcar todas las notificaciones como leídas', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al marcar todas las notificaciones como leídas', 
+      error: error.message 
+    });
   }
 };
 
@@ -268,15 +330,25 @@ const eliminarNotificacion = async (req, res) => {
     // Verificar que la notificación existe
     const notificacionExiste = await pool.query('SELECT id FROM notificaciones WHERE id = $1', [id]);
     if (notificacionExiste.rows.length === 0) {
-      return res.status(404).json({ mensaje: 'Notificación no encontrada' });
+      return res.status(404).json({ 
+        success: false,
+        mensaje: 'Notificación no encontrada' 
+      });
     }
 
     await pool.query('DELETE FROM notificaciones WHERE id = $1', [id]);
     
-    res.json({ mensaje: 'Notificación eliminada correctamente' });
+    res.json({ 
+      success: true,
+      mensaje: 'Notificación eliminada correctamente' 
+    });
   } catch (error) {
     console.error('Error al eliminar notificación:', error);
-    res.status(500).json({ mensaje: 'Error al eliminar notificación', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al eliminar notificación', 
+      error: error.message 
+    });
   }
 };
 
@@ -294,17 +366,19 @@ const obtenerNotificacionesPorUsuario = async (req, res) => {
     let paramCount = 2;
 
     if (solo_no_leidas === 'true') {
-      whereClause += ` AND n.leido = false`;
+      whereClause += ` AND n.leida = false`;
     }
 
     const query = `
       SELECT 
         n.*,
-        u.nombre as usuario_nombre
+        u.nombre as usuario_nombre,
+        a.titulo as articulo_titulo
       FROM notificaciones n
       LEFT JOIN usuarios u ON n.usuario_id = u.id
+      LEFT JOIN articulos a ON n.articulo_id = a.id
       ${whereClause}
-      ORDER BY n.creado_en DESC
+      ORDER BY n.fecha_creacion DESC
       LIMIT $${paramCount} OFFSET $${paramCount + 1}
     `;
 
@@ -315,7 +389,7 @@ const obtenerNotificacionesPorUsuario = async (req, res) => {
     const countQuery = `
       SELECT 
         COUNT(*) as total,
-        COUNT(CASE WHEN leido = false THEN 1 END) as no_leidas
+        COUNT(CASE WHEN leida = false THEN 1 END) as no_leidas
       FROM notificaciones 
       WHERE usuario_id = $1
     `;
@@ -324,6 +398,7 @@ const obtenerNotificacionesPorUsuario = async (req, res) => {
     const { total, no_leidas } = totalResult.rows[0];
 
     res.json({
+      success: true,
       usuario_id: parseInt(usuario_id),
       notificaciones: resultado.rows,
       total_notificaciones: parseInt(total),
@@ -337,22 +412,30 @@ const obtenerNotificacionesPorUsuario = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al obtener notificaciones del usuario:', error);
-    res.status(500).json({ mensaje: 'Error al obtener notificaciones del usuario', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al obtener notificaciones del usuario', 
+      error: error.message 
+    });
   }
 };
 
 // Función helper para crear notificaciones automáticas del sistema
-const crearNotificacionAutomatica = async (usuario_id, mensaje) => {
+const crearNotificacionAutomatica = async (usuario_id, titulo, mensaje, tipo = 'info', articulo_id = null, revision_id = null) => {
   try {
     const query = `
-      INSERT INTO notificaciones (usuario_id, mensaje) 
-      VALUES ($1, $2) 
+      INSERT INTO notificaciones (usuario_id, titulo, mensaje, tipo, articulo_id, revision_id) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
       RETURNING *
     `;
     
     const resultado = await pool.query(query, [
       usuario_id, 
-      mensaje
+      titulo,
+      mensaje,
+      tipo,
+      articulo_id,
+      revision_id
     ]);
 
     return resultado.rows[0];
