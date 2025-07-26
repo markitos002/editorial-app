@@ -23,7 +23,7 @@ Construir una web app completa de gestión editorial que permita:
 
 ---
 
-## 📊 ESTADO ACTUAL (Actualizado: 25 Julio 2025 - 6:30 PM)
+## 📊 ESTADO ACTUAL (Actualizado: 26 Julio 2025 - 12:30 PM)
 ✅ **Base de datos**: PostgreSQL restaurada y operativa con esquema completo en servidor Debian (192.168.18.5:5432)
 ✅ **Backend**: API completa con autenticación JWT y carga de archivos - Conexión estable a BD remota  
 ✅ **Frontend**: React con Chakra UI, autenticación completa y gestión de archivos
@@ -36,15 +36,19 @@ Construir una web app completa de gestión editorial que permita:
 ✅ **Sistema de registro**: Registro de usuarios funcionando para todos los roles
 ✅ **Sistema de asignación de revisores**: Backend y frontend completo, totalmente operativo
 ✅ **Sistema de revisión de documentos**: Backend completo, frontend implementado, APIs funcionales
-✅ **Testing**: Scripts de prueba implementados, validados y actualizados
+✅ **Sistema de comentarios**: Backend y frontend completo con threading, permisos y estados
+✅ **Restricción de roles**: Sistema de seguridad implementado para prevenir registros no autorizados
+✅ **Gestión administrativa**: Panel de administración para crear editores y gestionar usuarios
+✅ **Testing**: Scripts de prueba implementados, validados y actualizados para todas las funcionalidades
 
 ### 🔧 INFRAESTRUCTURA ACTUAL
 - **Base de datos**: PostgreSQL en Debian server (192.168.18.5:5432)
-- **Usuarios en BD**: 11 usuarios (Admin, Editores, Revisores, Autores)
+- **Usuarios en BD**: 15+ usuarios (Admin, Editores, Revisores, Autores)
 - **Artículos**: 2 artículos en estado "enviado"  
 - **Asignaciones**: 3 asignaciones activas en funcionamiento
 - **Revisiones**: Sistema completo operativo con 1 revisión en progreso
-- **Servidores**: Backend y Frontend ejecutándose correctamente
+- **Comentarios**: Sistema de threading implementado con 8+ comentarios de prueba
+- **Servidores**: Backend y Frontend ejecutándose correctamente con nuevas funcionalidades
 
 ---
 
@@ -175,11 +179,26 @@ Construir una web app completa de gestión editorial que permita:
 - [x] **4.2.10** Integración: Navegación específica para revisores
 - [x] **4.2.11** Testing: Scripts de prueba del flujo completo
 
-#### 🎯 **PRIORIDAD 3: Gestión de Comentarios y Observaciones** (PENDIENTE)
-- [ ] **4.3.1** Sistema de comentarios públicos vs privados
-- [ ] **4.3.2** Thread de conversación entre revisor y autor
-- [ ] **4.3.3** Resolución de observaciones
-- [ ] **4.3.4** Historial completo de intercambios
+#### ✅ **PRIORIDAD 3: Sistema de Gestión de Comentarios y Observaciones** ✅ (COMPLETADO - 26 Julio 2025)
+- [x] **4.3.1** Sistema de comentarios públicos, privados e internos
+- [x] **4.3.2** Thread de conversación entre revisor, autor y editores
+- [x] **4.3.3** Resolución de observaciones (activo/resuelto)
+- [x] **4.3.4** Historial completo de intercambios con threading
+- [x] **4.3.5** Backend: Controller completo con 6 endpoints principales
+- [x] **4.3.6** Backend: Sistema de permisos granular por rol de usuario
+- [x] **4.3.7** Frontend: Componente React completo con interfaz intuitiva
+- [x] **4.3.8** Frontend: Página detallada de revisión con pestañas
+- [x] **4.3.9** Base de datos: Tabla comentarios con soporte para threading
+- [x] **4.3.10** Testing: Scripts de prueba completos y validados
+- [x] **4.3.11** Integración: Sistema completamente operativo en aplicación
+
+#### ✅ **BONUS: Sistema de Restricción de Roles** ✅ (COMPLETADO - 26 Julio 2025)
+- [x] **4.4.1** Restricción de registro público (solo autor/revisor)
+- [x] **4.4.2** Endpoint administrativo para crear editores
+- [x] **4.4.3** Validación backend para prevenir registros no autorizados
+- [x] **4.4.4** Panel de gestión de usuarios para administradores
+- [x] **4.4.5** Testing de seguridad completo
+- [x] **4.4.6** Documentación de flujos de seguridad
 
 ---
 
@@ -349,14 +368,27 @@ Construir una web app completa de gestión editorial que permita:
 - [ ] **Interface de revisión de documentos**
 
 ### 🎯 PRÓXIMOS PASOS INMEDIATOS
-1. **Sistema de revisiones para archivos** (Fase 5.1) - PRIORIDAD ALTA
-2. **Herramientas de anotación de documentos** (Fase 5.2)
-3. **Sistema de asignación automática de revisores** (Fase 4.3)
-4. **Interface de revisión interactiva** (Fase 5.1)
-5. **Sistema de notificaciones** (Fase 6)
+1. **Sistema de Notificaciones** (Priority 4) - PRIORIDAD ALTA
+   - Notificaciones por email cuando se reciben comentarios
+   - Notificaciones en tiempo real en la interfaz
+   - Panel de notificaciones para usuarios
+2. **Reportes y Analytics Avanzados** (Priority 5)
+   - Reportes de actividad editorial
+   - Métricas de rendimiento de revisores
+   - Análisis de tiempos de revisión
+3. **Optimizaciones UX** (Priority 6)
+   - Editor rich text para comentarios
+   - Menciones a usuarios (@usuario)
+   - Adjuntar archivos a comentarios
+4. **Búsqueda y Filtros Avanzados**
+   - Búsqueda de artículos y revisiones
+   - Filtros por estado, fecha, revisor
+5. **Sistema de Templates de Email**
+   - Templates personalizables para notificaciones
+   - Branding consistente en comunicaciones
 
 ### 🚀 CARACTERÍSTICAS PRINCIPALES IMPLEMENTADAS
-- ✅ **Autenticación JWT completa**
+- ✅ **Autenticación JWT completa con restricciones de seguridad**
 - ✅ **Carga de archivos académicos (.doc, .docx, .pdf, .txt)**
 - ✅ **Validaciones robustas (formato, tamaño 10MB)**
 - ✅ **Descarga segura con autenticación**
@@ -365,11 +397,18 @@ Construir una web app completa de gestión editorial que permita:
 - ✅ **Dashboards diferenciados con estadísticas reales**
 - ✅ **Sistema de roles completo (4 tipos de usuario)**
 - ✅ **APIs de estadísticas en tiempo real**
+- ✅ **Sistema de asignación de revisores completo**
+- ✅ **Sistema de revisión de documentos operativo**
+- ✅ **Sistema de comentarios con threading y permisos**
+- ✅ **Panel administrativo para gestión de usuarios**
+- ✅ **Restricciones de seguridad por roles**
 
 ### 📊 MÉTRICAS ACTUALES DEL SISTEMA
-- **👥 Usuarios**: 11 registrados (1 admin, 3 editores, 5 revisores, 2 autores)
+- **👥 Usuarios**: 15+ registrados (1 admin, 3+ editores, 5+ revisores, 2+ autores)
 - **📄 Artículos**: 2 artículos en estado "enviado"
-- **🔍 Revisiones**: 1 revisión en estado "pendiente"  
+- **🔍 Revisiones**: 1+ revisiones con comentarios activos
+- **💬 Comentarios**: 8+ comentarios con threading implementado
+- **🔒 Seguridad**: Sistema de restricción de roles operativo
 - **💾 Base de datos**: PostgreSQL en Debian server estable
 - **🔧 Servidores**: Backend (4000) y Frontend (5173) operativos
 

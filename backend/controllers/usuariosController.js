@@ -1,4 +1,96 @@
 const pool = require('../db');
+const bcrypt = require('bcryptjs');
+
+// Crear usuario por administrador (permite todos los roles)
+const crearUsuarioPorAdmin = async (req, res) => {
+  try {
+    console.log('=== CREACIÓN DE USUARIO POR ADMIN ===');
+    console.log('Body recibido:', req.body);
+    console.log('Usuario autenticado:', req.usuario);
+
+    // Verificar que el usuario sea admin
+    if (req.usuario.rol !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        mensaje: 'No tienes permisos para crear usuarios con este rol'
+      });
+    }
+
+    const { nombre, email, contrasena, rol } = req.body;
+
+    // Validaciones básicas
+    if (!nombre || !email || !contrasena || !rol) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'Todos los campos son requeridos: nombre, email, contrasena, rol'
+      });
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'Formato de email inválido'
+      });
+    }
+
+    // Validar longitud de contraseña
+    if (contrasena.length < 6) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'La contraseña debe tener al menos 6 caracteres'
+      });
+    }
+
+    // Validar rol - Todos los roles permitidos para admin
+    const rolesValidos = ['autor', 'revisor', 'editor', 'admin'];
+    if (!rolesValidos.includes(rol)) {
+      return res.status(400).json({
+        success: false,
+        mensaje: `Rol inválido. Roles permitidos: ${rolesValidos.join(', ')}`
+      });
+    }
+
+    // Verificar si el email ya existe
+    const usuarioExistente = await pool.query(
+      'SELECT id FROM usuarios WHERE email = $1',
+      [email.toLowerCase()]
+    );
+
+    if (usuarioExistente.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        mensaje: 'Ya existe un usuario con este email'
+      });
+    }
+
+    // Hashear contraseña
+    const saltRounds = 10;
+    const contrasenaHasheada = await bcrypt.hash(contrasena, saltRounds);
+
+    // Crear usuario
+    const resultado = await pool.query(
+      'INSERT INTO usuarios (nombre, email, password, rol) VALUES ($1, $2, $3, $4) RETURNING id, nombre, email, rol, fecha_creacion',
+      [nombre, email.toLowerCase(), contrasenaHasheada, rol]
+    );
+
+    console.log('Usuario creado exitosamente:', resultado.rows[0]);
+
+    res.status(201).json({
+      success: true,
+      mensaje: 'Usuario creado exitosamente',
+      data: resultado.rows[0]
+    });
+
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error interno del servidor'
+    });
+  }
+};
 
 // Obtener todos los usuarios
 const obtenerUsuarios = async (req, res) => {
@@ -86,6 +178,7 @@ module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   crearUsuario,
+  crearUsuarioPorAdmin,
   actualizarUsuario,
   eliminarUsuario,
 };

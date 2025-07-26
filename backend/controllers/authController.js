@@ -36,11 +36,11 @@ const registro = async (req, res) => {
       });
     }
 
-    // Validar rol
-    const rolesValidos = ['autor', 'revisor', 'editor', 'admin'];
-    if (!rolesValidos.includes(rol)) {
+    // Validar rol - Solo autor y revisor permitidos para registro público
+    const rolesPermitidosRegistro = ['autor', 'revisor'];
+    if (!rolesPermitidosRegistro.includes(rol)) {
       return res.status(400).json({
-        mensaje: `Rol inválido. Roles permitidos: ${rolesValidos.join(', ')}`
+        mensaje: `Rol no permitido para registro público. Solo se permiten: ${rolesPermitidosRegistro.join(', ')}`
       });
     }
 

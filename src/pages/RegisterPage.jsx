@@ -108,7 +108,7 @@ const RegisterPage = () => {
     }
 
     // Validar rol
-    const rolesValidos = ['autor', 'revisor', 'editor'];
+    const rolesValidos = ['autor', 'revisor']; // Solo autor y revisor para registro público
     if (!rolesValidos.includes(formData.rol)) {
       errors.rol = 'Selecciona un rol válido';
     }
@@ -134,8 +134,8 @@ const RegisterPage = () => {
 
   const roles = [
     { value: 'autor', label: 'Autor', description: 'Puedo enviar artículos para revisión' },
-    { value: 'revisor', label: 'Revisor', description: 'Puedo revisar artículos enviados' },
-    { value: 'editor', label: 'Editor', description: 'Puedo gestionar el proceso editorial' }
+    { value: 'revisor', label: 'Revisor', description: 'Puedo revisar artículos enviados' }
+    // Nota: Los editores solo pueden ser creados por administradores
   ];
 
   return (
@@ -218,6 +218,9 @@ const RegisterPage = () => {
                       <FormHelperText>
                         {roles.find(r => r.value === formData.rol)?.description}
                       </FormHelperText>
+                      <Text fontSize="xs" color="purple.600" mt={1}>
+                        <strong>Nota:</strong> Los roles de Editor y Administrador son creados únicamente por el equipo administrativo.
+                      </Text>
                       {validationErrors.rol && (
                         <Text color="red.500" fontSize="sm">
                           {validationErrors.rol}

@@ -108,7 +108,7 @@ const AppNavigation = () => {
     <VStack spacing={2} align="stretch">
       <Box mb={4}>
         <Text fontSize="lg" fontWeight="bold" color="purple.600">
-          Manos al Cuidado
+          Revista Manos al Cuidado
         </Text>
         <Text fontSize="sm" color="gray.500">
           {user?.nombre}

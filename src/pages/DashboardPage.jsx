@@ -71,7 +71,7 @@ const DashboardPage = () => {
         <Container maxW="container.xl">
           <Flex align="center">
             <HStack spacing={4}>
-              <Heading size="lg" color="blue.500">
+              <Heading size="lg" color="purple.600">
                 Revista Manos al Cuidado
               </Heading>
             </HStack>

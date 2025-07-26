@@ -10,6 +10,7 @@ import ArticulosPage from './pages/ArticulosPage';
 import AsignacionesPage from './pages/AsignacionesPage';
 import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
+import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import FormularioRevision from './components/FormularioRevision';
 
 // Tema personalizado para Chakra UI
@@ -144,10 +145,8 @@ const AppContent = () => {
         <Route 
           path="/users" 
           element={
-            <ProtectedRoute requiredRoles={['admin', 'editor']}>
-              <Box p={8}>
-                <h2>Gestión de Usuarios - Próximamente</h2>
-              </Box>
+            <ProtectedRoute requiredRoles={['admin']}>
+              <GestionUsuariosPage />
             </ProtectedRoute>
           } 
         />
