@@ -1,0 +1,286 @@
+/* styles/animations.css - Animaciones personalizadas para la aplicación editorial */
+
+/* Animaciones de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animaciones de salida */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* Animaciones de loading */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Animaciones de hover mejoradas */
+@keyframes hoverGlow {
+  from {
+    box-shadow: 0 0 5px rgba(66, 153, 225, 0.3);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(66, 153, 225, 0.6);
+  }
+}
+
+/* Clases de utilidad para animaciones */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.animate-slide-in-top {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+.animate-slide-in-bottom {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Transiciones suaves */
+.smooth-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+.smooth-transition-slow {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Efectos de hover */
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-glow:hover {
+  animation: hoverGlow 0.3s ease-in-out forwards;
+}
+
+/* Animaciones específicas para componentes */
+.card-enter {
+  animation: fadeIn 0.3s ease-in-out, slideInFromBottom 0.3s ease-out;
+}
+
+.notification-enter {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.notification-exit {
+  animation: slideOutToRight 0.3s ease-in;
+}
+
+.modal-enter {
+  animation: fadeIn 0.2s ease-in-out, scaleIn 0.2s ease-out;
+}
+
+.button-click {
+  transform: scale(0.98);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Animaciones para estados de carga */
+.skeleton-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Tema oscuro - ajustes para animaciones */
+[data-theme="dark"] .skeleton-loading {
+  background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+  background-size: 200% 100%;
+}
+
+/* Animaciones reducidas para usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Animaciones específicas para responsive */
+@media (max-width: 768px) {
+  .mobile-slide-up {
+    animation: slideInFromBottom 0.3s ease-out;
+  }
+  
+  .mobile-fade-in {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}
+
+/* Efectos de focus mejorados */
+.focus-glow:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Animaciones para gráficos y estadísticas */
+.stat-bar {
+  animation: growWidth 1s ease-out;
+}
+
+@keyframes growWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--final-width);
+  }
+}
+
+.stat-number {
+  animation: countUp 1s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

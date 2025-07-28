@@ -22,7 +22,7 @@ const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true, // Inicializa como true para evitar bucles
   error: null
 };
 
@@ -99,20 +99,41 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const token = localStorage.getItem('editorial_token');
-    const userData = localStorage.getItem('editorial_user');
-    
-    if (token && userData) {
-      try {
-        const user = JSON.parse(userData);
+    const initializeAuth = async () => {
+      dispatch({ type: AUTH_ACTIONS.VERIFY_TOKEN_START });
+      
+      // Pequeño delay para evitar flash de loading
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const token = localStorage.getItem('editorial_token');
+      const userData = localStorage.getItem('editorial_user');
+      
+      if (token && userData) {
+        try {
+          const user = JSON.parse(userData);
+          dispatch({ 
+            type: AUTH_ACTIONS.VERIFY_TOKEN_SUCCESS, 
+            payload: { usuario: user } 
+          });
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('editorial_token');
+          localStorage.removeItem('editorial_user');
+          dispatch({ 
+            type: AUTH_ACTIONS.VERIFY_TOKEN_ERROR, 
+            payload: 'Invalid user data' 
+          });
+        }
+      } else {
+        // No hay token o datos de usuario, establecer como no autenticado
         dispatch({ 
-          type: AUTH_ACTIONS.VERIFY_TOKEN_SUCCESS, 
-          payload: { usuario: user } 
+          type: AUTH_ACTIONS.VERIFY_TOKEN_ERROR, 
+          payload: 'No authentication data found' 
         });
-      } catch (error) {
-        dispatch({ type: AUTH_ACTIONS.LOGOUT });
       }
-    }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = useCallback(async (credentials) => {
@@ -161,6 +182,9 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Error en logout:', error);
     } finally {
+      // Asegurar limpieza completa
+      localStorage.removeItem('editorial_token');
+      localStorage.removeItem('editorial_user');
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
     }
   }, []);

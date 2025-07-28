@@ -1,6 +1,7 @@
-import { ChakraProvider, extendTheme, Spinner, Center, Box } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme, Spinner, Center, Box, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
@@ -15,11 +16,11 @@ import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import FormularioRevision from './components/FormularioRevision';
 
-// Tema personalizado para Chakra UI
+// Tema personalizado mejorado para Chakra UI
 const theme = extendTheme({
   config: {
     initialColorMode: 'light',
-    useSystemColorMode: false,
+    useSystemColorMode: true, // Permite detectar preferencias del sistema
   },
   colors: {
     brand: {
@@ -35,7 +36,87 @@ const theme = extendTheme({
       900: '#0c4a6e',
     },
   },
+  // Mejoras de accesibilidad y responsive
+  components: {
+    Button: {
+      defaultProps: {
+        colorScheme: 'brand',
+      },
+      variants: {
+        solid: {
+          transition: 'all 0.2s ease-in-out',
+          _hover: {
+            transform: 'translateY(-1px)',
+            boxShadow: 'lg',
+          },
+          _active: {
+            transform: 'scale(0.98)',
+          },
+        },
+      },
+    },
+    Card: {
+      baseStyle: {
+        container: {
+          transition: 'all 0.2s ease-in-out',
+          _hover: {
+            transform: 'translateY(-2px)',
+            boxShadow: 'xl',
+          },
+        },
+      },
+    },
+  },
+  breakpoints: {
+    base: '0px',
+    sm: '480px',
+    md: '768px',
+    lg: '992px',
+    xl: '1280px',
+    '2xl': '1536px',
+  },
 });
+
+// Componente para manejar la redirección inicial
+const HomeRedirect = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Box textAlign="center">
+          <Spinner size="xl" color="blue.500" />
+          <Box mt={4}>Cargando...</Box>
+        </Box>
+      </Center>
+    );
+  }
+  
+  return <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />;
+};
+
+// Componente para rutas públicas (login, register)
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Box textAlign="center">
+          <Spinner size="xl" color="blue.500" />
+          <Box mt={4}>Cargando...</Box>
+        </Box>
+      </Center>
+    );
+  }
+  
+  // Si ya está autenticado, redirigir al dashboard
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
 
 // Componente para mostrar loading mientras se verifica la autenticación
 const AppContent = () => {
@@ -56,8 +137,8 @@ const AppContent = () => {
     <Layout>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
         
         {/* Rutas protegidas */}
         <Route 
@@ -193,8 +274,8 @@ const AppContent = () => {
           } 
         />
         
-        {/* Redirección por defecto */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Redirección inteligente por defecto */}
+        <Route path="/" element={<HomeRedirect />} />
         
         {/* 404 */}
         <Route 
@@ -213,13 +294,18 @@ const AppContent = () => {
 
 function App() {
   return (
-    <ChakraProvider theme={theme}>
-      <Router>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </Router>
-    </ChakraProvider>
+    <>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <ChakraProvider theme={theme}>
+        <ThemeProvider>
+          <Router>
+            <AuthProvider>
+              <AppContent />
+            </AuthProvider>
+          </Router>
+        </ThemeProvider>
+      </ChakraProvider>
+    </>
   );
 }
 

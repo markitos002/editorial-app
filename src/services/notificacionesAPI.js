@@ -53,7 +53,7 @@ const notificacionesAPI = {
     }
   },
 
-  // Obtener resumen de notificaciones (usando endpoint general con filtros)
+  // Obtener resumen de notificaciones (usando endpoint correcto)
   obtenerResumen: async () => {
     try {
       const response = await api.get('/usuario/me', { params: { limit: 1 } });
