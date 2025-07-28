@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ArticulosPage from './pages/ArticulosPage';
 import BusquedaPage from './pages/BusquedaPage';
+import NotificacionesPage from './pages/NotificacionesPage';
 import AsignacionesPage from './pages/AsignacionesPage';
 import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
@@ -83,6 +84,15 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <BusquedaPage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/notificaciones" 
+          element={
+            <ProtectedRoute>
+              <NotificacionesPage />
             </ProtectedRoute>
           } 
         />
