@@ -4,6 +4,10 @@ import '@testing-library/jest-dom';
 // Mock de variables de entorno
 process.env.VITE_API_URL = 'http://localhost:4000/api';
 
+// Polyfills para Node.js environment
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 // Mock de localStorage
 const localStorageMock = {
   getItem: jest.fn(),
