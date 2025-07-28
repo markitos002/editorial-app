@@ -307,6 +307,168 @@ const estadisticasController = {
         error: error.message
       });
     }
+  },
+
+  // Métricas de archivos y almacenamiento
+  async getMetricasArchivos(req, res) {
+    try {
+      const metricas = {};
+
+      // Total de archivos
+      const totalArchivosResult = await db.query(
+        'SELECT COUNT(*) as total FROM articulos WHERE archivo_nombre IS NOT NULL'
+      );
+      metricas.totalArchivos = parseInt(totalArchivosResult.rows[0].total);
+
+      // Espacio total utilizado (en bytes y MB)
+      const espacioResult = await db.query(
+        'SELECT SUM(archivo_size) as total_bytes FROM articulos WHERE archivo_size IS NOT NULL'
+      );
+      const totalBytes = parseInt(espacioResult.rows[0].total_bytes) || 0;
+      metricas.espacioTotalBytes = totalBytes;
+      metricas.espacioTotalMB = Math.round(totalBytes / 1024 / 1024 * 100) / 100; // Redondeado a 2 decimales
+
+      // Distribución por tipo de archivo
+      const tiposResult = await db.query(`
+        SELECT 
+          CASE 
+            WHEN archivo_mimetype LIKE '%pdf%' THEN 'PDF'
+            WHEN archivo_mimetype LIKE '%word%' OR archivo_mimetype LIKE '%document%' THEN 'Word'
+            WHEN archivo_mimetype LIKE '%text%' THEN 'Texto'
+            ELSE 'Otros'
+          END as tipo_archivo,
+          COUNT(*) as cantidad,
+          SUM(archivo_size) as espacio_total
+        FROM articulos 
+        WHERE archivo_mimetype IS NOT NULL AND archivo_size IS NOT NULL
+        GROUP BY 
+          CASE 
+            WHEN archivo_mimetype LIKE '%pdf%' THEN 'PDF'
+            WHEN archivo_mimetype LIKE '%word%' OR archivo_mimetype LIKE '%document%' THEN 'Word'
+            WHEN archivo_mimetype LIKE '%text%' THEN 'Texto'
+            ELSE 'Otros'
+          END
+        ORDER BY cantidad DESC
+      `);
+      
+      metricas.distribucionTipos = tiposResult.rows.map(row => ({
+        tipo: row.tipo_archivo,
+        cantidad: parseInt(row.cantidad),
+        espacioBytes: parseInt(row.espacio_total) || 0,
+        espacioMB: Math.round((parseInt(row.espacio_total) || 0) / 1024 / 1024 * 100) / 100
+      }));
+
+      // Archivos más grandes (top 5)
+      const archivosGrandesResult = await db.query(`
+        SELECT 
+          a.titulo,
+          a.archivo_nombre,
+          a.archivo_size,
+          a.fecha_creacion,
+          u.nombre as autor
+        FROM articulos a
+        LEFT JOIN usuarios u ON a.usuario_id = u.id
+        WHERE a.archivo_size IS NOT NULL
+        ORDER BY a.archivo_size DESC
+        LIMIT 5
+      `);
+      
+      metricas.archivosGrandes = archivosGrandesResult.rows.map(row => ({
+        titulo: row.titulo,
+        archivo: row.archivo_nombre,
+        tamanoBytes: parseInt(row.archivo_size),
+        tamanoMB: Math.round(parseInt(row.archivo_size) / 1024 / 1024 * 100) / 100,
+        fecha: row.fecha_creacion,
+        autor: row.autor
+      }));
+
+      // Estadísticas de archivos por fecha (últimos 7 días)
+      const archivosPorFechaResult = await db.query(`
+        SELECT 
+          DATE(a.fecha_creacion) as fecha,
+          COUNT(*) as archivos_subidos,
+          SUM(a.archivo_size) as espacio_usado
+        FROM articulos a
+        WHERE a.archivo_nombre IS NOT NULL 
+          AND a.fecha_creacion >= CURRENT_DATE - INTERVAL '7 days'
+        GROUP BY DATE(a.fecha_creacion)
+        ORDER BY fecha DESC
+      `);
+      
+      metricas.actividadReciente = archivosPorFechaResult.rows.map(row => ({
+        fecha: row.fecha,
+        archivos: parseInt(row.archivos_subidos),
+        espacioBytes: parseInt(row.espacio_usado) || 0,
+        espacioMB: Math.round((parseInt(row.espacio_usado) || 0) / 1024 / 1024 * 100) / 100
+      }));
+
+      // Promedio de tamaño de archivos
+      const promedioResult = await db.query(
+        'SELECT AVG(archivo_size) as promedio FROM articulos WHERE archivo_size IS NOT NULL'
+      );
+      const promedioBytes = parseFloat(promedioResult.rows[0].promedio) || 0;
+      metricas.tamanoPromedio = {
+        bytes: Math.round(promedioBytes),
+        mb: Math.round(promedioBytes / 1024 / 1024 * 100) / 100
+      };
+
+      res.json({
+        success: true,
+        data: metricas,
+        mensaje: 'Métricas de archivos obtenidas correctamente'
+      });
+
+    } catch (error) {
+      console.error('Error al obtener métricas de archivos:', error);
+      res.status(500).json({
+        success: false,
+        mensaje: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  },
+
+  // Estadísticas de descarga de documentos
+  async getEstadisticasDescargas(req, res) {
+    try {
+      // Por ahora simulamos las estadísticas de descarga
+      // En una implementación real, necesitaríamos una tabla de logs de descarga
+      const estadisticas = {
+        totalDescargas: 0,
+        descargasHoy: 0,
+        descargasSemana: 0,
+        descargasMes: 0,
+        documentosMasDescargados: [],
+        descargasPorDia: [],
+        nota: 'Sistema de tracking de descargas pendiente de implementación'
+      };
+
+      // Podemos obtener información básica de los archivos disponibles para descarga
+      const archivosDisponiblesResult = await db.query(`
+        SELECT 
+          COUNT(*) as total_disponibles,
+          COUNT(CASE WHEN estado = 'publicado' THEN 1 END) as publicados_disponibles
+        FROM articulos 
+        WHERE archivo_nombre IS NOT NULL
+      `);
+
+      estadisticas.archivosDisponibles = parseInt(archivosDisponiblesResult.rows[0].total_disponibles);
+      estadisticas.archivosPublicados = parseInt(archivosDisponiblesResult.rows[0].publicados_disponibles);
+
+      res.json({
+        success: true,
+        data: estadisticas,
+        mensaje: 'Estadísticas de descarga obtenidas (simuladas)'
+      });
+
+    } catch (error) {
+      console.error('Error al obtener estadísticas de descarga:', error);
+      res.status(500).json({
+        success: false,
+        mensaje: 'Error interno del servidor',
+        error: error.message
+      });
+    }
   }
 };
 

@@ -71,6 +71,28 @@ export const estadisticasAPI = {
       console.error('Error al obtener actividad reciente:', error);
       throw error;
     }
+  },
+
+  // Obtener métricas de archivos y almacenamiento
+  async getMetricasArchivos() {
+    try {
+      const response = await axios.get(`${API_URL}/estadisticas/metricas-archivos`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener métricas de archivos:', error);
+      throw error;
+    }
+  },
+
+  // Obtener estadísticas de descarga
+  async getEstadisticasDescargas() {
+    try {
+      const response = await axios.get(`${API_URL}/estadisticas/estadisticas-descargas`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener estadísticas de descarga:', error);
+      throw error;
+    }
   }
 };
 

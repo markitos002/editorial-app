@@ -54,4 +54,26 @@ router.get('/actividad-reciente', (req, res, next) => {
   next();
 }, estadisticasController.getActividadReciente);
 
+// Ruta para métricas de archivos y almacenamiento (admin y editores)
+router.get('/metricas-archivos', (req, res, next) => {
+  if (!['admin', 'editor'].includes(req.usuario.rol)) {
+    return res.status(403).json({
+      success: false,
+      mensaje: 'Acceso denegado. Solo administradores y editores pueden ver métricas de archivos.'
+    });
+  }
+  next();
+}, estadisticasController.getMetricasArchivos);
+
+// Ruta para estadísticas de descarga de documentos (admin y editores)
+router.get('/estadisticas-descargas', (req, res, next) => {
+  if (!['admin', 'editor'].includes(req.usuario.rol)) {
+    return res.status(403).json({
+      success: false,
+      mensaje: 'Acceso denegado. Solo administradores y editores pueden ver estadísticas de descarga.'
+    });
+  }
+  next();
+}, estadisticasController.getEstadisticasDescargas);
+
 module.exports = router;
