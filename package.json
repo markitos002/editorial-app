@@ -6,15 +6,26 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
+    "build:production": "vite build --mode production",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
+    "preview:staging": "vite preview --mode staging",
+    "preview:production": "vite preview --mode production",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
     "test:e2e": "cypress run",
-    "test:e2e:open": "cypress open"
+    "test:e2e:open": "cypress open",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "clean": "rm -rf dist node_modules/.vite",
+    "start": "npm run preview",
+    "deploy:staging": "npm run build:staging && npm run preview:staging",
+    "deploy:production": "npm run test:all && npm run build:production",
+    "health-check": "node scripts/health-check.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
