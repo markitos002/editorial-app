@@ -27,17 +27,18 @@ import {
   Alert,
   AlertIcon,
   Icon,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel
 } from '@chakra-ui/react';
+import { 
+  CustomAccordion, 
+  CustomAccordionItem, 
+  CustomAccordionButton, 
+  CustomAccordionPanel 
+} from '../CustomAccordion';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FiEdit, FiSend, FiCheckCircle, FiClock } from 'react-icons/fi';
@@ -222,9 +223,9 @@ const AuthorDashboard = () => {
                     </Button>
                   </HStack>
                   
-                  <Accordion allowToggle>
-                    <AccordionItem>
-                      <AccordionButton>
+                  <CustomAccordion allowToggle>
+                    <CustomAccordionItem>
+                      <CustomAccordionButton>
                         <Box flex="1" textAlign="left">
                           <HStack spacing={4}>
                             <Badge colorScheme="green" variant="solid">APROBADO</Badge>
@@ -232,9 +233,8 @@ const AuthorDashboard = () => {
                             <Text fontSize="sm" color="gray.500">Enviado: 15/07/2025</Text>
                           </HStack>
                         </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel pb={4}>
+                      </CustomAccordionButton>
+                      <CustomAccordionPanel pb={4}>
                         <VStack spacing={4} align="stretch">
                           <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
                             <GridItem>
@@ -266,11 +266,11 @@ const AuthorDashboard = () => {
                             <Button colorScheme="green" variant="outline" size="sm">📤 Compartir</Button>
                           </HStack>
                         </VStack>
-                      </AccordionPanel>
-                    </AccordionItem>
+                      </CustomAccordionPanel>
+                    </CustomAccordionItem>
 
-                    <AccordionItem>
-                      <AccordionButton>
+                    <CustomAccordionItem>
+                      <CustomAccordionButton>
                         <Box flex="1" textAlign="left">
                           <HStack spacing={4}>
                             <Badge colorScheme="orange" variant="solid">EN REVISIÓN</Badge>
@@ -278,9 +278,8 @@ const AuthorDashboard = () => {
                             <Text fontSize="sm" color="gray.500">Enviado: 20/07/2025</Text>
                           </HStack>
                         </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel pb={4}>
+                      </CustomAccordionButton>
+                      <CustomAccordionPanel pb={4}>
                         <VStack spacing={4} align="stretch">
                           <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
                             <GridItem>
@@ -311,9 +310,9 @@ const AuthorDashboard = () => {
                             <Button colorScheme="gray" variant="outline" size="sm">💬 Contactar Editor</Button>
                           </HStack>
                         </VStack>
-                      </AccordionPanel>
-                    </AccordionItem>
-                  </Accordion>
+                      </CustomAccordionPanel>
+                    </CustomAccordionItem>
+                  </CustomAccordion>
                 </VStack>
               </TabPanel>
 

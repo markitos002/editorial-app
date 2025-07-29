@@ -26,13 +26,14 @@ import {
   Progress,
   Alert,
   AlertIcon,
-  Icon,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon
+  Icon
 } from '@chakra-ui/react';
+import { 
+  CustomAccordion, 
+  CustomAccordionItem, 
+  CustomAccordionButton, 
+  CustomAccordionPanel 
+} from '../CustomAccordion';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FiClock, FiFileText, FiCheckCircle } from 'react-icons/fi';
@@ -172,9 +173,9 @@ const ReviewerDashboard = () => {
           <Heading size="md">📋 Mis Revisiones Asignadas</Heading>
         </CardHeader>
         <CardBody>
-          <Accordion allowToggle>
-            <AccordionItem>
-              <AccordionButton>
+          <CustomAccordion allowToggle>
+            <CustomAccordionItem>
+              <CustomAccordionButton>
                 <Box flex="1" textAlign="left">
                   <HStack spacing={4}>
                     <Badge colorScheme="red" variant="subtle">URGENTE</Badge>
@@ -182,9 +183,8 @@ const ReviewerDashboard = () => {
                     <Text fontSize="sm" color="gray.500">Dr. García López</Text>
                   </HStack>
                 </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel pb={4}>
+              </CustomAccordionButton>
+              <CustomAccordionPanel pb={4}>
                 <VStack spacing={4} align="stretch">
                   <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
                     <GridItem>
@@ -222,11 +222,11 @@ const ReviewerDashboard = () => {
                     </Button>
                   </HStack>
                 </VStack>
-              </AccordionPanel>
-            </AccordionItem>
+              </CustomAccordionPanel>
+            </CustomAccordionItem>
 
-            <AccordionItem>
-              <AccordionButton>
+            <CustomAccordionItem>
+              <CustomAccordionButton>
                 <Box flex="1" textAlign="left">
                   <HStack spacing={4}>
                     <Badge colorScheme="blue" variant="subtle">NUEVO</Badge>
@@ -234,9 +234,8 @@ const ReviewerDashboard = () => {
                     <Text fontSize="sm" color="gray.500">Enf. Martínez Ruiz</Text>
                   </HStack>
                 </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel pb={4}>
+              </CustomAccordionButton>
+              <CustomAccordionPanel pb={4}>
                 <VStack spacing={4} align="stretch">
                   <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
                     <GridItem>
@@ -274,9 +273,9 @@ const ReviewerDashboard = () => {
                     </Button>
                   </HStack>
                 </VStack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
+              </CustomAccordionPanel>
+            </CustomAccordionItem>
+          </CustomAccordion>
         </CardBody>
       </Card>
 

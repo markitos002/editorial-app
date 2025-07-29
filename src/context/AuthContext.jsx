@@ -22,7 +22,7 @@ const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  isLoading: true, // Inicializa como true para evitar bucles
+  isLoading: true, // Volvemos a true para debugging con logs
   error: null
 };
 
@@ -102,8 +102,8 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       dispatch({ type: AUTH_ACTIONS.VERIFY_TOKEN_START });
       
-      // Pequeño delay para evitar flash de loading
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Delay más largo para asegurar que Chakra UI esté completamente inicializado
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const token = localStorage.getItem('editorial_token');
       const userData = localStorage.getItem('editorial_user');

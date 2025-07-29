@@ -20,12 +20,6 @@ import {
   CardHeader,
   CardBody,
   Heading,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   FormControl,
   FormLabel,
@@ -34,6 +28,7 @@ import {
   FormHelperText
 } from '@chakra-ui/react';
 import { FiPlus, FiUsers, FiShield } from 'react-icons/fi';
+import CustomModal from '../components/CustomModal';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
@@ -269,12 +264,7 @@ const GestionUsuariosPage = () => {
       </VStack>
 
       {/* Modal para crear usuario */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Crear Nuevo Usuario</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+      <CustomModal isOpen={isOpen} onClose={onClose} size="lg" title="Crear Nuevo Usuario">
             <VStack spacing={4}>
               <FormControl isRequired>
                 <FormLabel>Nombre Completo</FormLabel>
@@ -343,9 +333,7 @@ const GestionUsuariosPage = () => {
                 </Button>
               </HStack>
             </VStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      </CustomModal>
     </Container>
   );
 };

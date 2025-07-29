@@ -3,13 +3,6 @@ import {
   Box,
   IconButton,
   Badge,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
   VStack,
   HStack,
   Text,
@@ -22,6 +15,7 @@ import {
 import { BellIcon, ViewIcon } from '@chakra-ui/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CustomPopover from '../CustomPopover';
 import notificacionesAPI from '../../services/notificacionesAPI';
 
 const IndicadorNotificaciones = () => {
@@ -119,12 +113,12 @@ const IndicadorNotificaciones = () => {
   };
 
   return (
-    <Popover 
+    <CustomPopover 
       isOpen={isOpen} 
       onClose={() => setIsOpen(false)}
-      placement="bottom-end"
-    >
-      <PopoverTrigger>
+      onOpen={() => setIsOpen(true)}
+      title="Notificaciones"
+      trigger={
         <Box position="relative">
           <IconButton
             icon={<BellIcon />}
@@ -152,30 +146,8 @@ const IndicadorNotificaciones = () => {
             </Badge>
           )}
         </Box>
-      </PopoverTrigger>
-      
-      <PopoverContent 
-        w="400px" 
-        bg={bgColor}
-        border="1px solid"
-        borderColor={borderColor}
-        boxShadow="lg"
-      >
-        <PopoverArrow />
-        <PopoverCloseButton />
-        
-        <PopoverHeader>
-          <HStack justify="space-between">
-            <Text fontWeight="bold">Notificaciones</Text>
-            {resumen.noLeidas > 0 && (
-              <Badge colorScheme="red" variant="solid">
-                {resumen.noLeidas} nuevas
-              </Badge>
-            )}
-          </HStack>
-        </PopoverHeader>
-        
-        <PopoverBody p={0}>
+      }
+    >
           {loading ? (
             <Box p={4} textAlign="center">
               <Spinner size="sm" />
@@ -272,9 +244,7 @@ const IndicadorNotificaciones = () => {
               )}
             </VStack>
           )}
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+    </CustomPopover>
   );
 };
 

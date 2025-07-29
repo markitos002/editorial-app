@@ -5,35 +5,42 @@ import {
   Flex,
   VStack,
   HStack,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
   IconButton,
-  useDisclosure,
-  useBreakpointValue,
-  Container,
-  Show,
-  Hide
+  Container
 } from '@chakra-ui/react';
+import { CustomDrawer, CustomDrawerHeader, CustomDrawerBody } from './CustomDrawer';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { useTheme } from '../context/ThemeContext';
 import AppNavigation from './AppNavigation';
 import ThemeToggle from './ThemeToggle';
+import { useState, useEffect } from 'react';
 
 const ResponsiveLayout = ({ children, showSidebar = true }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // Simple state management sin hooks problemáticos
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { colors, cardStyle, animationsEnabled } = useTheme();
   
-  // Responsive breakpoints
-  const isMobile = useBreakpointValue({ base: true, md: false });
-  const sidebarWidth = useBreakpointValue({ base: '100%', md: '250px', lg: '280px' });
-  const containerMaxW = useBreakpointValue({ base: '100%', md: 'container.xl', lg: 'container.2xl' });
+  // Detectar mobile con resize listener simple
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // Valores responsive hardcodeados
+  const sidebarWidth = isMobile ? '100%' : '280px';
+  const containerMaxW = isMobile ? '100%' : 'container.2xl';
   
   // Estado para colapsar sidebar en desktop
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
 
   const sidebarContent = (
     <VStack spacing={4} align="stretch" height="100%">
@@ -53,8 +60,8 @@ const ResponsiveLayout = ({ children, showSidebar = true }) => {
   return (
     <Flex minHeight="100vh" bg={colors.bg}>
       {/* Sidebar para desktop */}
-      <Show above="md">
-        {showSidebar && (
+      {!isMobile && (
+        showSidebar && (
           <Box
             width={sidebarCollapsed ? '60px' : sidebarWidth}
             bg={colors.sidebar}
@@ -97,29 +104,25 @@ const ResponsiveLayout = ({ children, showSidebar = true }) => {
               )}
             </Flex>
           </Box>
-        )}
-      </Show>
+        )
+      )}
 
       {/* Drawer para mobile */}
-      <Hide above="md">
-        <Drawer
+      {isMobile && (
+        <CustomDrawer
           isOpen={isOpen}
           placement="left"
           onClose={onClose}
           size="sm"
         >
-          <DrawerOverlay />
-          <DrawerContent bg={colors.sidebar}>
-            <DrawerCloseButton />
-            <DrawerHeader borderBottomWidth="1px" borderColor={colors.border}>
-              Editorial System
-            </DrawerHeader>
-            <DrawerBody p={0}>
-              {sidebarContent}
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
-      </Hide>
+          <CustomDrawerHeader onClose={onClose}>
+            Editorial System
+          </CustomDrawerHeader>
+          <CustomDrawerBody>
+            {sidebarContent}
+          </CustomDrawerBody>
+        </CustomDrawer>
+      )}
 
       {/* Contenido principal */}
       <Flex direction="column" flex={1} overflow="hidden">
@@ -137,7 +140,7 @@ const ResponsiveLayout = ({ children, showSidebar = true }) => {
         >
           <HStack justify="space-between" align="center">
             {/* Botón menú mobile */}
-            <Hide above="md">
+            {isMobile && (
               <IconButton
                 icon={<FiMenu />}
                 variant="ghost"
@@ -145,14 +148,14 @@ const ResponsiveLayout = ({ children, showSidebar = true }) => {
                 aria-label="Abrir menú"
                 size="md"
               />
-            </Hide>
+            )}
 
             {/* Título responsive */}
-            <Show above="md">
+            {!isMobile && (
               <Box fontSize="lg" fontWeight="semibold" color={colors.text}>
                 Sistema Editorial
               </Box>
-            </Show>
+            )}
 
             {/* Controles del header */}
             <HStack spacing={2}>

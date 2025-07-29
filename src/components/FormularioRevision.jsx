@@ -30,19 +30,13 @@ import {
   AlertDescription,
   Progress,
   Icon,
-  Tooltip,
   ButtonGroup,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
   useDisclosure
 } from '@chakra-ui/react';
 import { FiSave, FiCheck, FiDownload, FiInfo, FiArrowLeft } from 'react-icons/fi';
 import { useParams, useNavigate } from 'react-router-dom';
+import CustomModal from './CustomModal';
+import CustomTooltip from './CustomTooltip';
 import { revisionAPI } from '../services/revisionAPI';
 
 const FormularioRevision = () => {
@@ -437,9 +431,9 @@ const FormularioRevision = () => {
               <FormControl>
                 <FormLabel>
                   Observaciones Privadas 
-                  <Tooltip label="Estas observaciones solo las verán los editores, no el autor">
+                  <CustomTooltip label="Estas observaciones solo las verán los editores, no el autor">
                     <Icon as={FiInfo} ml={1} color="gray.400" />
-                  </Tooltip>
+                  </CustomTooltip>
                 </FormLabel>
                 <Textarea
                   value={formData.observacionesPrivadas}
@@ -489,12 +483,7 @@ const FormularioRevision = () => {
         </Card>
 
         {/* Modal de confirmación */}
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Confirmar Completar Revisión</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
+        <CustomModal isOpen={isOpen} onClose={onClose} title="Confirmar Completar Revisión">
               <VStack align="stretch" spacing={4}>
                 <Alert status="info">
                   <AlertIcon />
@@ -520,10 +509,7 @@ const FormularioRevision = () => {
                     </HStack>
                   </VStack>
                 </Box>
-              </VStack>
-            </ModalBody>
-            
-            <ModalFooter>
+              
               <ButtonGroup spacing={3}>
                 <Button variant="ghost" onClick={onClose}>
                   Cancelar
@@ -537,9 +523,8 @@ const FormularioRevision = () => {
                   Sí, Completar Revisión
                 </Button>
               </ButtonGroup>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </VStack>
+        </CustomModal>
       </VStack>
     </Container>
   );

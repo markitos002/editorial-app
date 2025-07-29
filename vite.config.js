@@ -5,6 +5,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   
+  // Resolver aliases  
+  resolve: {
+    alias: {
+      // Mock framer-motion para evitar errores de React 19
+      'framer-motion': './src/mocks/framer-motion.js'
+    }
+  },
+  
   // Development server configuration
   server: {
     hmr: {
@@ -38,7 +46,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
           icons: ['@chakra-ui/icons', 'react-icons'],
-          utils: ['axios', 'framer-motion']
+          utils: ['axios']
         }
       }
     },
@@ -61,6 +69,13 @@ export default defineConfig({
   // Preview server (for built app)
   preview: {
     port: 3000,
-    host: true
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   }
 })

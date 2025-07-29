@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+</head>
+<body>
+    <div id="root">
+        <h1>Test Page - Should show this text</h1>
+        <p>If you see this, HTML is loading correctly</p>
+    </div>
+    
+    <script>
+        console.log('JavaScript is working');
+        console.log('API URL should be:', 'http://localhost:4000/api');
+        
+        // Test API call
+        fetch('http://localhost:4000/api/articulos')
+            .then(response => response.json())
+            .then(data => {
+                console.log('API response:', data);
+                document.getElementById('root').innerHTML += '<p style="color: green;">API is working! Found ' + data.articulos.length + ' articles</p>';
+            })
+            .catch(error => {
+                console.error('API error:', error);
+                document.getElementById('root').innerHTML += '<p style="color: red;">API error: ' + error.message + '</p>';
+            });
+    </script>
+</body>
+</html>

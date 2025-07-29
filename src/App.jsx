@@ -1,4 +1,4 @@
-import { ChakraProvider, extendTheme, Spinner, Center, Box, ColorModeScript } from '@chakra-ui/react';
+import { ChakraProvider, Spinner, Center, Box, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -15,67 +15,6 @@ import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import FormularioRevision from './components/FormularioRevision';
-
-// Tema personalizado mejorado para Chakra UI
-const theme = extendTheme({
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: true, // Permite detectar preferencias del sistema
-  },
-  colors: {
-    brand: {
-      50: '#f0f9ff',
-      100: '#e0f2fe',
-      200: '#bae6fd',
-      300: '#7dd3fc',
-      400: '#38bdf8',
-      500: '#0ea5e9',
-      600: '#0284c7',
-      700: '#0369a1',
-      800: '#075985',
-      900: '#0c4a6e',
-    },
-  },
-  // Mejoras de accesibilidad y responsive
-  components: {
-    Button: {
-      defaultProps: {
-        colorScheme: 'brand',
-      },
-      variants: {
-        solid: {
-          transition: 'all 0.2s ease-in-out',
-          _hover: {
-            transform: 'translateY(-1px)',
-            boxShadow: 'lg',
-          },
-          _active: {
-            transform: 'scale(0.98)',
-          },
-        },
-      },
-    },
-    Card: {
-      baseStyle: {
-        container: {
-          transition: 'all 0.2s ease-in-out',
-          _hover: {
-            transform: 'translateY(-2px)',
-            boxShadow: 'xl',
-          },
-        },
-      },
-    },
-  },
-  breakpoints: {
-    base: '0px',
-    sm: '480px',
-    md: '768px',
-    lg: '992px',
-    xl: '1280px',
-    '2xl': '1536px',
-  },
-});
 
 // Componente para manejar la redirección inicial
 const HomeRedirect = () => {
@@ -295,8 +234,8 @@ const AppContent = () => {
 function App() {
   return (
     <>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode="light" />
+      <ChakraProvider>
         <ThemeProvider>
           <Router>
             <AuthProvider>

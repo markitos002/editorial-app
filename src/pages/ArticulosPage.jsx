@@ -20,12 +20,6 @@ import {
   Spinner,
   Text,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   FormControl,
   FormLabel,
   Input,
@@ -36,6 +30,7 @@ import {
   useToast
 } from '@chakra-ui/react';
 import { useAuth } from '../context/AuthContext';
+import CustomModal from '../components/CustomModal';
 import { articulosAPI } from '../services/api';
 import { formatDateShort, getStatusColor, getStatusDisplayName } from '../utils/helpers';
 
@@ -343,12 +338,7 @@ const ArticulosPage = () => {
       </Container>
 
       {/* Modal para ver detalles del artículo */}
-      <Modal isOpen={isDetalleOpen} onClose={onDetalleClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Detalles del Artículo</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+      <CustomModal isOpen={isDetalleOpen} onClose={onDetalleClose} size="xl" title="Detalles del Artículo">
             {articuloSeleccionado && (
               <VStack spacing={4} align="stretch">
                 <Box>
@@ -432,19 +422,12 @@ const ArticulosPage = () => {
                     </Button>
                   )}
                 </HStack>
-              </VStack>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+            </VStack>
+          )}
+      </CustomModal>
 
       {/* Modal para nuevo artículo */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Enviar Nuevo Artículo</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+      <CustomModal isOpen={isOpen} onClose={onClose} size="xl" title="Enviar Nuevo Artículo">
             <form onSubmit={handleSubmit}>
               <VStack spacing={4}>
                 <FormControl isRequired>
@@ -527,9 +510,7 @@ const ArticulosPage = () => {
                 </HStack>
               </VStack>
             </form>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      </CustomModal>
     </Box>
   );
 };

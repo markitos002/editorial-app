@@ -28,14 +28,9 @@ import {
   Select,
   FormControl,
   FormLabel,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure
 } from '@chakra-ui/react';
+import CustomModal from '../components/CustomModal';
 import { 
   FiArrowLeft, 
   FiDownload, 
@@ -435,64 +430,62 @@ const RevisionDetallePage = () => {
       </Tabs>
 
       {/* Modal para actualizar estado */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Actualizar Estado de Revisión</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <VStack spacing={4}>
-              <FormControl>
-                <FormLabel>Nuevo Estado</FormLabel>
-                <Select
-                  value={decision.estado}
-                  onChange={(e) => setDecision({...decision, estado: e.target.value})}
-                  placeholder="Seleccionar estado"
-                >
-                  <option value="en_progreso">En Progreso</option>
-                  <option value="completada">Completada</option>
-                  <option value="rechazada">Rechazada</option>
-                </Select>
-              </FormControl>
-              
-              <FormControl>
-                <FormLabel>Comentarios de Revisión</FormLabel>
-                <Textarea
-                  value={decision.comentarios}
-                  onChange={(e) => setDecision({...decision, comentarios: e.target.value})}
-                  placeholder="Ingrese sus comentarios sobre la revisión"
-                  rows={4}
-                />
-              </FormControl>
-              
-              <FormControl>
-                <FormLabel>Recomendaciones</FormLabel>
-                <Textarea
-                  value={decision.recomendaciones}
-                  onChange={(e) => setDecision({...decision, recomendaciones: e.target.value})}
-                  placeholder="Ingrese recomendaciones para el autor"
-                  rows={4}
-                />
-              </FormControl>
-              
-              <HStack spacing={3} justify="flex-end" w="100%">
-                <Button variant="outline" onClick={onClose}>
-                  Cancelar
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={actualizarEstadoRevision}
-                  isLoading={actualizandoEstado}
-                  loadingText="Guardando..."
-                  isDisabled={!decision.estado}
-                >
-                  Guardar Cambios
-                </Button>
-              </HStack>
-            </VStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <CustomModal 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        size="xl"
+        title="Actualizar Estado de Revisión"
+      >
+        <VStack spacing={4}>
+          <FormControl>
+            <FormLabel>Nuevo Estado</FormLabel>
+            <Select
+              value={decision.estado}
+              onChange={(e) => setDecision({...decision, estado: e.target.value})}
+              placeholder="Seleccionar estado"
+            >
+              <option value="en_progreso">En Progreso</option>
+              <option value="completada">Completada</option>
+              <option value="rechazada">Rechazada</option>
+            </Select>
+          </FormControl>
+          
+          <FormControl>
+            <FormLabel>Comentarios de Revisión</FormLabel>
+            <Textarea
+              value={decision.comentarios}
+              onChange={(e) => setDecision({...decision, comentarios: e.target.value})}
+              placeholder="Ingrese sus comentarios sobre la revisión"
+              rows={4}
+            />
+          </FormControl>
+          
+          <FormControl>
+            <FormLabel>Recomendaciones</FormLabel>
+            <Textarea
+              value={decision.recomendaciones}
+              onChange={(e) => setDecision({...decision, recomendaciones: e.target.value})}
+              placeholder="Ingrese recomendaciones para el autor"
+              rows={4}
+            />
+          </FormControl>
+          
+          <HStack spacing={3} justify="flex-end" w="100%">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={actualizarEstadoRevision}
+              isLoading={actualizandoEstado}
+              loadingText="Guardando..."
+              isDisabled={!decision.estado}
+            >
+              Guardar Cambios
+            </Button>
+          </HStack>
+        </VStack>
+      </CustomModal>
     </Container>
   );
 };

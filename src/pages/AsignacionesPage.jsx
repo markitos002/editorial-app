@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import {
   Box, VStack, HStack, Heading, Text, Button, Card, CardBody,
   Table, Thead, Tbody, Tr, Th, Td, Badge, Spinner, Alert, AlertIcon,
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Select, Textarea, useDisclosure, useToast, Flex, Spacer,
   Tabs, TabList, TabPanels, Tab, TabPanel, useColorModeValue
 } from '@chakra-ui/react';
+import CustomModal from '../components/CustomModal';
 import { asignacionesAPI } from '../services/asignacionesAPI';
 
 const AsignacionesPage = () => {
@@ -362,12 +362,7 @@ const AsignacionesPage = () => {
       </VStack>
 
       {/* Modal de Asignación */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Asignar Revisor</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+      <CustomModal isOpen={isOpen} onClose={onClose} size="lg" title="Asignar Revisor">
             {selectedArticulo && (
               <VStack spacing={4} align="stretch">
                 <Box>
@@ -402,24 +397,22 @@ const AsignacionesPage = () => {
                     rows={3}
                   />
                 </Box>
-              </VStack>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={handleAsignar}
-              isLoading={submitting}
-              loadingText="Asignando..."
-            >
-              Asignar Revisor
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+              <HStack spacing={3} justify="flex-end" w="100%">
+                <Button variant="ghost" onClick={onClose}>
+                  Cancelar
+                </Button>
+                <Button
+                  colorScheme="blue"
+                  onClick={handleAsignar}
+                  isLoading={submitting}
+                  loadingText="Asignando..."
+                >
+                  Asignar Revisor
+                </Button>
+              </HStack>
+            </VStack>
+          )}
+      </CustomModal>
     </Box>
   );
 };

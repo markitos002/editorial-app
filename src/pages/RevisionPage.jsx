@@ -22,15 +22,10 @@ import {
   Heading,
   Divider,
   Icon,
-  Tooltip,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure
 } from '@chakra-ui/react';
+import CustomModal from '../components/CustomModal';
+import CustomTooltip from '../components/CustomTooltip';
 import { FiEye, FiDownload, FiEdit, FiClock, FiCheckCircle, FiMessageSquare } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { revisionAPI } from '../services/revisionAPI';
@@ -319,74 +314,72 @@ const RevisionPage = () => {
         )}
 
         {/* Modal de detalles */}
-        <Modal isOpen={isOpen} onClose={onClose} size="xl">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Detalles de Revisión</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              {selectedRevision && (
-                <VStack align="stretch" spacing={4}>
-                  <Box>
-                    <Text fontWeight="bold">Título:</Text>
-                    <Text>{selectedRevision.titulo}</Text>
-                  </Box>
-                  
-                  <Box>
-                    <Text fontWeight="bold">Autor:</Text>
-                    <Text>{selectedRevision.autor_nombre} ({selectedRevision.autor_email})</Text>
-                  </Box>
-                  
-                  <Box>
-                    <Text fontWeight="bold">Estado:</Text>
-                    <EstadoBadge estado={selectedRevision.estado} />
-                  </Box>
-                  
-                  {selectedRevision.observaciones && (
-                    <Box>
-                      <Text fontWeight="bold">Observaciones actuales:</Text>
-                      <Text bg="gray.50" p={3} borderRadius="md">
-                        {selectedRevision.observaciones}
-                      </Text>
-                    </Box>
-                  )}
-                  
-                  {selectedRevision.calificacion && (
-                    <Box>
-                      <Text fontWeight="bold">Calificación:</Text>
-                      <Text fontSize="lg" color="blue.600">
-                        {selectedRevision.calificacion}/10
-                      </Text>
-                    </Box>
-                  )}
-                  
-                  <HStack spacing={2} pt={4}>
-                    <Button
-                      colorScheme="blue"
-                      leftIcon={<FiEdit />}
-                      onClick={() => {
-                        onClose();
-                        navigate(`/revision/${selectedRevision.revision_id}`);
-                      }}
-                    >
-                      Editar Revisión
-                    </Button>
-                    
-                    {selectedRevision.archivo_nombre && (
-                      <Button
-                        variant="outline"
-                        leftIcon={<FiDownload />}
-                        onClick={() => descargarDocumento(selectedRevision.revision_id)}
-                      >
-                        Descargar Documento
-                      </Button>
-                    )}
-                  </HStack>
-                </VStack>
+        <CustomModal 
+          isOpen={isOpen} 
+          onClose={onClose} 
+          size="xl"
+          title="Detalles de Revisión"
+        >
+          {selectedRevision && (
+            <VStack align="stretch" spacing={4}>
+              <Box>
+                <Text fontWeight="bold">Título:</Text>
+                <Text>{selectedRevision.titulo}</Text>
+              </Box>
+              
+              <Box>
+                <Text fontWeight="bold">Autor:</Text>
+                <Text>{selectedRevision.autor_nombre} ({selectedRevision.autor_email})</Text>
+              </Box>
+              
+              <Box>
+                <Text fontWeight="bold">Estado:</Text>
+                <EstadoBadge estado={selectedRevision.estado} />
+              </Box>
+              
+              {selectedRevision.observaciones && (
+                <Box>
+                  <Text fontWeight="bold">Observaciones actuales:</Text>
+                  <Text bg="gray.50" p={3} borderRadius="md">
+                    {selectedRevision.observaciones}
+                  </Text>
+                </Box>
               )}
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+              
+              {selectedRevision.calificacion && (
+                <Box>
+                  <Text fontWeight="bold">Calificación:</Text>
+                  <Text fontSize="lg" color="blue.600">
+                    {selectedRevision.calificacion}/10
+                  </Text>
+                </Box>
+              )}
+              
+              <HStack spacing={2} pt={4}>
+                <Button
+                  colorScheme="blue"
+                  leftIcon={<FiEdit />}
+                  onClick={() => {
+                    onClose();
+                    navigate(`/revision/${selectedRevision.revision_id}`);
+                  }}
+                >
+                  Editar Revisión
+                </Button>
+                
+                {selectedRevision.archivo_nombre && (
+                  <Button
+                    variant="outline"
+                    leftIcon={<FiDownload />}
+                    onClick={() => descargarDocumento(selectedRevision.revision_id)}
+                  >
+                    Descargar Documento
+                  </Button>
+                )}
+              </HStack>
+            </VStack>
+          )}
+        </CustomModal>
       </VStack>
     </Container>
   );

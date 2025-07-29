@@ -12,11 +12,11 @@ import {
   VStack,
   IconButton,
   Badge,
-  Divider,
-  useBreakpointValue
+  Divider
 } from '@chakra-ui/react';
 import { FiMoreVertical } from 'react-icons/fi';
 import { useTheme } from '../../context/ThemeContext';
+import { useResponsive, getResponsiveValue } from '../../hooks/useResponsive';
 
 const ResponsiveCard = ({
   title,
@@ -33,12 +33,13 @@ const ResponsiveCard = ({
   ...props
 }) => {
   const { colors, cardStyle, animationsEnabled } = useTheme();
+  const { isMobile } = useResponsive();
   
-  // Responsive sizing
-  const headerPadding = useBreakpointValue({ base: 4, md: 6 });
-  const bodyPadding = useBreakpointValue({ base: 4, md: 6 });
-  const titleSize = useBreakpointValue({ base: 'md', md: 'lg' });
-  const subtitleSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  // Responsive sizing sin useBreakpointValue
+  const headerPadding = isMobile ? 4 : 6;
+  const bodyPadding = isMobile ? 4 : 6;
+  const titleSize = isMobile ? 'md' : 'lg';
+  const subtitleSize = isMobile ? 'sm' : 'md';
 
   // Variantes de estilo
   const cardVariants = {

@@ -5,10 +5,10 @@ import {
   Text,
   Circle,
   Spinner,
-  useColorModeValue,
-  Tooltip
+  useColorModeValue
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
+import CustomTooltip from '../CustomTooltip';
 import { busquedaAPI } from '../../services/busquedaAPI';
 
 const EstadoConexion = () => {
@@ -61,7 +61,7 @@ const EstadoConexion = () => {
   };
 
   return (
-    <Tooltip label={getTooltipText()} fontSize="sm" placement="top">
+    <CustomTooltip label={getTooltipText()} fontSize="sm">
       <Box 
         position="fixed"
         bottom="20px"
@@ -92,7 +92,7 @@ const EstadoConexion = () => {
           </Text>
         </HStack>
       </Box>
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 
