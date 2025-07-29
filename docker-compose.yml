@@ -6,7 +6,7 @@ services:
     image: postgres:14-alpine
     container_name: editorial-db
     environment:
-      POSTGRES_DB: editorial_app
+      POSTGRES_DB: editorialdata
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -30,7 +30,7 @@ services:
     container_name: editorial-backend
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/editorial_app
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/editorialdata
       JWT_SECRET: dev-jwt-secret
       PORT: 4000
     ports:

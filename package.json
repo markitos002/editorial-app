@@ -8,9 +8,10 @@
     "build": "vite build",
     "build:staging": "vite build --mode staging",
     "build:production": "vite build --mode production",
+    "build:preview": "vite build --mode preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "preview": "vite preview",
+    "preview": "vite preview --mode preview",
     "preview:staging": "vite preview --mode staging",
     "preview:production": "vite preview --mode production",
     "test": "jest",
@@ -22,6 +23,7 @@
     "test:e2e:open": "cypress open",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "clean": "rm -rf dist node_modules/.vite",
+    "validate-build": "node scripts/validate-build.js",
     "start": "npm run preview",
     "deploy:staging": "npm run build:staging && npm run preview:staging",
     "deploy:production": "npm run test:all && npm run build:production",
@@ -61,6 +63,7 @@
     "jest-environment-jsdom": "^30.0.5",
     "jsonwebtoken": "^9.0.2",
     "supertest": "^7.1.4",
+    "terser": "^5.43.1",
     "vite": "^7.0.4"
   }
 }

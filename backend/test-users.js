@@ -6,7 +6,7 @@ require('dotenv').config();
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'editorial_app',
+    database: 'editorialdata',
     password: 'postgres',
     port: 5432,
 });

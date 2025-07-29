@@ -79,7 +79,7 @@ async function verificarBaseDatos() {
     console.log('\n💡 Posibles soluciones:');
     console.log('   1. Verifica que PostgreSQL esté corriendo');
     console.log('   2. Verifica las credenciales en el archivo .env');
-    console.log('   3. Verifica que la base de datos "editorial_app" exista');
+    console.log('   3. Verifica que la base de datos "editorialdata" exista');
     console.log('   4. Ejecuta el script setup-database.sql');
   } finally {
     await pool.end();

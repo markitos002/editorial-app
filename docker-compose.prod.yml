@@ -6,7 +6,7 @@ services:
     image: postgres:14-alpine
     container_name: editorial-db-prod
     environment:
-      POSTGRES_DB: editorial_production
+      POSTGRES_DB: editorialdata
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
@@ -29,7 +29,7 @@ services:
     container_name: editorial-app-prod
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/editorial_production
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/editorialdata
       JWT_SECRET: ${JWT_SECRET}
       VITE_API_URL: ${API_URL}
     ports:

@@ -44,6 +44,16 @@ app.get('/', (req, res) => {
   res.send('API funcionando correctamente');
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    service: 'editorial-app-backend'
+  });
+});
+
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
