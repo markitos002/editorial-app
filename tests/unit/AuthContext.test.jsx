@@ -1,7 +1,7 @@
 // tests/unit/AuthContext.test.jsx - Tests unitarios para AuthContext
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AuthProvider, useAuth } from '../../src/contexts/AuthContext';
+import { AuthProvider, useAuth } from '../../src/context/AuthContext';
 
 // Componente de prueba para usar el contexto
 const TestComponent = () => {

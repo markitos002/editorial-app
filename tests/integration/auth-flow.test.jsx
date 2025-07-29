@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '../../src/contexts/AuthContext';
+import { AuthProvider } from '../../src/context/AuthContext';
 import ProtectedRoute from '../../src/components/ProtectedRoute';
 import LoginPage from '../../src/pages/LoginPage';
 

@@ -42,7 +42,7 @@ const notificacionesAPI = {
   // Obtener notificaciones del usuario actual
   obtenerNotificaciones: async (params = {}) => {
     try {
-      const response = await api.get('/usuario/me', { params });
+      const response = await api.get('/notificaciones/usuario/me', { params });
       return response.data;
     } catch (error) {
       console.error('Error al obtener notificaciones:', error);
@@ -56,7 +56,7 @@ const notificacionesAPI = {
   // Obtener resumen de notificaciones (usando endpoint correcto)
   obtenerResumen: async () => {
     try {
-      const response = await api.get('/usuario/me', { params: { limit: 1 } });
+      const response = await api.get('/notificaciones/usuario/me', { params: { limit: 1 } });
       const data = response.data;
       
       // Calcular resumen basado en los datos disponibles
@@ -98,7 +98,7 @@ const notificacionesAPI = {
   // Marcar todas las notificaciones como leídas
   marcarTodasComoLeidas: async () => {
     try {
-      const response = await api.patch('/usuario/me/marcar-todas-leidas');
+      const response = await api.patch('/notificaciones/usuario/me/marcar-todas-leidas');
       return response.data;
     } catch (error) {
       console.error('Error al marcar todas como leídas:', error);

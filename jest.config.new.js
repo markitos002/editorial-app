@@ -1,10 +1,10 @@
 // jest.config.js - Configuración de Jest para testing
-module.exports = {
+export default {
   // Entorno de testing
   testEnvironment: 'jsdom',
   
   // Archivos de setup
-  setupFilesAfterEnv: ['<rootDir>/tests/setup-final.js'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   
   // Patrones de archivos de test
   testMatch: [
@@ -21,7 +21,7 @@ module.exports = {
   },
   
   // Mapeo de módulos para resolver imports
-  moduleNameMapper: {
+  moduleNameMapping: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
   },
@@ -44,15 +44,5 @@ module.exports = {
   // Variables de entorno para testing
   testEnvironmentOptions: {
     url: 'http://localhost:3000'
-  },
-
-  // Globales para Jest - Mock de import.meta
-  globals: {
-    'import.meta': {
-      env: {
-        VITE_API_URL: 'http://localhost:4000/api',
-        NODE_ENV: 'test'
-      }
-    }
   }
 };

@@ -1,4 +1,4 @@
-// tests/setup.js - Configuración global para Jest
+// tests/setup.js - Configuración global para Jest simplificada
 import '@testing-library/jest-dom';
 
 // Mock de variables de entorno
@@ -18,16 +18,6 @@ const localStorageMock = {
 };
 global.localStorage = localStorageMock;
 
-// Mock de window.location
-delete window.location;
-window.location = {
-  href: '',
-  pathname: '/',
-  search: '',
-  hash: '',
-  reload: jest.fn()
-};
-
 // Mock de fetch para las peticiones HTTP
 global.fetch = jest.fn();
 
@@ -37,20 +27,8 @@ jest.setTimeout(10000);
 // Limpiar mocks entre tests
 beforeEach(() => {
   localStorage.clear();
+  localStorage.getItem.mockClear();
+  localStorage.setItem.mockClear();
+  localStorage.removeItem.mockClear();
   fetch.mockClear();
-});
-
-// Mock de console.error para evitar ruido en los tests
-const originalError = console.error;
-beforeAll(() => {
-  console.error = (...args) => {
-    if (typeof args[0] === 'string' && args[0].includes('Warning: ReactDOM.render is no longer supported')) {
-      return;
-    }
-    originalError.call(console, ...args);
-  };
-});
-
-afterAll(() => {
-  console.error = originalError;
 });
