@@ -42,6 +42,29 @@ module.exports = {
         interval: 30000,
         timeout: 5000
       }
+    },
+    {
+      name: 'editorial-app-frontend',
+      script: 'npx',
+      args: 'vite preview --host 0.0.0.0 --port 3000',
+      cwd: process.cwd(),
+      env: {
+        NODE_ENV: 'production'
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        VITE_API_URL: 'http://localhost:4000/api'
+      },
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '512M',
+      log_file: './logs/frontend.log',
+      out_file: './logs/frontend-out.log',
+      error_file: './logs/frontend-error.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      min_uptime: '10s',
+      max_restarts: 5
     }
   ],
 
