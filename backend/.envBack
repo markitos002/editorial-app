@@ -1,0 +1,8 @@
+DB_HOST=192.168.18.5
+DB_PORT=5432
+DB_NAME=editorialdata
+DB_USER=markitos
+DB_PASSWORD=AjedreZ22
+DATABASE_URL=postgresql://markitos:AjedreZ22@192.168.18.5:5432/editorialdata
+NODE_ENV=development
+PORT=4000
