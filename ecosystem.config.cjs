@@ -19,11 +19,11 @@ module.exports = {
     },
     {
       name: 'editorial-app-frontend',
-      script: 'npx',
-      args: 'vite preview --host 0.0.0.0 --port 3000',
+      script: 'npm',
+      args: 'run dev -- --host 0.0.0.0 --port 3000',
       cwd: '/home/markitos/projects/editorial-app',
       env: {
-        NODE_ENV: 'production'
+        NODE_ENV: 'development'
       },
       instances: 1,
       autorestart: true,
