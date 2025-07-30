@@ -60,6 +60,14 @@ cd projects
 ```
 
 ### 2.2 Clonar el repositorio
+
+**Opción A: SSH (Recomendado para deployment):**
+```bash
+git clone git@github.com:markitos002/editorial-app.git
+cd editorial-app
+```
+
+**Opción B: HTTPS (Alternativa):**
 ```bash
 git clone https://github.com/markitos002/editorial-app.git
 cd editorial-app
@@ -134,17 +142,16 @@ npm install
 
 ## 🗄️ PASO 5: Configurar Base de Datos
 
-### 5.1 Crear base de datos (si no existe)
+### 5.1 Crear base de datos (PostgreSQL)
 ```bash
-# Para MySQL
-mysql -u root -p
+sudo -u postgres psql
 ```
 ```sql
-CREATE DATABASE IF NOT EXISTS editorial_app;
-CREATE USER IF NOT EXISTS 'editorial_user'@'localhost' IDENTIFIED BY 'password_seguro';
-GRANT ALL PRIVILEGES ON editorial_app.* TO 'editorial_user'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
+CREATE DATABASE editorial_app;
+CREATE USER editorial_user WITH ENCRYPTED PASSWORD 'password_seguro';
+GRANT ALL PRIVILEGES ON DATABASE editorial_app TO editorial_user;
+ALTER USER editorial_user CREATEDB;
+\q
 ```
 
 ### 5.2 Ejecutar migraciones/setup (si tienes scripts)
