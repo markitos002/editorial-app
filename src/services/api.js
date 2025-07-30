@@ -1,8 +1,8 @@
 // services/api.js
 import axios from 'axios';
 
-// Configuración base de la API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+// Configuración base de la API - HARDCODED FIX
+const API_BASE_URL = 'http://localhost:4000/api';
 
 // DEBUG: Ver qué URL se está usando
 console.log('🔍 DEBUG - VITE_API_URL:', import.meta.env.VITE_API_URL);
