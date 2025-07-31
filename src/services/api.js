@@ -1,12 +1,32 @@
 // services/api.js
 import axios from 'axios';
 
-// Configuración base de la API - HARDCODED FIX
-const API_BASE_URL = 'http://localhost:4000/api';
+// Configuración base de la API - Múltiples fallbacks para asegurar localhost
+let API_BASE_URL;
+
+// En orden de prioridad:
+// 1. Variable de entorno VITE_API_URL
+// 2. Detectar si estamos en desarrollo
+// 3. Fallback por defecto
+if (import.meta.env.VITE_API_URL) {
+  API_BASE_URL = import.meta.env.VITE_API_URL;
+} else if (import.meta.env.DEV || import.meta.env.MODE === 'development') {
+  API_BASE_URL = 'http://localhost:4000/api';
+} else {
+  // Forzar localhost incluso en producción local
+  API_BASE_URL = 'http://localhost:4000/api';
+}
 
 // DEBUG: Ver qué URL se está usando
+console.log('🔍 DEBUG - Environment:', import.meta.env.MODE);
 console.log('🔍 DEBUG - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('🔍 DEBUG - API_BASE_URL:', API_BASE_URL);
+console.log('🔍 DEBUG - Final API_BASE_URL:', API_BASE_URL);
+
+// Verificación adicional para evitar URLs externas
+if (API_BASE_URL.includes('editorial-app.com')) {
+  console.warn('⚠️ WARNING: Detectada URL externa, forzando localhost');
+  API_BASE_URL = 'http://localhost:4000/api';
+}
 
 // Crear instancia de Axios
 const api = axios.create({
