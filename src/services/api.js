@@ -1,31 +1,59 @@
 // services/api.js
 import axios from 'axios';
 
-// Configuración base de la API - Múltiples fallbacks para asegurar localhost
+// Función para detectar la IP base del servidor
+function getServerBaseURL() {
+  const currentURL = window.location;
+  const hostname = currentURL.hostname;
+  
+  console.log('🔍 Current hostname:', hostname);
+  
+  // Si accedemos por localhost, usar localhost para API
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:4000/api';
+  }
+  
+  // Si accedemos por IP de Tailscale (100.x.x.x), usar la misma IP para API
+  if (hostname.startsWith('100.')) {
+    return `http://${hostname}:4000/api`;
+  }
+  
+  // Si accedemos por otra IP, usar esa IP para API
+  if (/^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+    return `http://${hostname}:4000/api`;
+  }
+  
+  // Fallback a localhost
+  return 'http://localhost:4000/api';
+}
+
+// Configuración base de la API - Detección automática de servidor
 let API_BASE_URL;
 
 // En orden de prioridad:
 // 1. Variable de entorno VITE_API_URL
-// 2. Detectar si estamos en desarrollo
+// 2. Detección automática basada en hostname
 // 3. Fallback por defecto
 if (import.meta.env.VITE_API_URL) {
   API_BASE_URL = import.meta.env.VITE_API_URL;
-} else if (import.meta.env.DEV || import.meta.env.MODE === 'development') {
-  API_BASE_URL = 'http://localhost:4000/api';
+  console.log('🔧 Using VITE_API_URL:', API_BASE_URL);
 } else {
-  // Forzar localhost incluso en producción local
-  API_BASE_URL = 'http://localhost:4000/api';
+  API_BASE_URL = getServerBaseURL();
+  console.log('🔧 Auto-detected API URL:', API_BASE_URL);
 }
 
-// DEBUG: Ver qué URL se está usando
-console.log('🔍 DEBUG - Environment:', import.meta.env.MODE);
-console.log('🔍 DEBUG - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('🔍 DEBUG - Final API_BASE_URL:', API_BASE_URL);
+// DEBUG: Ver configuración completa
+console.log('🔧 API Configuration Debug:');
+console.log('- Environment:', import.meta.env.MODE);
+console.log('- Current location:', window.location.href);
+console.log('- Hostname:', window.location.hostname);
+console.log('- VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('- Final API_BASE_URL:', API_BASE_URL);
 
-// Verificación adicional para evitar URLs externas
+// Verificación adicional para evitar URLs externas no deseadas
 if (API_BASE_URL.includes('editorial-app.com')) {
-  console.warn('⚠️ WARNING: Detectada URL externa, forzando localhost');
-  API_BASE_URL = 'http://localhost:4000/api';
+  console.warn('⚠️ WARNING: Detectada URL externa, usando detección automática');
+  API_BASE_URL = getServerBaseURL();
 }
 
 // Crear instancia de Axios

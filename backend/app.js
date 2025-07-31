@@ -7,7 +7,32 @@ const db = require('./db'); // Esto importa y ejecuta la conexión automáticame
 const app = express();
 
 // Middlewares
-app.use(cors());
+// Configurar CORS para permitir acceso desde Tailscale y localhost
+app.use(cors({
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (aplicaciones móviles, postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Permitir localhost
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    // Permitir IPs de Tailscale (100.x.x.x)
+    if (origin.match(/100\.\d{1,3}\.\d{1,3}\.\d{1,3}/)) {
+      return callback(null, true);
+    }
+    
+    // Permitir cualquier IP local (192.168.x.x, 10.x.x.x, etc.)
+    if (origin.match(/192\.168\.\d{1,3}\.\d{1,3}/) || origin.match(/10\.\d{1,3}\.\d{1,3}\.\d{1,3}/)) {
+      return callback(null, true);
+    }
+    
+    console.log('🔍 CORS origin check:', origin);
+    return callback(null, true); // Permitir todos los orígenes para desarrollo
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Middleware de logging
