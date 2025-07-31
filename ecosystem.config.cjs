@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'editorial-app-backend',
-      script: './backend/app.js',
+      script: './app.js',
       instances: 1,
       exec_mode: 'fork',
       cwd: './backend',
@@ -29,8 +29,8 @@ module.exports = {
     {
       name: 'editorial-app-frontend',
       script: 'npm',
-      args: 'run dev -- --host 0.0.0.0 --port 3000',
-      cwd: '/home/markitos/projects/editorial-app',
+      args: 'run dev -- --host 0.0.0.0 --port 5173',
+      cwd: './',
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'development'
