@@ -79,8 +79,51 @@ app.get('/health', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
+// Database health check endpoint
+app.get('/api/health/db', (req, res) => {
+  const pool = require('./db');
+  
+  pool.query('SELECT NOW() as timestamp', (err, result) => {
+    if (err) {
+      console.error('Database health check failed:', err);
+      return res.status(500).json({
+        status: 'unhealthy',
+        error: 'Database connection failed',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    res.status(200).json({
+      status: 'healthy',
+      database: 'connected',
+      timestamp: result.rows[0].timestamp,
+      service: 'editorial-app-database'
+    });
+  });
+});
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor backend corriendo en el puerto ${PORT}`);
+// Network info endpoint
+app.get('/api/network-info', (req, res) => {
+  const os = require('os');
+  const networkInterfaces = os.networkInterfaces();
+  
+  res.status(200).json({
+    host: req.get('host'),
+    ip: req.ip,
+    ips: req.ips,
+    originalUrl: req.originalUrl,
+    networkInterfaces: networkInterfaces,
+    headers: req.headers
+  });
+});
+
+const PORT = process.env.PORT || 4000;
+const HOST = process.env.HOST || '0.0.0.0'; // Escuchar en todas las interfaces
+
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Servidor backend corriendo en ${HOST}:${PORT}`);
+  console.log(`📡 Accesible desde:`);
+  console.log(`   - Local: http://localhost:${PORT}`);
+  console.log(`   - Red: http://0.0.0.0:${PORT}`);
+  console.log(`   - Tailscale: http://[TAILSCALE-IP]:${PORT}`);
 });
