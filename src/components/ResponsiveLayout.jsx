@@ -1,5 +1,5 @@
 // components/ResponsiveLayout.jsx - Layout responsive mejorado para la aplicación
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -13,7 +13,6 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { useTheme } from '../context/ThemeContext';
 import AppNavigation from './AppNavigation';
 import ThemeToggle from './ThemeToggle';
-import { useState, useEffect } from 'react';
 
 const ResponsiveLayout = ({ children, showSidebar = true }) => {
   // Simple state management sin hooks problemáticos

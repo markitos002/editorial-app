@@ -6,7 +6,7 @@ import './commands'
 // require('./commands')
 
 // Cypress configuración global
-Cypress.on('uncaught:exception', (err, runnable) => {
+Cypress.on('uncaught:exception', (err, _runnable) => {
   // returning false here prevents Cypress from failing the test
   // on uncaught exceptions from your application
   if (err.message.includes('ResizeObserver loop limit exceeded')) {

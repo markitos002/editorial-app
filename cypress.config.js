@@ -16,7 +16,7 @@ export default defineConfig({
     fixturesFolder: 'tests/e2e/fixtures',
     screenshotsFolder: 'tests/e2e/screenshots',
     videosFolder: 'tests/e2e/videos',
-    setupNodeEvents(on, config) {
+    setupNodeEvents(_on, _config) {
       // implement node event listeners here
     },
   },

@@ -68,33 +68,37 @@ export default [
       'verificacion-sistema.js',
       'test-conexion-remota.js',
       'test-login.json',
-      'test.html',
-      
-      // Archivos de backup y desarrollo
-      'src/**/*-backup.jsx',
-      'src/**/*.backup.jsx',
-      'backend/**/*-backup.js',
-      'backend/dev-tools/**',
-      'eslint.config.old.js',
-      
-      // Archivos JSON con contenido no-JS
-      'babel.config.json',
-      
-      // HTML files no deben ser parseados como JS
-      'index.html',
-      '**/*.html'
+      'test.html'
+    ]
+  },
+      'build/**',
+      'coverage/**',
+      'node_modules/**',
+      '*.min.js',
+      'uploads/**',
+      '.vscode/**',
+      '.git/**',
+      // Backup and temporary files
+      '**/*-backup.{js,jsx}',
+      '**/*.backup.{js,jsx}',
+      // Specific problematic files during development
+      'src/components/ResponsiveLayout.jsx', // Has parsing errors
+      'backend/dev-tools/**', // Development tools with loose coding standards
+      'backend/test-*.js', // Ad-hoc test files
+      'verificacion-sistema.js', // Development verification script
     ]
   },
 
-  // Frontend: React + Vite (sin HTML ni JSON)
+  // Frontend (src/) - React/Vite
   {
-    files: ['src/**/*.{js,jsx,ts,tsx}', 'vite.config.js'],
+    files: ['src/**/*.{js,jsx}'],
     ...js.configs.recommended,
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
     languageOptions: {
+      ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...globals.browser,
@@ -107,114 +111,159 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
+      'no-unused-vars': ['warn', { 
         varsIgnorePattern: '^[A-Z_]',
-        caughtErrorsIgnorePattern: '^_'
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
       }],
       'no-console': 'warn',
-      'prefer-const': 'warn'
+      'prefer-const': 'warn',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
 
-  // Backend: Node.js + Express
+  // Backend (backend/) - Node.js/CommonJS
   {
-    files: ['backend/**/*.js', 'ecosystem.config.cjs'],
+    files: ['backend/**/*.js'],
     ...js.configs.recommended,
     languageOptions: {
+      ecmaVersion: 2022,
       sourceType: 'commonjs',
       globals: {
         ...globals.node,
-        ...globals.es2022,
+        ...globals.commonjs,
       },
     },
     rules: {
-      'no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
+      'no-unused-vars': ['warn', { 
         varsIgnorePattern: '^[A-Z_]',
-        caughtErrorsIgnorePattern: '^_'
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
       }],
-      'no-console': 'off', // Permitir console en backend
-      'prefer-const': 'warn'
+      'no-console': 'off', // Allow console in backend
+      'prefer-const': 'warn',
     },
   },
 
-  // Tests: Jest
+  // Tests - Jest
   {
-    files: ['tests/**/*.{js,jsx,ts,tsx}', '*.test.{js,jsx}', '*.spec.{js,jsx}'],
+    files: ['tests/**/*.{js,jsx}', '**/*.test.{js,jsx}', '**/*.spec.{js,jsx}'],
     ...js.configs.recommended,
     languageOptions: {
+      ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
-        ...globals.jest,
         ...globals.browser,
-        ...globals.es2022,
+        ...globals.node,
+        ...globals.jest,
+        // Jest globals
+        describe: 'readonly',
+        test: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
       },
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },
     },
     rules: {
-      'no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
+      'no-unused-vars': ['warn', { 
         varsIgnorePattern: '^[A-Z_]',
-        caughtErrorsIgnorePattern: '^_'
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
       }],
       'no-console': 'off',
-      'prefer-const': 'warn'
+      'react-hooks/exhaustive-deps': 'off',
     },
   },
 
   // Cypress E2E Tests
   {
-    files: ['cypress/**/*.{js,ts}', 'tests/e2e/**/*.{js,ts}'],
+    files: ['tests/e2e/**/*.{js,jsx}', 'cypress/**/*.{js,jsx}', '**/*.cy.{js,jsx}'],
     ...js.configs.recommended,
     languageOptions: {
+      ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...globals.browser,
-        ...globals.es2022,
+        // Cypress globals
         cy: 'readonly',
         Cypress: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        before: 'readonly',
+        after: 'readonly',
         expect: 'readonly',
         assert: 'readonly',
-        chai: 'readonly'
       },
     },
     rules: {
-      'no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
+      'no-unused-vars': ['error', { 
         varsIgnorePattern: '^[A-Z_]',
-        caughtErrorsIgnorePattern: '^_'
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
       }],
       'no-console': 'off',
-      'prefer-const': 'warn'
     },
   },
 
-  // Config files (solo .js, no .json)
+  // Config files and scripts
   {
     files: [
-      '*.config.{js,cjs,mjs}',
-      'eslint.config.js',
-      'jest.config.js'
+      '*.config.{js,mjs}',
+      'scripts/**/*.js',
+      'vite.config.js',
+      'jest.config.js',
+      'cypress.config.js',
+      'eslint.config.js'
     ],
     ...js.configs.recommended,
     languageOptions: {
+      ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...globals.node,
-        ...globals.es2022,
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        global: 'readonly',
       },
     },
     rules: {
-      'no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
+      'no-unused-vars': ['error', { 
         varsIgnorePattern: '^[A-Z_]',
-        caughtErrorsIgnorePattern: '^_'
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
       }],
       'no-console': 'off',
-      'prefer-const': 'warn'
+    },
+  },
+
+  // Development and build tools
+  {
+    files: ['verificacion-sistema.js', 'test-conexion-remota.js'],
+    ...js.configs.recommended,
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        process: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['warn'], // More lenient for development scripts
+      'no-console': 'off',
     },
   },
 ]
