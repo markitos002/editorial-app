@@ -1,12 +1,60 @@
 // services/api.js
 import axios from 'axios';
 
-// Configuración fija para Tailscale - SOLUCIÓN TEMPORAL
-const API_BASE_URL = 'http://100.115.107.89:4000/api';
+// Configuración hardcodeada para Tailscale - TEMPORAL para testing
+const TAILSCALE_IP = '100.115.107.89';
 
-console.log('🔧 API Configuration (Tailscale Fixed):');
-console.log('- API_BASE_URL:', API_BASE_URL);
-console.log('- Mode: Tailscale hardcoded for remote access');
+// Función para detectar la IP base del servidor
+function getServerBaseURL() {
+  const currentURL = window.location;
+  const hostname = currentURL.hostname;
+  
+  console.log('🔍 Current hostname:', hostname);
+  
+  // FORZAR siempre la IP de Tailscale para acceso remoto
+  // Esto asegura que funcione desde cualquier dispositivo
+  if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+    console.log('🚀 Using Tailscale IP for remote access');
+    return `http://${TAILSCALE_IP}:4000/api`;
+  }
+  
+  // Solo usar localhost si accedemos directamente desde localhost
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:4000/api';
+  }
+  
+  // Fallback a Tailscale IP
+  return `http://${TAILSCALE_IP}:4000/api`;
+}
+
+// Configuración base de la API - Prioridad a Tailscale para acceso remoto
+let API_BASE_URL;
+
+// En orden de prioridad:
+// 1. Variable de entorno VITE_API_URL
+// 2. Detección automática con preferencia a Tailscale
+// 3. Fallback a Tailscale IP
+if (import.meta.env.VITE_API_URL) {
+  API_BASE_URL = import.meta.env.VITE_API_URL;
+  console.log('🔧 Using VITE_API_URL:', API_BASE_URL);
+} else {
+  API_BASE_URL = getServerBaseURL();
+  console.log('🔧 Auto-detected API URL:', API_BASE_URL);
+}
+
+// DEBUG: Ver configuración completa
+console.log('🔧 API Configuration Debug:');
+console.log('- Environment:', import.meta.env.MODE);
+console.log('- Current location:', window.location.href);
+console.log('- Hostname:', window.location.hostname);
+console.log('- VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('- Final API_BASE_URL:', API_BASE_URL);
+
+// Verificación adicional para evitar URLs externas no deseadas
+if (API_BASE_URL.includes('editorial-app.com')) {
+  console.warn('⚠️ WARNING: Detectada URL externa, usando detección automática');
+  API_BASE_URL = getServerBaseURL();
+}
 
 // Crear instancia de Axios
 const api = axios.create({
