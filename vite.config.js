@@ -40,6 +40,9 @@ export default defineConfig({
     // Chunk size warnings
     chunkSizeWarningLimit: 1000,
     
+    // Copy _redirects file for Render deployment
+    copyPublicDir: true,
+    
     // Rollup options for advanced optimization
     rollupOptions: {
       output: {
