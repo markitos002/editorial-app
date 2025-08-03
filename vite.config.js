@@ -18,6 +18,8 @@ export default defineConfig({
     hmr: {
       overlay: false, // Reduce overlay de errores
     },
+    // SPA fallback para desarrollo
+    historyApiFallback: true,
     proxy: {
       '/api': {
         target: 'http://localhost:4000',
@@ -70,6 +72,8 @@ export default defineConfig({
   preview: {
     port: 3000,
     host: true,
+    // SPA fallback para preview
+    historyApiFallback: true,
     proxy: {
       '/api': {
         target: 'http://localhost:4000',

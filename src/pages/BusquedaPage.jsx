@@ -16,7 +16,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import BusquedaGlobal from '../components/busqueda/BusquedaGlobal';
 import BusquedaArticulos from '../components/busqueda/BusquedaArticulos';
-import BusquedaArticulosSimple from '../components/busqueda/BusquedaArticulosSimple';
 import EstadoConexion from '../components/busqueda/EstadoConexion';
 import { useAuth } from '../context/AuthContext';
 
@@ -82,7 +81,7 @@ const BusquedaPage = () => {
               {/* Panel de búsqueda de artículos */}
               <TabPanel p={0}>
                 <Box bg={bgColor} borderRadius="lg" border="1px solid" borderColor={borderColor}>
-                  <BusquedaArticulosSimple />
+                  <BusquedaArticulos />
                 </Box>
               </TabPanel>
             </TabPanels>

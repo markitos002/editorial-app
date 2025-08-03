@@ -1,0 +1,4 @@
+# Redirects for React Router SPA
+# Todas las rutas deben redirigir al index.html para que React Router maneje la navegación
+
+/*    /index.html   200
