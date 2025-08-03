@@ -34,6 +34,11 @@ UPLOAD_FOLDER=uploads
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 
+⚡ CONFIGURACIÓN ACTUALIZADA para resolver errores de red IPv6:
+   • Usar variables individuales en lugar de DATABASE_URL
+   • Timeouts configurados para estabilidad
+   • Pool de conexiones optimizado
+
 💰 Plan: Free
 
 ✅ Deploy automático: Habilitado

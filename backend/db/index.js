@@ -14,9 +14,26 @@ console.log('DB_PORT:', process.env.DB_PORT);
 
 let pool;
 
-// Configuración para Render (usa DATABASE_URL) o local (usa variables individuales)
-if (process.env.DATABASE_URL) {
-  console.log('🚀 Using DATABASE_URL for Render deployment');
+// Configuración optimizada para Render con variables individuales (mejor control)
+if (process.env.NODE_ENV === 'production' && process.env.DB_HOST) {
+  console.log('🚀 Using individual DB variables for Render deployment');
+  pool = new Pool({
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || '5432'),
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    ssl: {
+      rejectUnauthorized: false
+    },
+    // Configuración adicional para estabilidad
+    connectionTimeoutMillis: 30000,
+    idleTimeoutMillis: 30000,
+    max: 10,
+    min: 2
+  });
+} else if (process.env.DATABASE_URL) {
+  console.log('🚀 Using DATABASE_URL for fallback');
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
