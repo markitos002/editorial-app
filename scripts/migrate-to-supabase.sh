@@ -76,17 +76,12 @@ FROM revisiones;
 # 5. Generar archivo de configuración
 echo "📝 Generando configuración para Render..."
 cat > .env.supabase << EOF
-# Configuración para Render + Supabase
-DATABASE_URL=postgresql://postgres:${SUPABASE_PASSWORD}@db.${SUPABASE_REF}.supabase.co:5432/postgres
-DB_HOST=db.${SUPABASE_REF}.supabase.co
-DB_PORT=5432
-DB_NAME=postgres
-DB_USER=postgres
-DB_PASSWORD=${SUPABASE_PASSWORD}
-JWT_SECRET=\$%^Tdasd9529841#\$&*9dascaseASDeqQQasdcEasdc\$##@33
-JWT_EXPIRES_IN=24h
-NODE_ENV=production
-PORT=10000
+# Configuración Supabase
+SUPABASE_HOST="db.ybnpusbnqlizaiqvztph.supabase.co"
+SUPABASE_PORT="5432"
+SUPABASE_DB="postgres"
+SUPABASE_USER="postgres"
+SUPABASE_PASSWORD="VqX2KgTvTZLrOWlq"
 EOF
 
 echo "✅ Migración completada!"
@@ -95,5 +90,4 @@ echo "   1. Copia las variables de .env.supabase a Render"
 echo "   2. Actualiza render.yaml con la nueva configuración"
 echo "   3. Haz commit y push para deployar"
 echo ""
-echo "🔗 URL de tu proyecto Supabase:"
-echo "   https://app.supabase.com/project/${SUPABASE_REF}"
+    echo "🌐 Ve a tu proyecto: https://supabase.com/dashboard/project/ybnpusbnqlizaiqvztph"
