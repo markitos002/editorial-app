@@ -24,8 +24,9 @@ services:
     autoDeploy: true
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: editorial-app-frontend
+    env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     headers:

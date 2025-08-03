@@ -95,8 +95,9 @@ Para evitar requerir tarjeta de crédito, todos los servicios están configurado
    # Database  
    plan: free    # NO usar "starter" o "standard"
    
-   # Frontend
-   type: static  # Los static sites son siempre gratuitos
+   # Frontend (Static Site)
+   type: web
+   env: static   # Sin plan = gratis para static sites
    ```
 
 2. **Límites del Free Tier**:
