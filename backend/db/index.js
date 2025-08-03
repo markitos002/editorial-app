@@ -19,7 +19,9 @@ if (process.env.DATABASE_URL) {
   console.log('🚀 Using DATABASE_URL for Render deployment');
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
 } else {
   console.log('🏠 Using individual DB variables for local development');
