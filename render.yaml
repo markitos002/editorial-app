@@ -24,9 +24,8 @@ services:
     autoDeploy: true
 
   # Frontend Static Site
-  - type: web
+  - type: static
     name: editorial-app-frontend
-    env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     # Headers
@@ -43,7 +42,6 @@ services:
           type: web
           name: editorial-app-backend
           property: host
-    autoDeploy: true
 
 databases:
   - name: editorial-app-db
