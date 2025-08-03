@@ -1,1 +1,13 @@
-/*    /index.html   200
+# Specific routes for SPA
+/login /index.html 200
+/dashboard /index.html 200
+/busqueda /index.html 200
+/articulos /index.html 200
+/notificaciones /index.html 200
+/revision /index.html 200
+/asignaciones /index.html 200
+/users /index.html 200
+/settings /index.html 200
+
+# Catch-all for any other routes
+/* /index.html 200
