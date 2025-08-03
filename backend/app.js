@@ -33,15 +33,14 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Permitir dominios de Render preview (.render.com)
-    if (origin.includes('.render.com')) {
-      return callback(null, true);
-    }
-    
-    console.log('🔍 CORS origin check:', origin);
-    return callback(null, true); // Permitir todos los orígenes para desarrollo
+    // Log para debug
+    console.log('🔍 CORS Origin:', origin);
+    return callback(null, true); // Temporalmente permitir todo para debug
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // Para navegadores legacy
 }));
 app.use(express.json());
 
@@ -88,6 +87,20 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     service: 'editorial-app-backend'
+  });
+});
+
+// Test endpoint para verificar rutas
+app.get('/api/test', (req, res) => {
+  res.status(200).json({
+    message: 'API Test endpoint working',
+    timestamp: new Date().toISOString(),
+    routes_available: [
+      '/api/auth/login',
+      '/api/auth/registro',
+      '/api/debug/db-status',
+      '/api/debug/env-check'
+    ]
   });
 });
 
