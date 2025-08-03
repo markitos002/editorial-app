@@ -17,21 +17,26 @@ let pool;
 // Configuración optimizada para Render con variables individuales (mejor control)
 if (process.env.NODE_ENV === 'production' && process.env.DB_HOST) {
   console.log('🚀 Using individual DB variables for Render deployment');
+  
+  // Solución para ENETUNREACH: usar URL completa pero con configuración explícita
+  const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+  
   pool = new Pool({
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '5432'),
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    connectionString: connectionString,
     ssl: {
       rejectUnauthorized: false
     },
-    // Configuración adicional para estabilidad
+    // Configuración específica para resolver problemas de red
+    statement_timeout: 30000,
+    query_timeout: 30000,
     connectionTimeoutMillis: 30000,
     idleTimeoutMillis: 30000,
-    max: 10,
-    min: 2
+    max: 5, // Reducir conexiones máximas
+    min: 1
   });
+  
+  console.log('🔧 Using connection string with explicit SSL and timeouts');
+  
 } else if (process.env.DATABASE_URL) {
   console.log('🚀 Using DATABASE_URL for fallback');
   pool = new Pool({

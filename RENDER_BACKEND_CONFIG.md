@@ -19,7 +19,7 @@
 🌍 Environment Variables (COPIAR EXACTAMENTE):
 NODE_ENV=production
 PORT=10000
-DATABASE_URL=postgresql://postgres:VqX2KgTvTZLrOWlq@db.ybnpusbnqlizaiqvztph.supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres:VqX2KgTvTZLrOWlq@db.ybnpusbnqlizaiqvztph.supabase.co:5432/postgres?sslmode=require
 DB_HOST=db.ybnpusbnqlizaiqvztph.supabase.co
 DB_PORT=5432
 DB_NAME=postgres
@@ -34,10 +34,10 @@ UPLOAD_FOLDER=uploads
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 
-⚡ CONFIGURACIÓN ACTUALIZADA para resolver errores de red IPv6:
-   • Usar variables individuales en lugar de DATABASE_URL
-   • Timeouts configurados para estabilidad
-   • Pool de conexiones optimizado
+⚡ ACTUALIZACIÓN IPv6 → IPv4 Fix:
+   • Connection string con sslmode=require
+   • Pool configurado con timeouts explícitos
+   • Conexiones reducidas para estabilidad
 
 💰 Plan: Free
 
