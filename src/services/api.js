@@ -11,9 +11,16 @@ function getServerBaseURL() {
   
   console.log('🔍 Current hostname:', hostname);
   
-  // FORZAR siempre la IP de Tailscale para acceso remoto
-  // Esto asegura que funcione desde cualquier dispositivo
-  if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+  // Si estamos en Render (.onrender.com), usar variable de entorno
+  if (hostname.includes('.onrender.com')) {
+    const renderApiUrl = import.meta.env.VITE_API_URL || 
+                        `${window.location.protocol}//${window.location.hostname.replace('editorial-app-frontend', 'editorial-app-backend')}/api`;
+    console.log('🌐 Using Render API URL:', renderApiUrl);
+    return renderApiUrl;
+  }
+  
+  // Si estamos accediendo por Tailscale IP
+  if (hostname !== 'localhost' && hostname !== '127.0.0.1' && !hostname.includes('.onrender.com')) {
     console.log('🚀 Using Tailscale IP for remote access');
     return `http://${TAILSCALE_IP}:4000/api`;
   }

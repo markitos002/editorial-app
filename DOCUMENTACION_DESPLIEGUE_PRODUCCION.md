@@ -392,9 +392,12 @@ Ver **PLAN_DESARROLLO_2.0.md** para roadmap detallado de mejoras y nuevas funcio
 - GitHub Actions listo para testing automático
 - Pipeline ejecutándose en cada push a `main`
 
+### **Alternativas de Despliegue** 🌐
+**ACTUALIZACIÓN (2 de agosto, 2025)**: Se agregó configuración para despliegue en Render como alternativa pública al sistema Tailscale. Ver **DOCUMENTACION_DESPLIEGUE_RENDER.md** para detalles completos.
+
 ---
 
 **Fecha de creación**: 31 de julio, 2025
-**Última actualización**: 31 de julio, 2025 - CI/CD Pipeline Optimizado
+**Última actualización**: 3 de agosto, 2025 - CI/CD Pipeline Optimizado + Render
 **Autor**: Equipo Editorial App
-**Status**: ✅ Producción Estable + CI/CD Activo
+**Status**: ✅ Producción Estable + CI/CD Activo + 🌐 Render Disponible

@@ -7,13 +7,13 @@ const db = require('./db'); // Esto importa y ejecuta la conexión automáticame
 const app = express();
 
 // Middlewares
-// Configurar CORS para permitir acceso desde Tailscale y localhost
+// Configurar CORS para permitir acceso desde Tailscale, localhost y Render
 app.use(cors({
   origin: function (origin, callback) {
     // Permitir requests sin origin (aplicaciones móviles, postman, etc.)
     if (!origin) return callback(null, true);
     
-    // Permitir localhost
+    // Permitir localhost y 127.0.0.1
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
       return callback(null, true);
     }
@@ -25,6 +25,16 @@ app.use(cors({
     
     // Permitir cualquier IP local (192.168.x.x, 10.x.x.x, etc.)
     if (origin.match(/192\.168\.\d{1,3}\.\d{1,3}/) || origin.match(/10\.\d{1,3}\.\d{1,3}\.\d{1,3}/)) {
+      return callback(null, true);
+    }
+    
+    // Permitir dominios de Render (.onrender.com)
+    if (origin.includes('.onrender.com')) {
+      return callback(null, true);
+    }
+    
+    // Permitir dominios de Render preview (.render.com)
+    if (origin.includes('.render.com')) {
       return callback(null, true);
     }
     
