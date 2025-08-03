@@ -30,6 +30,35 @@ import { useState, useEffect } from 'react';
 import { busquedaAPI } from '../../services/busquedaAPI';
 import { useAuth } from '../../context/AuthContext';
 
+// Helper para convertir valores de manera segura
+const toSafeString = (value) => {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return '[object]';
+    }
+  }
+  return String(value);
+};
+
+// Helper para parsear arrays de manera segura
+const parseSafeArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 const BusquedaArticulos = () => {
   const [filtros, setFiltros] = useState({
     termino: '',
@@ -396,7 +425,7 @@ const BusquedaArticulos = () => {
                         {/* Título y estado */}
                         <HStack justify="space-between" w="full">
                           <Heading size="md" color="blue.700">
-                            {articulo.titulo}
+                            {toSafeString(articulo.titulo)}
                           </Heading>
                           <HStack>
                             <Badge 
@@ -406,7 +435,7 @@ const BusquedaArticulos = () => {
                                 articulo.estado === 'enviado' ? 'blue' : 'gray'
                               }
                             >
-                              {articulo.estado}
+                              {toSafeString(articulo.estado)}
                             </Badge>
                           </HStack>
                         </HStack>
@@ -414,17 +443,17 @@ const BusquedaArticulos = () => {
                         {/* Resumen */}
                         {articulo.resumen && (
                           <Text color="gray.700" noOfLines={2}>
-                            {articulo.resumen}
+                            {toSafeString(articulo.resumen)}
                           </Text>
                         )}
                         
                         {/* Palabras clave */}
-                        {articulo.palabras_clave && articulo.palabras_clave.length > 0 && (
+                        {articulo.palabras_clave && (
                           <HStack wrap="wrap">
                             <Text fontSize="sm" color="gray.500">Palabras clave:</Text>
-                            {articulo.palabras_clave.map((palabra, index) => (
+                            {parseSafeArray(articulo.palabras_clave).map((palabra, index) => (
                               <Badge key={index} variant="outline" fontSize="xs">
-                                {palabra}
+                                {toSafeString(palabra)}
                               </Badge>
                             ))}
                           </HStack>
@@ -434,11 +463,11 @@ const BusquedaArticulos = () => {
                         <HStack spacing={6} fontSize="sm" color="gray.500" wrap="wrap">
                           <Text>📅 {formatearFecha(articulo.fecha_creacion)}</Text>
                           {articulo.autor && (
-                            <Text>👤 {articulo.autor}</Text>
+                            <Text>👤 {toSafeString(articulo.autor)}</Text>
                           )}
-                          <Text>💬 {articulo.total_comentarios} comentarios</Text>
+                          <Text>💬 {toSafeString(articulo.total_comentarios)} comentarios</Text>
                           {articulo.archivo_nombre && (
-                            <Text>📎 {articulo.archivo_nombre}</Text>
+                            <Text>📎 {toSafeString(articulo.archivo_nombre)}</Text>
                           )}
                         </HStack>
                       </VStack>

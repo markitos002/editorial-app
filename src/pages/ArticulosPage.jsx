@@ -360,15 +360,32 @@ const ArticulosPage = () => {
                   </Badge>
                 </Box>
 
-                {articuloSeleccionado.palabras_clave && articuloSeleccionado.palabras_clave.length > 0 && (
+                {articuloSeleccionado.palabras_clave && (
                   <Box>
                     <Text fontWeight="bold" mb={2}>Palabras Clave:</Text>
                     <HStack wrap="wrap" spacing={2}>
-                      {articuloSeleccionado.palabras_clave.map((palabra, index) => (
-                        <Badge key={index} colorScheme="blue" variant="subtle">
-                          {palabra}
-                        </Badge>
-                      ))}
+                      {(() => {
+                        try {
+                          const palabras = Array.isArray(articuloSeleccionado.palabras_clave) 
+                            ? articuloSeleccionado.palabras_clave
+                            : typeof articuloSeleccionado.palabras_clave === 'string'
+                              ? JSON.parse(articuloSeleccionado.palabras_clave)
+                              : [];
+                          
+                          return palabras.map((palabra, index) => (
+                            <Badge key={index} colorScheme="blue" variant="subtle">
+                              {typeof palabra === 'string' ? palabra : String(palabra)}
+                            </Badge>
+                          ));
+                        } catch (error) {
+                          console.error('Error parsing palabras_clave:', error);
+                          return (
+                            <Badge colorScheme="red" variant="subtle">
+                              Error al cargar palabras clave
+                            </Badge>
+                          );
+                        }
+                      })()}
                     </HStack>
                   </Box>
                 )}

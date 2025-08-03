@@ -26,6 +26,21 @@ import { useSearchParams } from 'react-router-dom';
 import { busquedaAPI } from '../../services/busquedaAPI';
 import { useAuth } from '../../context/AuthContext';
 
+// Helper para convertir valores de manera segura
+const toSafeString = (value) => {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return '[object]';
+    }
+  }
+  return String(value);
+};
+
 const BusquedaGlobal = () => {
   const [termino, setTermino] = useState('');
   const [tipo, setTipo] = useState('todos');
@@ -116,7 +131,7 @@ const BusquedaGlobal = () => {
                 <VStack align="start" spacing={2}>
                   <HStack justify="space-between" w="full">
                     <Heading size="sm" color="blue.700">
-                      {articulo.titulo}
+                      {toSafeString(articulo.titulo)}
                     </Heading>
                     <HStack>
                       <Badge 
@@ -126,24 +141,24 @@ const BusquedaGlobal = () => {
                           articulo.estado === 'enviado' ? 'blue' : 'gray'
                         }
                       >
-                        {articulo.estado}
+                        {toSafeString(articulo.estado)}
                       </Badge>
                       <Badge variant="outline">
-                        Relevancia: {articulo.relevancia}
+                        Relevancia: {toSafeString(articulo.relevancia)}
                       </Badge>
                     </HStack>
                   </HStack>
                   
                   {articulo.resumen && (
                     <Text fontSize="sm" color="gray.600" noOfLines={2}>
-                      {articulo.resumen}
+                      {toSafeString(articulo.resumen)}
                     </Text>
                   )}
                   
                   <HStack spacing={4} fontSize="sm" color="gray.500">
                     <Text>📅 {formatearFecha(articulo.fecha_creacion)}</Text>
                     {articulo.autor && (
-                      <Text>👤 {articulo.autor}</Text>
+                      <Text>👤 {toSafeString(articulo.autor)}</Text>
                     )}
                   </HStack>
                 </VStack>
@@ -170,31 +185,31 @@ const BusquedaGlobal = () => {
                 <VStack align="start" spacing={2}>
                   <HStack justify="space-between" w="full">
                     <Text fontWeight="medium" color="orange.700">
-                      💬 {comentario.tipo_comentario}
+                      💬 {toSafeString(comentario.tipo_comentario)}
                     </Text>
                     <HStack>
                       <Badge 
                         colorScheme={comentario.estado === 'activo' ? 'green' : 'gray'}
                       >
-                        {comentario.estado}
+                        {toSafeString(comentario.estado)}
                       </Badge>
                       <Badge variant="outline">
-                        Relevancia: {comentario.relevancia}
+                        Relevancia: {toSafeString(comentario.relevancia)}
                       </Badge>
                     </HStack>
                   </HStack>
                   
                   <Text fontSize="sm" color="gray.700">
-                    {comentario.contenido}
+                    {toSafeString(comentario.contenido)}
                   </Text>
                   
                   <HStack spacing={4} fontSize="sm" color="gray.500">
                     <Text>📅 {formatearFecha(comentario.fecha_creacion)}</Text>
                     {comentario.autor_comentario && (
-                      <Text>👤 {comentario.autor_comentario}</Text>
+                      <Text>👤 {toSafeString(comentario.autor_comentario)}</Text>
                     )}
                     {comentario.articulo_titulo && (
-                      <Text>📝 En: {comentario.articulo_titulo}</Text>
+                      <Text>📝 En: {toSafeString(comentario.articulo_titulo)}</Text>
                     )}
                   </HStack>
                 </VStack>
@@ -221,7 +236,7 @@ const BusquedaGlobal = () => {
                 <VStack align="start" spacing={2}>
                   <HStack justify="space-between" w="full">
                     <Text fontWeight="medium" color="purple.700">
-                      👤 {usuario.nombre}
+                      👤 {toSafeString(usuario.nombre)}
                     </Text>
                     <Badge 
                       colorScheme={
@@ -230,12 +245,12 @@ const BusquedaGlobal = () => {
                         usuario.rol === 'revisor' ? 'green' : 'gray'
                       }
                     >
-                      {usuario.rol}
+                      {toSafeString(usuario.rol)}
                     </Badge>
                   </HStack>
                   
                   <Text fontSize="sm" color="gray.600">
-                    {usuario.email}
+                    {toSafeString(usuario.email)}
                   </Text>
                   
                   <Text fontSize="sm" color="gray.500">
@@ -328,27 +343,27 @@ const BusquedaGlobal = () => {
                 <HStack justify="space-between" wrap="wrap">
                   <VStack align="start" spacing={1}>
                     <Text fontWeight="bold" color="blue.700">
-                      Resultados para: "{resultados.termino_busqueda}"
+                      Resultados para: "{toSafeString(resultados.termino_busqueda)}"
                     </Text>
                     <Text fontSize="sm" color="gray.600">
-                      Total encontrados: {resultados.total_general}
+                      Total encontrados: {toSafeString(resultados.total_general)}
                     </Text>
                   </VStack>
                   
                   <HStack spacing={2}>
                     {resultados.totales.articulos > 0 && (
                       <Tag colorScheme="blue" size="sm">
-                        <TagLabel>📝 {resultados.totales.articulos}</TagLabel>
+                        <TagLabel>📝 {toSafeString(resultados.totales.articulos)}</TagLabel>
                       </Tag>
                     )}
                     {resultados.totales.comentarios > 0 && (
                       <Tag colorScheme="orange" size="sm">
-                        <TagLabel>💬 {resultados.totales.comentarios}</TagLabel>
+                        <TagLabel>💬 {toSafeString(resultados.totales.comentarios)}</TagLabel>
                       </Tag>
                     )}
                     {resultados.totales.usuarios > 0 && (
                       <Tag colorScheme="purple" size="sm">
-                        <TagLabel>👥 {resultados.totales.usuarios}</TagLabel>
+                        <TagLabel>👥 {toSafeString(resultados.totales.usuarios)}</TagLabel>
                       </Tag>
                     )}
                   </HStack>
