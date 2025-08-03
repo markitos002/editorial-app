@@ -1,5 +1,6 @@
 // services/busquedaAPI.js - Servicio para APIs de búsqueda y filtros
 import api from './api';
+import { cleanApiResponse, logPotentialProblems } from '../utils/dataValidator';
 
 export const busquedaAPI = {
   // Búsqueda global en todos los tipos de contenido
@@ -16,7 +17,12 @@ export const busquedaAPI = {
       }
       
       const response = await api.get('/busqueda/global', { params });
-      return response.data;
+      
+      // Limpiar y validar la respuesta
+      const cleanedResponse = cleanApiResponse(response);
+      logPotentialProblems(cleanedResponse.data, 'busquedaGlobal');
+      
+      return cleanedResponse.data;
     } catch (error) {
       console.error('Error en búsqueda global:', error);
       
@@ -52,7 +58,12 @@ export const busquedaAPI = {
       if (filtros.revisor_id) params.revisor_id = filtros.revisor_id;
 
       const response = await api.get('/busqueda/articulos', { params });
-      return response.data;
+      
+      // Limpiar y validar la respuesta
+      const cleanedResponse = cleanApiResponse(response);
+      logPotentialProblems(cleanedResponse.data, 'busquedaArticulos');
+      
+      return cleanedResponse.data;
     } catch (error) {
       console.error('Error en búsqueda de artículos:', error);
       

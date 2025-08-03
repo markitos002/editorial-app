@@ -29,6 +29,8 @@ import { SearchIcon, ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { useState, useEffect } from 'react';
 import { busquedaAPI } from '../../services/busquedaAPI';
 import { useAuth } from '../../context/AuthContext';
+import { SafeRender, toSafeRender } from '../../utils/SafeRender';
+import ErrorBoundary from '../ErrorBoundary';
 
 // Helper para convertir valores de manera segura
 const toSafeString = (value) => {
@@ -203,7 +205,8 @@ const BusquedaArticulos = () => {
   };
 
   return (
-    <Box maxW="7xl" mx="auto" p={6}>
+    <ErrorBoundary location="BusquedaArticulos">
+      <Box maxW="7xl" mx="auto" p={6}>
       <VStack spacing={6} align="stretch">
         {/* Título */}
         <Box textAlign="center">
@@ -419,60 +422,64 @@ const BusquedaArticulos = () => {
             ) : (
               <VStack spacing={4} align="stretch">
                 {resultados.articulos.map((articulo) => (
-                  <Card key={articulo.id} variant="outline" _hover={{ shadow: 'md' }}>
-                    <CardBody>
-                      <VStack align="start" spacing={3}>
-                        {/* Título y estado */}
-                        <HStack justify="space-between" w="full">
-                          <Heading size="md" color="blue.700">
-                            {toSafeString(articulo.titulo)}
-                          </Heading>
-                          <HStack>
-                            <Badge 
-                              colorScheme={
-                                articulo.estado === 'publicado' ? 'green' :
-                                articulo.estado === 'en_revision' ? 'yellow' :
-                                articulo.estado === 'enviado' ? 'blue' : 'gray'
-                              }
-                            >
-                              {toSafeString(articulo.estado)}
-                            </Badge>
-                          </HStack>
-                        </HStack>
-                        
-                        {/* Resumen */}
-                        {articulo.resumen && (
-                          <Text color="gray.700" noOfLines={2}>
-                            {toSafeString(articulo.resumen)}
-                          </Text>
-                        )}
-                        
-                        {/* Palabras clave */}
-                        {articulo.palabras_clave && (
-                          <HStack wrap="wrap">
-                            <Text fontSize="sm" color="gray.500">Palabras clave:</Text>
-                            {parseSafeArray(articulo.palabras_clave).map((palabra, index) => (
-                              <Badge key={index} variant="outline" fontSize="xs">
-                                {toSafeString(palabra)}
+                  <SafeRender key={articulo.id} label={`Articulo-${articulo.id}`}>
+                    <Card variant="outline" _hover={{ shadow: 'md' }}>
+                      <CardBody>
+                        <VStack align="start" spacing={3}>
+                          {/* Título y estado */}
+                          <HStack justify="space-between" w="full">
+                            <Heading size="md" color="blue.700">
+                              <SafeRender label="titulo">{toSafeRender(articulo.titulo)}</SafeRender>
+                            </Heading>
+                            <HStack>
+                              <Badge 
+                                colorScheme={
+                                  articulo.estado === 'publicado' ? 'green' :
+                                  articulo.estado === 'en_revision' ? 'yellow' :
+                                  articulo.estado === 'enviado' ? 'blue' : 'gray'
+                                }
+                              >
+                                <SafeRender label="estado">{toSafeRender(articulo.estado)}</SafeRender>
                               </Badge>
-                            ))}
+                            </HStack>
                           </HStack>
-                        )}
-                        
-                        {/* Información adicional */}
-                        <HStack spacing={6} fontSize="sm" color="gray.500" wrap="wrap">
-                          <Text>📅 {formatearFecha(articulo.fecha_creacion)}</Text>
-                          {articulo.autor && (
-                            <Text>👤 {toSafeString(articulo.autor)}</Text>
+                          
+                          {/* Resumen */}
+                          {articulo.resumen && (
+                            <Text color="gray.700" noOfLines={2}>
+                              <SafeRender label="resumen">{toSafeRender(articulo.resumen)}</SafeRender>
+                            </Text>
                           )}
-                          <Text>💬 {toSafeString(articulo.total_comentarios)} comentarios</Text>
-                          {articulo.archivo_nombre && (
-                            <Text>📎 {toSafeString(articulo.archivo_nombre)}</Text>
+                          
+                          {/* Palabras clave */}
+                          {articulo.palabras_clave && (
+                            <HStack wrap="wrap">
+                              <Text fontSize="sm" color="gray.500">Palabras clave:</Text>
+                              <SafeRender label="palabras_clave">
+                                {parseSafeArray(articulo.palabras_clave).map((palabra, index) => (
+                                  <Badge key={index} variant="outline" fontSize="xs">
+                                    <SafeRender label={`palabra-${index}`}>{toSafeRender(palabra)}</SafeRender>
+                                  </Badge>
+                                ))}
+                              </SafeRender>
+                            </HStack>
                           )}
-                        </HStack>
-                      </VStack>
-                    </CardBody>
-                  </Card>
+                          
+                          {/* Información adicional */}
+                          <HStack spacing={6} fontSize="sm" color="gray.500" wrap="wrap">
+                            <Text>📅 <SafeRender label="fecha">{formatearFecha(articulo.fecha_creacion)}</SafeRender></Text>
+                            {articulo.autor && (
+                              <Text>👤 <SafeRender label="autor">{toSafeRender(articulo.autor)}</SafeRender></Text>
+                            )}
+                            <Text>💬 <SafeRender label="comentarios">{toSafeRender(articulo.total_comentarios)}</SafeRender> comentarios</Text>
+                            {articulo.archivo_nombre && (
+                              <Text>📎 <SafeRender label="archivo">{toSafeRender(articulo.archivo_nombre)}</SafeRender></Text>
+                            )}
+                          </HStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  </SafeRender>
                 ))}
               </VStack>
             )}
@@ -483,6 +490,7 @@ const BusquedaArticulos = () => {
         )}
       </VStack>
     </Box>
+    </ErrorBoundary>
   );
 };
 

@@ -25,6 +25,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { busquedaAPI } from '../../services/busquedaAPI';
 import { useAuth } from '../../context/AuthContext';
+import ErrorBoundary from '../ErrorBoundary';
 
 // Helper para convertir valores de manera segura
 const toSafeString = (value) => {
@@ -266,7 +267,8 @@ const BusquedaGlobal = () => {
   };
 
   return (
-    <Box maxW="6xl" mx="auto" p={6}>
+    <ErrorBoundary location="BusquedaGlobal">
+      <Box maxW="6xl" mx="auto" p={6}>
       <VStack spacing={6} align="stretch">
         {/* Título */}
         <Box textAlign="center">
@@ -388,6 +390,7 @@ const BusquedaGlobal = () => {
         )}
       </VStack>
     </Box>
+    </ErrorBoundary>
   );
 };
 
