@@ -71,12 +71,41 @@ VITE_ENVIRONMENT=production
    - Nombre: `editorial-app-db`
    - Usuario: `editorialuser`
    - Región: Oregon
-   - Plan: Starter (gratis)
+   - Plan: **Free** (sin tarjeta de crédito)
 
 2. **Inicialización automática**:
    - Render ejecutará `scripts/init-db-render.sh`
    - Se crearán todas las tablas necesarias
    - Se insertarán usuarios de prueba
+
+### **⚠️ Importante: Configuración Free Tier**
+
+Para evitar requerir tarjeta de crédito, todos los servicios están configurados con plan `free`:
+- **Backend**: Plan `free` (750 horas/mes)
+- **Frontend**: Static site (gratis ilimitado)
+- **Database**: Plan `free` (1GB, 1 mes retención)
+
+### **🆓 Cómo Evitar Cargos**
+
+1. **Verificar configuración antes del deploy**:
+   ```yaml
+   # Backend
+   plan: free    # NO usar "starter" o "standard"
+   
+   # Database  
+   plan: free    # NO usar "starter" o "standard"
+   
+   # Frontend
+   type: static  # Los static sites son siempre gratuitos
+   ```
+
+2. **Límites del Free Tier**:
+   - Backend: 750 horas/mes (suficiente para testing)
+   - Database: 1GB storage, conexiones limitadas
+   - Bandwidth: 100GB/mes para todos los servicios
+   - Sleep después de 15 min de inactividad
+
+3. **Monitorear uso**: Dashboard → Usage → verificar no superar límites
 
 ### **Paso 5: Despliegue y Verificación**
 
