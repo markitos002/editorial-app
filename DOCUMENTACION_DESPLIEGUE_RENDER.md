@@ -199,6 +199,11 @@ npm run preview:production
 - ⚠️ **PostgreSQL**: 1GB almacenamiento, 1 mes retención
 - ⚠️ **Cold starts**: ~30 segundos para despertar
 
+### **Limitaciones de Configuración**
+- ⚠️ **Static sites no soportan `region`**: Los sitios estáticos se despliegan automáticamente en la región óptima
+- ⚠️ **Environment variables**: Algunas variables solo están disponibles en build time para static sites
+- ⚠️ **CORS**: Debe configurarse en el backend, no en el frontend estático
+
 ### **Recomendaciones**
 1. **Usar Render para demos y testing público**
 2. **Usar Tailscale para desarrollo y uso interno**

@@ -27,7 +27,6 @@ services:
   - type: web
     name: editorial-app-frontend
     env: static
-    region: oregon
     plan: starter
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
