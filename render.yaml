@@ -28,6 +28,7 @@ services:
     name: editorial-app-frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
+    autoDeploy: true
     # Headers
     headers:
       - path: "/*"
