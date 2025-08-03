@@ -29,11 +29,7 @@ services:
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    # Configuración para SPA routing
-    routes:
-      - type: rewrite
-        source: "/*"
-        destination: "/index.html"
+    # Headers
     headers:
       - path: "/*"
         name: "X-Frame-Options"
