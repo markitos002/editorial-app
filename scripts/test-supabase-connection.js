@@ -6,7 +6,7 @@ require('dotenv').config();
 // Configuración de Supabase (desde render-supabase.yaml)
 const supabaseConfig = {
   user: 'postgres',
-  host: 'db.editorialdata.supabase.co',
+  host: 'db.ybnpusbnqlizaiqvztph.supabase.co',
   database: 'postgres',
   password: 'VqX2KgTvTZLrOWlq',
   port: 5432,

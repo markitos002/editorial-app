@@ -19,9 +19,9 @@ services:
         value: 24h
       # Supabase Database Connection
       - key: DATABASE_URL
-        value: postgresql://postgres:VqX2KgTvTZLrOWlq@db.editorialdata.supabase.co:5432/postgres
+        value: postgresql://postgres:VqX2KgTvTZLrOWlq@db.ybnpusbnqlizaiqvztph.supabase.co:5432/postgres
       - key: DB_HOST
-        value: db.editorialdata.supabase.co
+        value: db.ybnpusbnqlizaiqvztph.supabase.co
       - key: DB_PORT
         value: 5432
       - key: DB_NAME
