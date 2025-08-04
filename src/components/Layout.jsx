@@ -5,6 +5,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import AppNavigation from './AppNavigation';
+import Header from './Header';
 import { useAuth } from '../context/AuthContext';
 
 const Layout = ({ children }) => {
@@ -17,19 +18,25 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <Flex minH="100vh" bg={bgColor}>
-      {/* Navegación lateral */}
-      <AppNavigation />
+    <Box minH="100vh" bg={bgColor}>
+      {/* Header/Banner superior */}
+      <Header />
       
-      {/* Contenido principal */}
-      <Box
-        flex="1"
-        ml={{ base: 0, md: '250px' }}
-        w={{ base: '100%', md: 'calc(100% - 250px)' }}
-      >
-        {children}
-      </Box>
-    </Flex>
+      <Flex pt="80px"> {/* Padding top para compensar el header fijo */}
+        {/* Navegación lateral */}
+        <AppNavigation />
+        
+        {/* Contenido principal */}
+        <Box
+          flex="1"
+          ml={{ base: 0, md: '250px' }}
+          w={{ base: '100%', md: 'calc(100% - 250px)' }}
+          p={4}
+        >
+          {children}
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 
