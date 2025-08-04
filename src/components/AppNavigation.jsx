@@ -90,13 +90,6 @@ const AppNavigation = () => {
       disabled: true
     },
     {
-      label: 'Notificaciones',
-      path: '/notifications',
-      icon: '🔔',
-      roles: ['admin', 'editor', 'revisor', 'autor'],
-      disabled: true
-    },
-    {
       label: 'Configuración',
       path: '/settings',
       icon: '⚙️',
