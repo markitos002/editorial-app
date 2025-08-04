@@ -58,7 +58,7 @@ const AppNavigation = () => {
       label: 'Nuevo Artículo',
       path: '/articles/new',
       icon: '➕',
-      roles: ['admin', 'editor', 'autor'],
+      roles: ['autor'],
       disabled: false
     },
     {
