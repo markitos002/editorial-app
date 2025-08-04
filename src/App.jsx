@@ -15,6 +15,7 @@ import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import NuevoArticuloPage from './pages/NuevoArticuloPage';
+import ConfiguracionPage from './pages/ConfiguracionPage';
 import FormularioRevision from './components/FormularioRevision';
 
 // Componente para manejar la redirección inicial
@@ -204,10 +205,8 @@ const AppContent = () => {
         <Route 
           path="/settings" 
           element={
-            <ProtectedRoute requiredRoles={['admin']}>
-              <Box p={8}>
-                <h2>Configuración - Próximamente</h2>
-              </Box>
+            <ProtectedRoute>
+              <ConfiguracionPage />
             </ProtectedRoute>
           } 
         />

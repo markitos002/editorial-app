@@ -100,8 +100,8 @@ const AppNavigation = () => {
       label: 'Configuración',
       path: '/settings',
       icon: '⚙️',
-      roles: ['admin'],
-      disabled: true
+      roles: ['admin', 'editor', 'revisor', 'autor'],
+      disabled: false
     }
   ];
 
