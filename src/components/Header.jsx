@@ -23,7 +23,7 @@ const Header = () => {
       left="0"
       right="0"
       zIndex="1000"
-      height="80px"
+      height="140px"
     >
       <Flex
         h="100%"
@@ -42,13 +42,13 @@ const Header = () => {
           <Image
             src="/images/logoUT.png"
             alt="Universidad del Tolima"
-            maxH="60px"
-            maxW="400px"
+            maxH="120px"
+            maxW="800px"
             objectFit="contain"
             fallback={
               <Box
-                h="60px"
-                w="400px"
+                h="120px"
+                w="800px"
                 bg="gray.100"
                 display="flex"
                 alignItems="center"
@@ -67,13 +67,13 @@ const Header = () => {
           <Image
             src="/images/enfermeria.png"
             alt="Enfermería"
-            maxH="50px"
-            maxW="80px"
+            maxH="100px"
+            maxW="160px"
             objectFit="contain"
             fallback={
               <Box
-                h="50px"
-                w="80px"
+                h="100px"
+                w="160px"
                 bg="gray.100"
                 display="flex"
                 alignItems="center"

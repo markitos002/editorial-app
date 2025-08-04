@@ -178,7 +178,7 @@ const AppNavigation = () => {
         variant="ghost"
         display={{ base: 'flex', md: 'none' }}
         position="fixed"
-        top="90px" /* Posicionar debajo del header */
+        top="150px" /* Posicionar debajo del header más grande */
         left="4"
         zIndex="docked"
       />
@@ -190,7 +190,7 @@ const AppNavigation = () => {
         borderRight="1px"
         borderColor={borderColor}
         p={4}
-        pt="100px" /* Padding top extra para el header */
+        pt="160px" /* Padding top extra para el header más grande */
         display={{ base: 'none', md: 'block' }}
         position="fixed"
         h="100vh"
@@ -203,7 +203,7 @@ const AppNavigation = () => {
       {isOpen && (
         <Box
           position="fixed"
-          top="80px" /* Debajo del header */
+          top="140px" /* Debajo del header más grande */
           left="0"
           right="0"
           bottom="0"
@@ -214,7 +214,7 @@ const AppNavigation = () => {
         >
           <Box
             w="250px"
-            h="calc(100vh - 80px)" /* Altura ajustada */
+            h="calc(100vh - 140px)" /* Altura ajustada para header más grande */
             bg={bgColor}
             p={4}
             onClick={(e) => e.stopPropagation()}

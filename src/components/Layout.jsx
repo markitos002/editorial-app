@@ -22,7 +22,7 @@ const Layout = ({ children }) => {
       {/* Header/Banner superior */}
       <Header />
       
-      <Flex pt="80px"> {/* Padding top para compensar el header fijo */}
+      <Flex pt="140px"> {/* Padding top para compensar el header fijo */}
         {/* Navegación lateral */}
         <AppNavigation />
         
