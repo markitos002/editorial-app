@@ -63,7 +63,7 @@ const Header = () => {
         {/* Logo enfermería - esquina superior derecha */}
         <Box ml="auto">
           <Image
-            src="/images/enfermeriaSF.png"
+            src="/images/logoEnf.png"
             alt="Enfermería"
             maxH="100px"
             maxW="160px"
