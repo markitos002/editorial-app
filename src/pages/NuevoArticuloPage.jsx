@@ -26,11 +26,18 @@ import {
   Collapse,
   useDisclosure
 } from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronUpIcon, InfoIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+// import { InfoIcon } from '@chakra-ui/icons'; // Comentamos temporalmente
 import { useAuth } from '../context/AuthContext';
 
 const NuevoArticuloPage = () => {
-  const { user } = useAuth();
+  console.log('NuevoArticuloPage: Iniciando render...');
+  
+  // Comentamos temporalmente el hook de auth para debuggear
+  // const { user } = useAuth();
+  const user = { nombre: 'Test User', rol: 'autor' }; // Mock data
+  console.log('NuevoArticuloPage: User obtenido:', user);
+  
   const toast = useToast();
   const { isOpen: isChecklistOpen, onToggle: onChecklistToggle } = useDisclosure({ defaultIsOpen: true });
   
@@ -206,6 +213,8 @@ const NuevoArticuloPage = () => {
       setIsSubmitting(false);
     }
   };
+  
+  console.log('NuevoArticuloPage: Llegando al render JSX...');
   
   return (
     <Box maxW="4xl" mx="auto" p={6}>
@@ -417,7 +426,7 @@ const NuevoArticuloPage = () => {
                 
                 {/* Declaración de Privacidad */}
                 <Alert status="info">
-                  <InfoIcon />
+                  <AlertIcon />
                   <Box ml={3}>
                     <AlertTitle>Declaración de Privacidad</AlertTitle>
                     <AlertDescription>
