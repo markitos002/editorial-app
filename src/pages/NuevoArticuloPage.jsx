@@ -33,9 +33,7 @@ import { useAuth } from '../context/AuthContext';
 const NuevoArticuloPage = () => {
   console.log('NuevoArticuloPage: Iniciando render...');
   
-  // Comentamos temporalmente el hook de auth para debuggear
-  // const { user } = useAuth();
-  const user = { nombre: 'Test User', rol: 'autor' }; // Mock data
+  const { user } = useAuth();
   console.log('NuevoArticuloPage: User obtenido:', user);
   
   const toast = useToast();
