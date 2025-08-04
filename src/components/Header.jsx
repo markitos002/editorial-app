@@ -30,14 +30,12 @@ const Header = () => {
         align="center"
         justify="space-between"
         maxW="100%"
-        position="relative"
       >
-        {/* Banner principal - logoUT centrado */}
+        {/* Banner principal - logoUT al lado izquierdo */}
         <Box 
-          position="absolute"
-          left="50%"
-          top="50%"
-          transform="translate(-50%, -50%)"
+          display="flex"
+          alignItems="center"
+          flex="1"
         >
           <Image
             src="/images/logoUT.png"
