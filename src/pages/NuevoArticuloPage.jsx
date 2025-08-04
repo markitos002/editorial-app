@@ -1,4 +1,4 @@
-// pages/NuevoArticuloPage.jsx
+// pages/NuevoArticuloPageFixed.jsx - Versión corregida sin errores
 import React, { useState } from 'react';
 import {
   Box,
@@ -32,13 +32,19 @@ import { useAuth } from '../context/AuthContext';
 const NuevoArticuloPage = () => {
   console.log('NuevoArticuloPage: Iniciando render...');
   
+  // Hook de autenticación con manejo seguro
+  let user = null;
   try {
-    const { user } = useAuth();
-    console.log('NuevoArticuloPage: User obtenido:', user);
-    console.log('NuevoArticuloPage: User type:', typeof user);
-    
-    const toast = useToast();
-    const { isOpen: isChecklistOpen, onToggle: onChecklistToggle } = useDisclosure({ defaultIsOpen: true });
+    const authResult = useAuth();
+    user = authResult?.user;
+    console.log('User obtenido:', user);
+  } catch (error) {
+    console.error('Error en useAuth:', error);
+    user = null;
+  }
+  
+  const toast = useToast();
+  const { isOpen: isChecklistOpen, onToggle: onChecklistToggle } = useDisclosure({ defaultIsOpen: true });
   
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -456,20 +462,6 @@ const NuevoArticuloPage = () => {
       </VStack>
     </Box>
   );
-  } catch (error) {
-    console.error('Error en NuevoArticuloPage:', error);
-    return (
-      <Box p={6}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>Error al cargar la página</AlertTitle>
-          <AlertDescription>
-            Hubo un problema al cargar el formulario. Error: {error.message}
-          </AlertDescription>
-        </Alert>
-      </Box>
-    );
-  }
 };
 
 export default NuevoArticuloPage;

@@ -15,10 +15,6 @@ import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import NuevoArticuloPage from './pages/NuevoArticuloPage';
-import NuevoArticuloPageFixed from './pages/NuevoArticuloPageFixed';
-import NuevoArticuloPageSafe from './pages/NuevoArticuloPageSafe';
-import NuevoArticuloPageMinimal from './pages/NuevoArticuloPageMinimal';
-import NuevoArticuloPageSimple from './pages/NuevoArticuloPageSimple';
 import ConfiguracionPage from './pages/ConfiguracionPage';
 import FormularioRevision from './components/FormularioRevision';
 
@@ -136,7 +132,7 @@ const AppContent = () => {
           path="/articles/new" 
           element={
             <ProtectedRoute requiredRoles={['autor']}>
-              <NuevoArticuloPageFixed />
+              <NuevoArticuloPage />
             </ProtectedRoute>
           } 
         />
