@@ -30,7 +30,7 @@ import {
   Select,
   Textarea
 } from '@chakra-ui/react';
-import { SettingsIcon, LockIcon, BellIcon, UserIcon } from '@chakra-ui/icons';
+import { SettingsIcon, LockIcon, BellIcon, EditIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 
 const ConfiguracionPage = () => {
@@ -265,7 +265,7 @@ const ConfiguracionPage = () => {
           <TabList>
             <Tab>
               <HStack>
-                <UserIcon />
+                <EditIcon />
                 <Text>Perfil</Text>
               </HStack>
             </Tab>
