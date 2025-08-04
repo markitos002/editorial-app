@@ -14,6 +14,7 @@ import AsignacionesPage from './pages/AsignacionesPage';
 import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
+import NuevoArticuloPage from './pages/NuevoArticuloPage';
 import FormularioRevision from './components/FormularioRevision';
 
 // Componente para manejar la redirección inicial
@@ -129,10 +130,8 @@ const AppContent = () => {
         <Route 
           path="/articles/new" 
           element={
-            <ProtectedRoute>
-              <Box p={8}>
-                <h2>Nuevo Artículo - Próximamente</h2>
-              </Box>
+            <ProtectedRoute requiredRoles={['autor', 'admin', 'editor']}>
+              <NuevoArticuloPage />
             </ProtectedRoute>
           } 
         />
