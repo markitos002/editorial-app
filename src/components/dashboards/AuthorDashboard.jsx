@@ -218,7 +218,7 @@ const AuthorDashboard = () => {
                 <VStack spacing={4} align="stretch">
                   <HStack justify="space-between">
                     <Heading size="sm">Estado de Mis Artículos</Heading>
-                    <Button size="sm" colorScheme="blue" onClick={() => navigate('/articulos/nuevo')}>
+                    <Button size="sm" colorScheme="blue" onClick={() => navigate('/articles/new')}>
                       + Nuevo Artículo
                     </Button>
                   </HStack>
@@ -447,7 +447,7 @@ const AuthorDashboard = () => {
                 <Button 
                   colorScheme="blue" 
                   w="100%" 
-                  onClick={() => navigate('/articulos/nuevo')}
+                  onClick={() => navigate('/articles/new')}
                 >
                   📝 Nuevo Artículo
                 </Button>

@@ -30,12 +30,14 @@ import {
   useToast
 } from '@chakra-ui/react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import CustomModal from '../components/CustomModal';
 import { articulosAPI } from '../services/api';
 import { formatDateShort, getStatusColor, getStatusDisplayName } from '../utils/helpers';
 
 const ArticulosPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDetalleOpen, onOpen: onDetalleOpen, onClose: onDetalleClose } = useDisclosure();
@@ -256,7 +258,7 @@ const ArticulosPage = () => {
           {/* Header */}
           <HStack justify="space-between" align="center">
             <Heading size="lg">Mis Artículos</Heading>
-            <Button colorScheme="blue" onClick={onOpen}>
+            <Button colorScheme="blue" onClick={() => navigate('/articles/new')}>
               📝 Nuevo Artículo
             </Button>
           </HStack>
