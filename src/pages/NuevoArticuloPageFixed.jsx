@@ -1,4 +1,4 @@
-// pages/NuevoArticuloPage.jsx
+// pages/NuevoArticuloPageFixed.jsx - Versión corregida sin errores
 import React, { useState } from 'react';
 import {
   Box,
@@ -29,11 +29,19 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 
-const NuevoArticuloPage = () => {
-  console.log('NuevoArticuloPage: Iniciando render...');
+const NuevoArticuloPageFixed = () => {
+  console.log('NuevoArticuloPageFixed: Iniciando render...');
   
-  const { user } = useAuth();
-  console.log('NuevoArticuloPage: User obtenido:', user);
+  // Hook de autenticación con manejo seguro
+  let user = null;
+  try {
+    const authResult = useAuth();
+    user = authResult?.user;
+    console.log('User obtenido:', user);
+  } catch (error) {
+    console.error('Error en useAuth:', error);
+    user = null;
+  }
   
   const toast = useToast();
   const { isOpen: isChecklistOpen, onToggle: onChecklistToggle } = useDisclosure({ defaultIsOpen: true });
