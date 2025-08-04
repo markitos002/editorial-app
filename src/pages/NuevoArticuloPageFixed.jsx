@@ -464,4 +464,4 @@ const NuevoArticuloPageFixed = () => {
   );
 };
 
-export default NuevoArticuloPage;
+export default NuevoArticuloPageFixed;
