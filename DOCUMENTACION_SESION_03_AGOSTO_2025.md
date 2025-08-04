@@ -184,9 +184,25 @@ git commit -m "🔧 Fix: Force frontend redeploy with specific redirects for eac
 
 ### 🎯 Objetivos Pendientes
 1. **Finalizar componentes placeholder** 
-   - Nuevo Artículo (`/articles/new`)
+   - **Nuevo Artículo (`/articles/new`)** - Incluir lista de comprobación para autores
    - Configuración (`/settings`)
    - Notificaciones avanzadas
+
+#### 📝 Lista de Comprobación para Nuevo Artículo
+**Instrucciones para autores al enviar artículos:**
+
+**Lista de comprobación para la preparación de envíos**
+Como parte del proceso de envío, los autores/as están obligados a comprobar que su envío cumpla todos los elementos que se muestran a continuación. Se devolverán a los autores/as aquellos envíos que no cumplan estas directrices.
+
+- ☐ El envío no ha sido publicado previamente ni se ha sometido a consideración por ninguna otra revista (o se ha proporcionado una explicación al respecto en los Comentarios al editor/a).
+- ☐ El archivo de envío está en formato OpenOffice, Microsoft Word, RTF o WordPerfect.
+- ☐ Siempre que sea posible, se proporcionan direcciones URL para las referencias.
+- ☐ El texto tiene un interlineado sencillo, un tamaño fuente de 12 puntos, se utiliza cursiva en lugar de subrayado (excepto en las direcciones URL), y todas las ilustraciones, figuras y tablas se encuentran colocadas en los lugares del texto apropiados, en vez de al final.
+- ☐ El texto reúne las condiciones estilísticas y bibliográficas incluidas en Pautas para el autor/a, en Acerca de la revista.
+- ☐ En el caso de enviar el texto a la sección de evaluación por pares, se siguen las instrucciones incluidas en Asegurar una evaluación anónima.
+
+**Declaración de privacidad**
+Los nombres y las direcciones de correo electrónico introducidos en esta revista se usarán exclusivamente para los fines establecidos en ella y no se proporcionarán a terceros o para su uso con otros fines.
 
 2. **Optimizaciones de rendimiento**
    - Lazy loading de componentes

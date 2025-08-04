@@ -164,6 +164,7 @@ Password: autor123
 - [📋 Sesión 23 Julio 2025](./DOCUMENTACION_SESION_23_JULIO_2025.md) - Sistema de Revisiones
 - [🔧 Guía de Deployment](./DOCUMENTACION_DESPLIEGUE_RENDER.md) - Configuración Render
 - [🛡️ Sistema de Roles](./DOCUMENTACION_RESTRICCION_ROLES.md) - Permisos y Seguridad
+- [📝 Directrices para Autores](./DIRECTRICES_AUTORES.md) - **NUEVO** - Lista de comprobación y requisitos
 
 ---
 

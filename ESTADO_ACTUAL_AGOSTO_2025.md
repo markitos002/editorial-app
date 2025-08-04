@@ -218,6 +218,7 @@ backend/
    - Upload de archivos múltiples
    - Preview de documentos
    - Validación de metadatos
+   - **✅ Lista de comprobación para autores incluida**
 
 2. **Panel de configuración de usuario**
    - Cambio de contraseña
@@ -228,6 +229,13 @@ backend/
    - Lazy loading de componentes pesados
    - Optimización de queries de base de datos
    - Cache de resultados frecuentes
+
+### 📝 Directrices para Autores Implementadas
+- ✅ **Lista de comprobación completa** para preparación de envíos
+- ✅ **Declaración de privacidad** incluida
+- ✅ **Requisitos de formato** especificados
+- ✅ **Proceso de revisión** documentado
+- ✅ **Tipos de artículos aceptados** definidos
 
 ### 🔧 Mejoras Técnicas Planificadas
 1. **PWA Implementation**
