@@ -244,9 +244,18 @@ function App() {
       <ChakraProvider>
         <ThemeProvider>
           <Router>
-            <AuthProvider>
-              <AppContent />
-            </AuthProvider>
+            <Routes>
+              {/* Rutas de prueba FUERA del AuthProvider */}
+              <Route path="/test" element={<TestPage />} />
+              <Route path="/test-layout" element={<TestLayoutPage />} />
+              
+              {/* Resto de la aplicación CON AuthProvider */}
+              <Route path="/*" element={
+                <AuthProvider>
+                  <AppContent />
+                </AuthProvider>
+              } />
+            </Routes>
           </Router>
         </ThemeProvider>
       </ChakraProvider>
