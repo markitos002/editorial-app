@@ -16,6 +16,7 @@ import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import NuevoArticuloPageSafe from './pages/NuevoArticuloPageSafe';
 import TestPage from './pages/TestPage';
+import TestLayoutPage from './pages/TestLayoutPage';
 import TestMinimal from './pages/TestMinimal';
 import ConfiguracionPage from './pages/ConfiguracionPage';
 import FormularioRevision from './components/FormularioRevision';
