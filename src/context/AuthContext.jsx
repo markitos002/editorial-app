@@ -218,8 +218,19 @@ export const AuthProvider = ({ children }) => {
     return state.user?.rol === 'autor';
   }, [state.user]);
 
+  // Crear el valor del contexto con propiedades primitivas seguras
   const value = {
-    ...state,
+    user: state.user ? {
+      id: String(state.user.id || ''),
+      nombre: String(state.user.nombre || ''),
+      email: String(state.user.email || ''),
+      rol: String(state.user.rol || ''),
+      creado_en: String(state.user.creado_en || '')
+    } : null,
+    token: String(state.token || ''),
+    isAuthenticated: Boolean(state.isAuthenticated),
+    isLoading: Boolean(state.isLoading),
+    error: state.error ? String(state.error) : null,
     login,
     register,
     logout,

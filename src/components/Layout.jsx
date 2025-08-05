@@ -9,13 +9,27 @@ import Header from './Header';
 import { useAuth } from '../context/AuthContext';
 
 const Layout = ({ children }) => {
-  const { user } = useAuth();
+  console.log('Layout: Iniciando render...');
+  
+  let user = null;
+  try {
+    const authResult = useAuth();
+    user = authResult?.user;
+    console.log('Layout: User obtenido:', user);
+  } catch (error) {
+    console.error('Layout: Error en useAuth:', error);
+    user = null;
+  }
+  
   const bgColor = useColorModeValue('gray.50', 'gray.900');
 
   // Si no hay usuario autenticado, no mostramos el layout
   if (!user) {
+    console.log('Layout: No hay usuario, renderizando children directamente');
     return <Box>{children}</Box>;
   }
+
+  console.log('Layout: Renderizando layout completo con Header y Navigation');
 
   return (
     <Box minH="100vh" bg={bgColor}>
