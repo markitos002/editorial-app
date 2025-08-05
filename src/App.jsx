@@ -16,7 +16,7 @@ import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import NuevoArticuloPageSafe from './pages/NuevoArticuloPageSafe';
 import TestPage from './pages/TestPage';
-import TestLayoutPage from './pages/TestLayoutPage';
+import TestMinimal from './pages/TestMinimal';
 import ConfiguracionPage from './pages/ConfiguracionPage';
 import FormularioRevision from './components/FormularioRevision';
 
@@ -242,22 +242,22 @@ function App() {
     <>
       <ColorModeScript initialColorMode="light" />
       <ChakraProvider>
-        <ThemeProvider>
-          <Router>
-            <Routes>
-              {/* Rutas de prueba FUERA del AuthProvider */}
-              <Route path="/test" element={<TestPage />} />
-              <Route path="/test-layout" element={<TestLayoutPage />} />
-              
-              {/* Resto de la aplicación CON AuthProvider */}
-              <Route path="/*" element={
-                <AuthProvider>
-                  <AppContent />
-                </AuthProvider>
-              } />
-            </Routes>
-          </Router>
-        </ThemeProvider>
+        {/* ThemeProvider temporalmente removido para debugging */}
+        <Router>
+          <Routes>
+            {/* Rutas de prueba FUERA del AuthProvider */}
+            <Route path="/test" element={<TestPage />} />
+            <Route path="/test-layout" element={<TestLayoutPage />} />
+            <Route path="/minimal" element={<TestMinimal />} />
+            
+            {/* Resto de la aplicación CON AuthProvider */}
+            <Route path="/*" element={
+              <AuthProvider>
+                <AppContent />
+              </AuthProvider>
+            } />
+          </Routes>
+        </Router>
       </ChakraProvider>
     </>
   );
