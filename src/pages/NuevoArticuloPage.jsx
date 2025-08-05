@@ -1,4 +1,4 @@
-// pages/NuevoArticuloPageFixed.jsx - Versión corregida sin errores
+// pages/NuevoArticuloPage.jsx - Formulario completo de envío de artículos
 import React, { useState } from 'react';
 import {
   Box,
@@ -38,6 +38,17 @@ const NuevoArticuloPage = () => {
     const authResult = useAuth();
     user = authResult?.user;
     console.log('User obtenido:', user);
+    
+    // Validar que user sea un objeto válido
+    if (user && typeof user === 'object' && !Array.isArray(user)) {
+      // Convertir propiedades a strings seguros
+      user = {
+        ...user,
+        nombre: String(user.nombre || ''),
+        rol: String(user.rol || ''),
+        email: String(user.email || '')
+      };
+    }
   } catch (error) {
     console.error('Error en useAuth:', error);
     user = null;
@@ -230,7 +241,7 @@ const NuevoArticuloPage = () => {
             Revista Manos al Cuidado - Complete el formulario y la lista de comprobación para enviar su artículo.
           </Text>
           <Badge colorScheme="blue" mt={2}>
-            Usuario: {user?.nombre || 'Cargando...'} ({user?.rol || 'N/A'})
+            Usuario: {user ? `${user.nombre} (${user.rol})` : 'Cargando...'}
           </Badge>
         </Box>
         

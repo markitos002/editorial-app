@@ -125,7 +125,7 @@ const DashboardPage = () => {
                 </HStack>
                 {user?.creado_en && (
                   <Text color="gray.500" fontSize="sm">
-                    Miembro desde: {formatDateShort(user.creado_en)}
+                    Miembro desde: {formatDateShort(String(user.creado_en))}
                   </Text>
                 )}
               </VStack>
