@@ -14,10 +14,6 @@ import AsignacionesPage from './pages/AsignacionesPage';
 import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
-import NuevoArticuloPageSafe from './pages/NuevoArticuloPageSafe';
-import TestPage from './pages/TestPage';
-import TestLayoutPage from './pages/TestLayoutPage';
-import TestMinimal from './pages/TestMinimal';
 import ConfiguracionPage from './pages/ConfiguracionPage';
 import FormularioRevision from './components/FormularioRevision';
 
@@ -131,16 +127,10 @@ const AppContent = () => {
           } 
         />
         
-        <Route 
-          path="/articles/new" 
-          element={
-            <ProtectedRoute requiredRoles={['autor']}>
-              <NuevoArticuloPageSafe />
-            </ProtectedRoute>
-          } 
-        />
+        {/* FUNCIONALIDAD "NUEVO ARTÍCULO" TEMPORALMENTE REMOVIDA */}
+        {/* TODO: Reconstruir desde cero sin errores */}
         
-        {/* Ruta de prueba aislada - SIN Layout, SIN ProtectedRoute */}
+        {/* Rutas de prueba para debugging */}
         <Route path="/test" element={<TestPage />} />
         
         {/* Ruta de prueba con Layout - CON Layout, SIN ProtectedRoute */}
@@ -243,22 +233,13 @@ function App() {
     <>
       <ColorModeScript initialColorMode="light" />
       <ChakraProvider>
-        {/* ThemeProvider temporalmente removido para debugging */}
-        <Router>
-          <Routes>
-            {/* Rutas de prueba FUERA del AuthProvider */}
-            <Route path="/test" element={<TestPage />} />
-            <Route path="/test-layout" element={<TestLayoutPage />} />
-            <Route path="/minimal" element={<TestMinimal />} />
-            
-            {/* Resto de la aplicación CON AuthProvider */}
-            <Route path="/*" element={
-              <AuthProvider>
-                <AppContent />
-              </AuthProvider>
-            } />
-          </Routes>
-        </Router>
+        <ThemeProvider>
+          <Router>
+            <AuthProvider>
+              <AppContent />
+            </AuthProvider>
+          </Router>
+        </ThemeProvider>
       </ChakraProvider>
     </>
   );
