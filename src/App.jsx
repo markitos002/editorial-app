@@ -15,6 +15,8 @@ import RevisionPage from './pages/RevisionPage';
 import RevisionDetallePage from './pages/RevisionDetallePage';
 import GestionUsuariosPage from './pages/GestionUsuariosPage';
 import NuevoArticuloPageSafe from './pages/NuevoArticuloPageSafe';
+import TestPage from './pages/TestPage';
+import TestLayoutPage from './pages/TestLayoutPage';
 import ConfiguracionPage from './pages/ConfiguracionPage';
 import FormularioRevision from './components/FormularioRevision';
 
@@ -136,6 +138,12 @@ const AppContent = () => {
             </ProtectedRoute>
           } 
         />
+        
+        {/* Ruta de prueba aislada - SIN Layout, SIN ProtectedRoute */}
+        <Route path="/test" element={<TestPage />} />
+        
+        {/* Ruta de prueba con Layout - CON Layout, SIN ProtectedRoute */}
+        <Route path="/test-layout" element={<TestLayoutPage />} />
         
         <Route 
           path="/reviews" 
