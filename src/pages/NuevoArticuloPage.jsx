@@ -31,6 +31,7 @@ import {
 import { FiUpload, FiFile, FiCheck } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { articulosAPI } from '../services/api';
 
 const NuevoArticuloPage = () => {
   const { user } = useAuth();
@@ -214,28 +215,32 @@ const NuevoArticuloPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Construir payload del artículo
-      const articulo = {
-        titulo: formData.titulo.trim(),
-        resumen: formData.resumen.trim(),
-        categoria: formData.categoria,
-        palabras_clave: formData.palabras_clave.trim(),
-        archivo_nombre: formData.archivo.name,
-        archivo_tamaño: formData.archivo.size,
-        archivo_tipo: formData.archivo.type,
-        autor_id: user.id,
-        estado: 'borrador'
-      };
+      // Crear FormData para envío con archivo
+      const formDataToSend = new FormData();
+      
+      // Agregar datos del formulario
+      formDataToSend.append('titulo', formData.titulo.trim());
+      formDataToSend.append('resumen', formData.resumen.trim());
+      formDataToSend.append('palabras_clave', formData.palabras_clave.trim());
+      formDataToSend.append('area_tematica', formData.categoria); // El backend usa 'area_tematica'
+      formDataToSend.append('archivo', formData.archivo);
 
-      console.log('Enviando artículo:', articulo);
-      console.log('Archivo:', formData.archivo);
+      console.log('Enviando artículo con archivo...');
+      console.log('Datos del formulario:');
+      console.log('- Título:', formData.titulo);
+      console.log('- Resumen:', formData.resumen);
+      console.log('- Categoría:', formData.categoria);
+      console.log('- Palabras clave:', formData.palabras_clave);
+      console.log('- Archivo:', formData.archivo.name, formData.archivo.size, 'bytes');
 
-      // Simular envío (PLACEHOLDER - conectar con API real)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Enviar usando la API configurada
+      const response = await articulosAPI.crearConArchivo(formDataToSend);
+
+      console.log('Respuesta del servidor:', response);
 
       toast({
-        title: 'Artículo creado',
-        description: 'Tu artículo ha sido guardado como borrador',
+        title: 'Artículo creado exitosamente',
+        description: `Tu artículo "${formData.titulo}" ha sido enviado y está en revisión`,
         status: 'success',
         duration: 5000,
         isClosable: true
@@ -246,11 +251,14 @@ const NuevoArticuloPage = () => {
 
     } catch (error) {
       console.error('Error creando artículo:', error);
+      
+      const errorMessage = error.response?.data?.mensaje || error.message || 'Error desconocido';
+      
       toast({
-        title: 'Error',
-        description: 'Hubo un problema al crear el artículo',
+        title: 'Error al crear artículo',
+        description: errorMessage,
         status: 'error',
-        duration: 5000,
+        duration: 7000,
         isClosable: true
       });
     } finally {

@@ -205,6 +205,16 @@ export const articulosAPI = {
     return response.data;
   },
 
+  // Crear nuevo artículo con archivo
+  crearConArchivo: async (formData) => {
+    const response = await api.post('/articulos', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
   // Actualizar artículo
   actualizar: async (id, articleData) => {
     const response = await api.put(`/articulos/${id}`, articleData);
