@@ -54,14 +54,13 @@ const AppNavigation = () => {
       roles: ['admin', 'editor', 'revisor', 'autor'],
       disabled: false
     },
-    // FUNCIONALIDAD "NUEVO ARTÍCULO" TEMPORALMENTE REMOVIDA
-    // {
-    //   label: 'Nuevo Artículo',
-    //   path: '/articles/new',
-    //   icon: '➕',
-    //   roles: ['autor'],
-    //   disabled: false
-    // },
+    {
+      label: 'Nuevo Artículo',
+      path: '/articles/new',
+      icon: '➕',
+      roles: ['admin', 'editor', 'autor'],
+      disabled: false
+    },
     {
       label: 'Mis Revisiones',
       path: '/revision',

@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ArticulosPage from './pages/ArticulosPage';
+import NuevoArticuloPage from './pages/NuevoArticuloPage';
 import BusquedaPage from './pages/BusquedaPage';
 import NotificacionesPage from './pages/NotificacionesPage';
 import AsignacionesPage from './pages/AsignacionesPage';
@@ -127,14 +128,15 @@ const AppContent = () => {
           } 
         />
         
-        {/* FUNCIONALIDAD "NUEVO ARTÍCULO" TEMPORALMENTE REMOVIDA */}
-        {/* TODO: Reconstruir desde cero sin errores */}
-        
-        {/* Rutas de prueba para debugging */}
-        <Route path="/test" element={<TestPage />} />
-        
-        {/* Ruta de prueba con Layout - CON Layout, SIN ProtectedRoute */}
-        <Route path="/test-layout" element={<TestLayoutPage />} />
+        {/* Ruta para crear nuevos artículos - RECONSTRUIDA DESDE CERO */}
+        <Route 
+          path="/articles/new" 
+          element={
+            <ProtectedRoute requiredRoles={['admin', 'editor', 'autor']}>
+              <NuevoArticuloPage />
+            </ProtectedRoute>
+          } 
+        />
         
         <Route 
           path="/reviews" 
