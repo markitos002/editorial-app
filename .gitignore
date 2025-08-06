@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Documentación archivada 
+**/BUILD_FIX_*.md 
+**/DOCUMENTACION_*.md 
+**/ESTADO_ACTUAL*.md 
+**/DEPLOYMENT*.md 
+**/GUIA_*.md 
+# Configs archivadas 
+/jest.config.js 
+/eslint.config.js 
+/ecosystem.config.* 

@@ -1,0 +1,25 @@
+{
+  // Extensiones esenciales para Editorial App (mínimas para reducir consumo)
+  "recommendations": [
+    "ms-vscode.vscode-javascript",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag"
+  ],
+  
+  // Extensiones que NO se deben instalar (consumen muchos recursos)
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "ms-python.python",
+    "ms-vscode.powershell",
+    "ms-vscode.cpptools",
+    "redhat.java",
+    "ms-dotnettools.csharp",
+    "ms-vscode.go",
+    "rust-lang.rust",
+    "ms-toolsai.jupyter",
+    "ms-vscode.cmake-tools",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-wsl"
+  ]
+}
