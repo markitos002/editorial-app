@@ -348,6 +348,57 @@ const NuevoArticuloPage = () => {
                   <FormErrorMessage>{errors.resumen}</FormErrorMessage>
                 </FormControl>
 
+                {/* Lista de comprobación para envíos */}
+                <Card borderLeft="4px solid" borderLeftColor="blue.500">
+                  <CardHeader pb={3}>
+                    <Heading size="sm" color="blue.600">
+                      📋 Lista de comprobación para la preparación de envíos
+                    </Heading>
+                  </CardHeader>
+                  <CardBody pt={0}>
+                    <Text fontSize="sm" mb={3} color="gray.700">
+                      Como parte del proceso de envío, los autores/as están obligados a comprobar que su envío cumpla todos los elementos que se muestran a continuación. Se devolverán a los autores/as aquellos envíos que no cumplan estas directrices.
+                    </Text>
+                    <VStack align="start" spacing={2}>
+                      <HStack align="start" spacing={2}>
+                        <Text fontSize="sm" color="blue.500">•</Text>
+                        <Text fontSize="sm">
+                          El envío no ha sido publicado previamente ni se ha sometido a consideración por ninguna otra revista (o se ha proporcionado una explicación al respecto en los Comentarios al editor/a).
+                        </Text>
+                      </HStack>
+                      <HStack align="start" spacing={2}>
+                        <Text fontSize="sm" color="blue.500">•</Text>
+                        <Text fontSize="sm">
+                          El archivo de envío está en formato OpenOffice, Microsoft Word, RTF o WordPerfect.
+                        </Text>
+                      </HStack>
+                      <HStack align="start" spacing={2}>
+                        <Text fontSize="sm" color="blue.500">•</Text>
+                        <Text fontSize="sm">
+                          Siempre que sea posible, se proporcionan direcciones URL para las referencias.
+                        </Text>
+                      </HStack>
+                      <HStack align="start" spacing={2}>
+                        <Text fontSize="sm" color="blue.500">•</Text>
+                        <Text fontSize="sm">
+                          El texto reúne las condiciones estilísticas y bibliográficas incluidas en Pautas para el autor/a, en Acerca de la revista.
+                        </Text>
+                      </HStack>
+                      <HStack align="start" spacing={2}>
+                        <Text fontSize="sm" color="blue.500">•</Text>
+                        <Text fontSize="sm">
+                          En el caso de enviar el texto a la sección de evaluación por pares, se siguen las instrucciones incluidas en Asegurar una evaluación anónima.
+                        </Text>
+                      </HStack>
+                      <Box w="100%" pt={2}>
+                        <Text fontSize="sm" fontWeight="medium" color="blue.700">
+                          ✅ Todos los autores están de acuerdo que se envía el manuscrito a la Revista Manos al Cuidado
+                        </Text>
+                      </Box>
+                    </VStack>
+                  </CardBody>
+                </Card>
+
                 {/* Carga de Archivo */}
                 <FormControl isInvalid={errors.archivo}>
                   <FormLabel>Archivo del Artículo</FormLabel>
