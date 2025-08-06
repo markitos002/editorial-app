@@ -1,8 +1,131 @@
 const pool = require('../db');
 
+// Función para crear artículo con archivos almacenados en base de datos
+const crearConArchivoDB = async (req, res) => {
+  try {
+    console.log('=== CREAR ARTÍCULO CON ARCHIVO EN BASE DE DATOS ===');
+    console.log('Datos recibidos:', req.body);
+    console.log('Archivos procesados:', req.processedFiles?.length || 0);
+    console.log('Usuario autenticado:', req.usuario);
+    
+    const { titulo, resumen, palabras_clave, area_tematica } = req.body;
+    const usuarioId = req.usuario.id;
+    const archivos = req.processedFiles || [];
+
+    // Validaciones
+    if (!titulo || !resumen) {
+      console.log('❌ Faltan campos requeridos');
+      return res.status(400).json({ 
+        success: false,
+        mensaje: 'Título y resumen son campos requeridos' 
+      });
+    }
+
+    // Validar que se haya subido al menos un archivo
+    if (archivos.length === 0) {
+      console.log('❌ No se recibieron archivos');
+      return res.status(400).json({ 
+        success: false,
+        mensaje: 'Es necesario adjuntar al menos un archivo con el contenido del artículo' 
+      });
+    }
+
+    // Procesar palabras clave
+    let palabrasClaveArray = [];
+    if (palabras_clave) {
+      try {
+        palabrasClaveArray = JSON.parse(palabras_clave);
+      } catch (error) {
+        console.log('⚠️ Error parseando palabras clave, usando como string:', error);
+        palabrasClaveArray = typeof palabras_clave === 'string' ? [palabras_clave] : [];
+      }
+    }
+
+    // Usar el primer archivo como principal
+    const archivoPrincipal = archivos[0];
+    
+    console.log('💾 Insertando artículo en base de datos...');
+    const query = `
+      INSERT INTO articulos (
+        titulo, resumen, palabras_clave, usuario_id, estado, area_tematica,
+        archivo_nombre, archivo_mimetype, archivo_size, archivo_data
+      ) 
+      VALUES ($1, $2, $3, $4, 'enviado', $5, $6, $7, $8, $9) 
+      RETURNING *
+    `;
+    
+    const parametros = [
+      titulo, 
+      resumen, 
+      palabrasClaveArray, 
+      usuarioId,
+      area_tematica || null,
+      archivoPrincipal.originalName,
+      archivoPrincipal.mimetype,
+      archivoPrincipal.size,
+      archivoPrincipal.buffer // Guardar como BYTEA
+    ];
+    
+    console.log('📋 Parámetros query (archivo como buffer):', [
+      parametros[0],
+      parametros[1], 
+      parametros[2],
+      parametros[3],
+      parametros[4],
+      parametros[5],
+      parametros[6],
+      parametros[7],
+      `Buffer(${parametros[8].length} bytes)`
+    ]);
+    
+    const resultado = await pool.query(query, parametros);
+    
+    if (!resultado.rows || resultado.rows.length === 0) {
+      console.log('❌ No se pudo insertar el artículo');
+      return res.status(500).json({ 
+        success: false,
+        mensaje: 'Error al crear artículo: no se pudo insertar' 
+      });
+    }
+    
+    console.log('✅ Artículo insertado con ID:', resultado.rows[0].id);
+    
+    // Obtener el artículo completo con información del autor (sin el archivo)
+    const articuloCompleto = await pool.query(`
+      SELECT 
+        a.id, a.titulo, a.resumen, a.palabras_clave, a.estado, a.area_tematica,
+        a.archivo_nombre, a.archivo_mimetype, a.archivo_size,
+        a.fecha_creacion, a.fecha_actualizacion,
+        u.nombre as autor_nombre,
+        u.email as autor_email
+      FROM articulos a
+      LEFT JOIN usuarios u ON a.usuario_id = u.id
+      WHERE a.id = $1
+    `, [resultado.rows[0].id]);
+
+    console.log('🎉 Artículo creado exitosamente');
+
+    res.status(201).json({
+      success: true,
+      mensaje: 'Artículo creado exitosamente',
+      articulo: articuloCompleto.rows[0]
+    });
+  } catch (error) {
+    console.error('💥 Error al crear artículo:', error);
+    res.status(500).json({ 
+      success: false,
+      mensaje: 'Error al crear artículo', 
+      error: error.message 
+    });
+  }
+};
+
 // Obtener todos los artículos
 const obtenerArticulos = async (req, res) => {
   try {
+    console.log('=== OBTENER ARTICULOS ===');
+    console.log('Query params:', req.query);
+    
     const { estado, usuario_id, page = 1, limit = 10 } = req.query;
     let query = `
       SELECT 
@@ -36,7 +159,12 @@ const obtenerArticulos = async (req, res) => {
     query += ` ORDER BY a.fecha_creacion DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
 
+    console.log('Ejecutando query:', query);
+    console.log('Parámetros:', params);
+
     const resultado = await pool.query(query, params);
+    
+    console.log('Query exitosa, filas encontradas:', resultado.rows.length);
     
     const totalCount = resultado.rows.length > 0 ? resultado.rows[0].total_count : 0;
     const totalPages = Math.ceil(totalCount / limit);
@@ -52,6 +180,7 @@ const obtenerArticulos = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al obtener artículos:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ mensaje: 'Error al obtener artículos', error: error.message });
   }
 };
@@ -366,6 +495,7 @@ module.exports = {
   obtenerMisArticulos,
   obtenerArticuloPorId,
   crearArticulo,
+  crearConArchivoDB,
   actualizarArticulo,
   eliminarArticulo,
   cambiarEstadoArticulo,
