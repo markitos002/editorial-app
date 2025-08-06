@@ -184,13 +184,16 @@ const NuevoArticuloPage = () => {
 
   // Obtener icono del archivo
   const getFileIcon = (fileName) => {
+    if (!fileName || typeof fileName !== 'string') {
+      return '📄'; // Icono por defecto
+    }
     const extension = fileName.split('.').pop().toLowerCase();
     return extension === 'pdf' ? '📄' : '📝';
   };
 
   // Formatear tamaño del archivo
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0 || !bytes) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -231,7 +234,7 @@ const NuevoArticuloPage = () => {
       console.log('- Resumen:', formData.resumen);
       console.log('- Categoría:', formData.categoria);
       console.log('- Palabras clave:', formData.palabras_clave);
-      console.log('- Archivo:', formData.archivo.name, formData.archivo.size, 'bytes');
+      console.log('- Archivo:', formData.archivo?.name || 'Sin nombre', formData.archivo?.size || 0, 'bytes');
 
       // Enviar usando la API configurada
       const response = await articulosAPI.crearConArchivo(formDataToSend);
@@ -393,11 +396,11 @@ const NuevoArticuloPage = () => {
                         <Flex justify="space-between" align="center">
                           <HStack spacing={3}>
                             <Text fontSize="2xl">
-                              {getFileIcon(formData.archivo.name)}
+                              {formData.archivo && getFileIcon(formData.archivo.name)}
                             </Text>
                             <VStack align="start" spacing={1}>
                               <Text fontWeight="medium">
-                                {formData.archivo.name}
+                                {formData.archivo?.name || 'Archivo desconocido'}
                               </Text>
                               <HStack spacing={2}>
                                 <Badge colorScheme="green" size="sm">
@@ -405,7 +408,7 @@ const NuevoArticuloPage = () => {
                                   Cargado
                                 </Badge>
                                 <Text fontSize="sm" color="gray.500">
-                                  {formatFileSize(formData.archivo.size)}
+                                  {formData.archivo?.size ? formatFileSize(formData.archivo.size) : '0 KB'}
                                 </Text>
                               </HStack>
                             </VStack>
