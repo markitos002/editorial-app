@@ -182,12 +182,12 @@ const NuevoArticuloPage = () => {
   };
 
   // Obtener icono del archivo
-  const getFileIcon = (fileName) => {
+  const getFileIcon = (fileName, props) => {
     if (!fileName || typeof fileName !== 'string') {
-      return '📄'; // Icono por defecto
+      return <Box as={FiFile} {...props} />;
     }
-    const extension = fileName.split('.').pop().toLowerCase();
-    return extension === 'pdf' ? '📄' : '📝';
+    // Aquí se podría añadir lógica para diferentes tipos de archivo si se quisiera
+    return <Box as={FiFile} {...props} />;
   };
 
   // Formatear tamaño del archivo
@@ -452,9 +452,7 @@ const NuevoArticuloPage = () => {
                       <CardBody>
                         <Flex justify="space-between" align="center">
                           <HStack spacing={3}>
-                            <Text fontSize="2xl">
-                              {formData.archivo && getFileIcon(formData.archivo.name)}
-                            </Text>
+                            {formData.archivo && getFileIcon(formData.archivo.name, { fontSize: '2xl' })}
                             <VStack align="start" spacing={1}>
                               <Text fontWeight="medium">
                                 {formData.archivo?.name || 'Archivo desconocido'}
