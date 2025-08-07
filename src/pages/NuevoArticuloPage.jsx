@@ -179,7 +179,7 @@ const NuevoArticuloPage = () => {
                 onChange={(e) => handleChange('titulo', e.target.value)}
                 placeholder="Escribe el título de tu artículo..."
               />
-              <FormErrorMessage>{errors.titulo}</FormErrorMessage>
+              <FormErrorMessage>{errors.titulo || ''}</FormErrorMessage>
             </FormControl>
 
             <FormControl isInvalid={!!errors.categoria}>
@@ -193,7 +193,7 @@ const NuevoArticuloPage = () => {
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </Select>
-              <FormErrorMessage>{errors.categoria}</FormErrorMessage>
+              <FormErrorMessage>{errors.categoria || ''}</FormErrorMessage>
             </FormControl>
 
             <FormControl>
@@ -213,7 +213,7 @@ const NuevoArticuloPage = () => {
                 placeholder="Escribe un resumen del artículo..."
                 rows={4}
               />
-              <FormErrorMessage>{errors.resumen}</FormErrorMessage>
+              <FormErrorMessage>{errors.resumen || ''}</FormErrorMessage>
             </FormControl>
 
             <FormControl isInvalid={!!errors.archivo}>
@@ -224,7 +224,7 @@ const NuevoArticuloPage = () => {
                 onChange={handleFileChange}
                 p={1} // Estilo para que se vea mejor
               />
-              <FormErrorMessage>{errors.archivo}</FormErrorMessage>
+              <FormErrorMessage>{errors.archivo || ''}</FormErrorMessage>
             </FormControl>
 
             <Button
