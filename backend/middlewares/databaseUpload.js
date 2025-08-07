@@ -81,9 +81,12 @@ const processFilesToDatabase = async (req, res, next) => {
             });
         }
 
+        console.log(`✅ ${req.processedFiles.length} archivos procesados exitosamente`);
         next();
 
     } catch (error) {
+        console.error('❌ Error en processFilesToDatabase:', error);
+        
         // Limpiar memoria en caso de error
         if (req.files) {
             req.files.forEach(file => {
@@ -93,27 +96,6 @@ const processFilesToDatabase = async (req, res, next) => {
             });
         }
         
-        res.status(500).json({
-            success: false,
-            message: 'Error al procesar archivos',
-            error: error.message
-        });
-    }
-};
-            req.processedFiles.push({
-                originalName: file.originalname,
-                size: file.size,
-                mimetype: file.mimetype,
-                buffer: file.buffer,
-                base64: fileBase64
-            });
-        }
-
-        console.log(`${req.processedFiles.length} archivos procesados exitosamente`);
-        next();
-
-    } catch (error) {
-        console.error('Error en processFilesToDatabase:', error);
         res.status(500).json({
             success: false,
             message: 'Error al procesar archivos',
