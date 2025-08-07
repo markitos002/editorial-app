@@ -12,21 +12,21 @@ const crearConArchivoDB = async (req, res) => {
     const usuarioId = req.usuario.id;
     const archivos = req.processedFiles || [];
 
-    // Validaciones
-    if (!titulo || !resumen) {
-      console.log('❌ Faltan campos requeridos');
+    // Validaciones optimizadas
+    if (!titulo?.trim() || !resumen?.trim()) {
       return res.status(400).json({ 
         success: false,
-        mensaje: 'Título y resumen son campos requeridos' 
+        mensaje: 'Título y resumen son campos requeridos',
+        code: 'MISSING_REQUIRED_FIELDS'
       });
     }
 
     // Validar que se haya subido al menos un archivo
     if (archivos.length === 0) {
-      console.log('❌ No se recibieron archivos');
       return res.status(400).json({ 
         success: false,
-        mensaje: 'Es necesario adjuntar al menos un archivo con el contenido del artículo' 
+        mensaje: 'Es necesario adjuntar al menos un archivo con el contenido del artículo',
+        code: 'NO_FILES_UPLOADED'
       });
     }
 
@@ -129,7 +129,9 @@ const obtenerArticulos = async (req, res) => {
     const { estado, usuario_id, page = 1, limit = 10 } = req.query;
     let query = `
       SELECT 
-        a.*,
+        a.id, a.titulo, a.resumen, a.palabras_clave, a.usuario_id, a.estado, 
+        a.area_tematica, a.archivo_nombre, a.archivo_mimetype, a.archivo_size,
+        a.fecha_creacion, a.fecha_actualizacion,
         u.nombre as autor_nombre,
         u.email as autor_email,
         COUNT(*) OVER() as total_count

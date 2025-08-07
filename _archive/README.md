@@ -10,17 +10,44 @@ Esta carpeta contiene todos los archivos que fueron movidos para optimizar el wo
 - Documentación de sesiones de desarrollo
 - Estados del proyecto y planes de desarrollo
 
-### `/tests` - Archivos de Prueba
-- Scripts de test del backend
-- Archivos HTTP para pruebas de API
-- Scripts PowerShell de testing
-- Archivos de debug y verificación
+### `/docs-raiz` - Documentos de la Raíz
+- ANALISIS_RENDER_TAILSCALE.md
+- BACKEND_VERIFICATION.md
+- LIMPIEZA_COMPLETADA.md
+- SISTEMA_UPLOAD_COMPLETADO.md
+- README-LIMPIO.md
 
-### `/backend-old` - Scripts de BD Viejos
-- Scripts SQL de migración
+### `/scripts-raiz` - Scripts de Organización
+- Scripts de archivado: archivar-tests.cjs, limpieza-final.cjs
+- Scripts de limpieza: limpiar-cache.cjs, limpiar-proyecto.bat
+- Scripts PowerShell: limpiar-vscode.ps1, optimizar-vscode.ps1
+- Configuraciones: .gitignore-optimized
+
+### `/duplicados` - Archivos Duplicados
+- Versiones .js cuando existe .cjs
+- archivar-tests.js, limpiar-cache.js
+
+### `/tests-old` - Archivos de Testing Backend
+- Scripts de test HTTP y verificación
+- Archivos de debug y check
+
+### `/debug-old` - Scripts de Debug
+- debug-admin.js, debug-api.js, debug-articulos.js
+- debug-autor.js, debug-database-structure.js
+- debug-db.js, debug-query.js
+
+### `/sql-old` - Scripts SQL de Migración
+- Scripts de estructura y migración de BD
+- add-*, create-*, grant-*, update-*
+
+### `/dev-old` - Herramientas de Desarrollo
+- Scripts de investigación y verificación
+- revisar-bd.js, investigar-tabla.js
+
+### `/backend-old` - Scripts de BD Viejos (anteriores)
+- Scripts SQL de migración históricos
 - Archivos de configuración de columnas
 - Scripts de setup y actualización
-- Archivos de verificación de base de datos
 
 ### `/examples` - Configuraciones y Ejemplos
 - Archivos Docker y docker-compose
