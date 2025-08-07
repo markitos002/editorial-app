@@ -3,11 +3,25 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { articulosAPI } from '../services/api';
+import { logAuthStatus, isTokenExpired } from '../utils/authHelper';
 
 const NuevoArticuloPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   // Se eliminó Chakra UI toast
+
+  // Debug: Verificar estado inicial de autenticación
+  React.useEffect(() => {
+    const authStatus = logAuthStatus();
+    
+    if (!authStatus.hasToken) {
+      console.warn('⚠️ No token found - user needs to login');
+    } else if (authStatus.tokenExpired) {
+      console.warn('⚠️ Token is expired - user needs to re-login');
+    } else {
+      console.log('✅ Token appears valid');
+    }
+  }, [user]);
   
   // Estado del formulario
   const [formData, setFormData] = useState({
@@ -89,6 +103,21 @@ const NuevoArticuloPage = () => {
       return;
     }
 
+    // DEBUG: Verificar estado de autenticación
+    const authStatus = logAuthStatus();
+
+    if (!authStatus.hasToken) {
+      alert('Error: No hay token de autenticación. Por favor, inicia sesión nuevamente.');
+      navigate('/login');
+      return;
+    }
+
+    if (authStatus.tokenExpired) {
+      alert('Error: Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      navigate('/login');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -100,13 +129,60 @@ const NuevoArticuloPage = () => {
       formDataToSend.append('area_tematica', formData.categoria);
       formDataToSend.append('archivos', formData.archivo);
 
+      console.log('📤 Enviando artículo con datos:', {
+        titulo: formData.titulo,
+        categoria: formData.categoria,
+        archivoNombre: formData.archivo?.name,
+        archivoTipo: formData.archivo?.type,
+        archivoTamano: formData.archivo?.size
+      });
+
+      // DEBUG: Verificar FormData antes de enviar
+      console.log('📋 FormData entries:');
+      for (let [key, value] of formDataToSend.entries()) {
+        if (value instanceof File) {
+          console.log(`  ${key}: File(${value.name}, ${value.type}, ${value.size} bytes)`);
+        } else {
+          console.log(`  ${key}: ${value}`);
+        }
+      }
+
       await articulosAPI.crearConArchivo(formDataToSend);
       alert(`Artículo creado exitosamente: Tu artículo "${formData.titulo}" ha sido enviado y está en revisión.`);
       navigate('/articulos');
 
     } catch (error) {
       console.error('Error creando artículo:', error);
-      const errorMessage = error.response?.data?.mensaje || error.message || 'Error desconocido';
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        url: error.config?.url
+      });
+      
+      let errorMessage = 'Error desconocido';
+      
+      // Manejo específico para diferentes tipos de errores
+      if (error.response?.status === 401) {
+        alert('Error de autenticación: Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        localStorage.removeItem('editorial_token');
+        localStorage.removeItem('editorial_user');
+        navigate('/login');
+        return;
+      } else if (error.response?.status === 500) {
+        errorMessage = `Error interno del servidor: ${error.response?.data?.mensaje || error.response?.data?.error || 'Problema en el backend'}`;
+        console.error('Server error details:', error.response?.data);
+      } else if (error.response?.status === 413) {
+        errorMessage = 'El archivo es demasiado grande. Reduce el tamaño e intenta de nuevo.';
+      } else if (error.response?.status === 415) {
+        errorMessage = 'Tipo de archivo no soportado. Usa PDF, DOC o DOCX.';
+      } else if (error.response?.data?.mensaje) {
+        errorMessage = error.response.data.mensaje;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       alert('Error al crear artículo: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -117,6 +193,61 @@ const NuevoArticuloPage = () => {
     <div style={{ padding: '1rem', maxWidth: '800px', margin: 'auto' }}>
       <h1>Nuevo Artículo</h1>
       <p>Enviado por: {user?.nombre || 'Usuario'} ({user?.email})</p>
+      
+      {/* DEBUG: Botón temporal para verificar autenticación */}
+      <div style={{ backgroundColor: '#f0f0f0', padding: '10px', marginBottom: '20px', border: '1px solid #ccc' }}>
+        <h3>🔧 DEBUG - Verificación de Autenticación</h3>
+        <button 
+          type="button" 
+          onClick={() => {
+            const status = logAuthStatus();
+            alert(`Token válido: ${status.hasToken && !status.tokenExpired ? 'SÍ' : 'NO'}\n` +
+                  `Detalles: ${JSON.stringify(status, null, 2)}`);
+          }}
+          style={{ marginRight: '10px' }}
+        >
+          Verificar Estado Auth
+        </button>
+        <button 
+          type="button" 
+          onClick={() => {
+            localStorage.removeItem('editorial_token');
+            localStorage.removeItem('editorial_user');
+            alert('Auth data cleared - Recarga la página y vuelve a hacer login');
+          }}
+          style={{ marginRight: '10px' }}
+        >
+          Limpiar Auth Data
+        </button>
+        <button 
+          type="button" 
+          onClick={async () => {
+            const testData = new FormData();
+            testData.append('titulo', 'Test Article');
+            testData.append('resumen', 'Test summary');
+            testData.append('area_tematica', 'Investigación');
+            testData.append('palabras_clave', JSON.stringify(['test', 'debug']));
+            
+            // Crear un archivo de prueba
+            const testContent = 'Este es un archivo de prueba para debuggear el upload';
+            const testFile = new Blob([testContent], { type: 'text/plain' });
+            const file = new File([testFile], 'test.txt', { type: 'text/plain' });
+            testData.append('archivos', file);
+            
+            try {
+              console.log('🧪 Enviando datos de prueba...');
+              await articulosAPI.crearConArchivo(testData);
+              alert('Test exitoso!');
+            } catch (error) {
+              console.error('Test error:', error);
+              alert('Test falló - revisa la consola');
+            }
+          }}
+        >
+          Test Upload
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div>
           <label>Título del Artículo</label><br />

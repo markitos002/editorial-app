@@ -4,7 +4,8 @@ const pool = require('../db');
 const crearConArchivoDB = async (req, res) => {
   try {
     console.log('=== CREAR ARTÍCULO CON ARCHIVO EN BASE DE DATOS ===');
-    console.log('Datos recibidos:', req.body);
+    console.log('Headers:', req.headers);
+    console.log('Datos recibidos (body):', req.body);
     console.log('Archivos procesados:', req.processedFiles?.length || 0);
     console.log('Usuario autenticado:', req.usuario);
     
@@ -14,6 +15,7 @@ const crearConArchivoDB = async (req, res) => {
 
     // Validaciones optimizadas
     if (!titulo?.trim() || !resumen?.trim()) {
+      console.log('❌ Validación fallida: campos requeridos');
       return res.status(400).json({ 
         success: false,
         mensaje: 'Título y resumen son campos requeridos',
@@ -23,6 +25,7 @@ const crearConArchivoDB = async (req, res) => {
 
     // Validar que se haya subido al menos un archivo
     if (archivos.length === 0) {
+      console.log('❌ Validación fallida: no hay archivos');
       return res.status(400).json({ 
         success: false,
         mensaje: 'Es necesario adjuntar al menos un archivo con el contenido del artículo',
@@ -112,10 +115,20 @@ const crearConArchivoDB = async (req, res) => {
     });
   } catch (error) {
     console.error('💥 Error al crear artículo:', error);
+    console.error('Error stack completo:', error.stack);
+    console.error('Error name:', error.name);
+    console.error('Error code:', error.code);
+    
+    // Manejo específico de errores de base de datos
+    if (error.code) {
+      console.error('Error code específico de PostgreSQL:', error.code);
+    }
+    
     res.status(500).json({ 
       success: false,
-      mensaje: 'Error al crear artículo', 
-      error: error.message 
+      mensaje: 'Error interno del servidor al crear artículo', 
+      error: error.message,
+      code: error.code || 'UNKNOWN_ERROR'
     });
   }
 };

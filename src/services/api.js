@@ -76,12 +76,24 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('editorial_token');
+    console.log('🔑 Request interceptor - Token check:', {
+      hasToken: !!token,
+      tokenLength: token?.length,
+      tokenPreview: token ? `${token.substring(0, 20)}...` : null,
+      url: config.url,
+      method: config.method?.toUpperCase()
+    });
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('✅ Token added to request headers');
+    } else {
+      console.warn('⚠️ No token found in localStorage');
     }
     return config;
   },
   (error) => {
+    console.error('❌ Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -89,16 +101,31 @@ api.interceptors.request.use(
 // Interceptor para responses (manejar errores globalmente)
 api.interceptors.response.use(
   (response) => {
+    console.log('✅ Response received:', {
+      status: response.status,
+      url: response.config?.url,
+      method: response.config?.method?.toUpperCase()
+    });
     return response;
   },
   (error) => {
+    console.error('❌ Response interceptor error:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      method: error.config?.method?.toUpperCase(),
+      data: error.response?.data
+    });
+    
     // Si el token ha expirado o es inválido, limpiar localStorage
     if (error.response?.status === 401) {
+      console.warn('🚪 401 Unauthorized - Clearing auth data and redirecting to login');
       localStorage.removeItem('editorial_token');
       localStorage.removeItem('editorial_user');
       
       // Redirigir al login si no estamos ya ahí
       if (window.location.pathname !== '/login') {
+        console.log('🔄 Redirecting to login...');
         window.location.href = '/login';
       }
     }
@@ -207,12 +234,38 @@ export const articulosAPI = {
 
   // Crear nuevo artículo con archivo
   crearConArchivo: async (formData) => {
-    const response = await api.post('/articulos/con-archivo-db', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
+    console.log('📤 crearConArchivo called with FormData');
+    console.log('FormData entries:');
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`  ${key}: File(${value.name}, ${value.type}, ${value.size} bytes)`);
+      } else {
+        console.log(`  ${key}: ${value}`);
+      }
+    }
+    
+    try {
+      const response = await api.post('/articulos/con-archivo-db', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('✅ crearConArchivo success:', response.status);
+      return response.data;
+    } catch (error) {
+      console.error('❌ crearConArchivo error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL
+        }
+      });
+      throw error;
+    }
   },
 
   // Actualizar artículo

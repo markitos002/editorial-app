@@ -38,16 +38,37 @@ const upload = multer({
 // Middleware optimizado para procesar archivos
 const processFilesToDatabase = async (req, res, next) => {
     try {
-        if (!req.files || req.files.length === 0) {
-            return next();
+        console.log('🔍 processFilesToDatabase - Verificando archivos...');
+        console.log('req.files:', req.files);
+        console.log('req.file:', req.file);
+        
+        // Manejar tanto req.files (array) como req.file (single)
+        let files = [];
+        if (req.files && Array.isArray(req.files)) {
+            files = req.files;
+        } else if (req.file) {
+            files = [req.file];
+        }
+        
+        console.log('📁 Archivos encontrados:', files.length);
+        
+        if (files.length === 0) {
+            console.log('⚠️ No se encontraron archivos');
+            return res.status(400).json({
+                success: false,
+                mensaje: 'No se recibieron archivos',
+                error: 'NO_FILES_RECEIVED'
+            });
         }
 
         // Pre-validar tamaño total
-        const totalSize = req.files.reduce((sum, file) => sum + file.size, 0);
+        const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+        console.log('📏 Tamaño total de archivos:', totalSize, 'bytes');
+        
         if (totalSize > 15 * 1024 * 1024) { // 15MB total máximo
             return res.status(413).json({
                 success: false,
-                message: 'Tamaño total de archivos excede el límite (15MB máximo)',
+                mensaje: 'Tamaño total de archivos excede el límite (15MB máximo)',
                 error: 'PAYLOAD_TOO_LARGE'
             });
         }
@@ -56,11 +77,18 @@ const processFilesToDatabase = async (req, res, next) => {
         req.processedFiles = [];
 
         // Procesar archivos de forma más eficiente
-        for (let i = 0; i < req.files.length; i++) {
-            const file = req.files[i];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            
+            console.log(`📄 Procesando archivo ${i + 1}:`, {
+                name: file.originalname,
+                size: file.size,
+                type: file.mimetype
+            });
             
             // Validaciones adicionales de seguridad
             if (!file.buffer || file.size === 0) {
+                console.log('⚠️ Saltando archivo vacío');
                 continue; // Saltar archivos vacíos
             }
 
@@ -76,7 +104,7 @@ const processFilesToDatabase = async (req, res, next) => {
         if (req.processedFiles.length === 0) {
             return res.status(400).json({
                 success: false,
-                message: 'No se recibieron archivos válidos',
+                mensaje: 'No se recibieron archivos válidos',
                 error: 'NO_VALID_FILES'
             });
         }
@@ -86,6 +114,7 @@ const processFilesToDatabase = async (req, res, next) => {
 
     } catch (error) {
         console.error('❌ Error en processFilesToDatabase:', error);
+        console.error('Error stack:', error.stack);
         
         // Limpiar memoria en caso de error
         if (req.files) {
@@ -98,7 +127,7 @@ const processFilesToDatabase = async (req, res, next) => {
         
         res.status(500).json({
             success: false,
-            message: 'Error al procesar archivos',
+            mensaje: 'Error al procesar archivos: ' + error.message,
             error: error.message
         });
     }
