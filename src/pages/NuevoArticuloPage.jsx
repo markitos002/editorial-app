@@ -126,7 +126,7 @@ const NuevoArticuloPage = () => {
       formDataToSend.append('resumen', formData.resumen.trim());
       const palabrasClaveArray = formData.palabras_clave.trim().split(',').map(p => p.trim()).filter(p => p.length > 0);
       formDataToSend.append('palabras_clave', JSON.stringify(palabrasClaveArray));
-      formDataToSend.append('area_tematica', formData.categoria);
+      formDataToSend.append('categoria', formData.categoria); // Cambiado de 'area_tematica' a 'categoria'
       formDataToSend.append('archivos', formData.archivo);
 
       console.log('📤 Enviando artículo con datos:', {

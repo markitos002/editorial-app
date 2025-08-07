@@ -9,7 +9,7 @@ const crearConArchivoDB = async (req, res) => {
     console.log('Archivos procesados:', req.processedFiles?.length || 0);
     console.log('Usuario autenticado:', req.usuario);
     
-    const { titulo, resumen, palabras_clave, area_tematica } = req.body;
+    const { titulo, resumen, palabras_clave, categoria } = req.body; // Cambiado de 'area_tematica' a 'categoria'
     const usuarioId = req.usuario.id;
     const archivos = req.processedFiles || [];
 
@@ -50,7 +50,7 @@ const crearConArchivoDB = async (req, res) => {
     console.log('💾 Insertando artículo en base de datos...');
     const query = `
       INSERT INTO articulos (
-        titulo, resumen, palabras_clave, usuario_id, estado, area_tematica,
+        titulo, resumen, palabras_clave, usuario_id, estado, categoria,
         archivo_nombre, archivo_mimetype, archivo_size, archivo_data
       ) 
       VALUES ($1, $2, $3, $4, 'enviado', $5, $6, $7, $8, $9) 
@@ -62,7 +62,7 @@ const crearConArchivoDB = async (req, res) => {
       resumen, 
       palabrasClaveArray, 
       usuarioId,
-      area_tematica || null,
+      categoria || null, // Usar la variable 'categoria'
       archivoPrincipal.originalName,
       archivoPrincipal.mimetype,
       archivoPrincipal.size,
