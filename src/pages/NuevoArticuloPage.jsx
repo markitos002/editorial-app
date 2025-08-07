@@ -7,7 +7,7 @@ import { articulosAPI } from '../services/api';
 const NuevoArticuloPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  // const toast = useToast(); // Eliminado Chakra UI toast
+  // Se eliminó Chakra UI toast
   
   // Estado del formulario
   const [formData, setFormData] = useState({
@@ -64,13 +64,7 @@ const NuevoArticuloPage = () => {
       'application/msword'
     ];
     if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: 'Tipo de archivo no válido',
-        description: 'Solo se permiten archivos PDF, DOC o DOCX.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true
-      });
+      alert('Tipo de archivo no válido: Solo se permiten archivos PDF, DOC o DOCX.');
       e.target.value = null; // Limpiar input
       handleChange('archivo', null);
       return;
@@ -78,13 +72,7 @@ const NuevoArticuloPage = () => {
 
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
-      toast({
-        title: 'Archivo muy grande',
-        description: 'El archivo no puede superar los 10MB.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true
-      });
+      alert('Archivo muy grande: El archivo no puede superar los 10MB.');
       e.target.value = null; // Limpiar input
       handleChange('archivo', null);
       return;
@@ -97,13 +85,7 @@ const NuevoArticuloPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      toast({
-        title: 'Error en el formulario',
-        description: 'Por favor corrige los errores marcados.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true
-      });
+      alert('Error en el formulario: Por favor corrige los errores marcados.');
       return;
     }
 
@@ -119,27 +101,13 @@ const NuevoArticuloPage = () => {
       formDataToSend.append('archivos', formData.archivo);
 
       await articulosAPI.crearConArchivo(formDataToSend);
-
-      toast({
-        title: 'Artículo creado exitosamente',
-        description: `Tu artículo "${formData.titulo}" ha sido enviado y está en revisión.`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true
-      });
-
+      alert(`Artículo creado exitosamente: Tu artículo "${formData.titulo}" ha sido enviado y está en revisión.`);
       navigate('/articulos');
 
     } catch (error) {
       console.error('Error creando artículo:', error);
       const errorMessage = error.response?.data?.mensaje || error.message || 'Error desconocido';
-      toast({
-        title: 'Error al crear artículo',
-        description: errorMessage,
-        status: 'error',
-        duration: 7000,
-        isClosable: true
-      });
+      alert('Error al crear artículo: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
