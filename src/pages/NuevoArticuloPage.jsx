@@ -225,7 +225,7 @@ const NuevoArticuloPage = () => {
             const testData = new FormData();
             testData.append('titulo', 'Test Article');
             testData.append('resumen', 'Test summary');
-            testData.append('area_tematica', 'Investigación');
+            // Eliminamos area_tematica ya que no existe en la tabla
             testData.append('palabras_clave', JSON.stringify(['test', 'debug']));
             
             // Crear un archivo de prueba

@@ -94,7 +94,7 @@ const crearConArchivoDB = async (req, res) => {
     // Obtener el artículo completo con información del autor (sin el archivo)
     const articuloCompleto = await pool.query(`
       SELECT 
-        a.id, a.titulo, a.resumen, a.palabras_clave, a.estado, a.area_tematica,
+        a.id, a.titulo, a.resumen, a.palabras_clave, a.estado,
         a.archivo_nombre, a.archivo_mimetype, a.archivo_size,
         a.fecha_creacion, a.fecha_actualizacion,
         u.nombre as autor_nombre,
@@ -141,7 +141,7 @@ const obtenerArticulos = async (req, res) => {
     let query = `
       SELECT 
         a.id, a.titulo, a.resumen, a.palabras_clave, a.usuario_id, a.estado, 
-        a.area_tematica, a.archivo_nombre, a.archivo_mimetype, a.archivo_size,
+        a.archivo_nombre, a.archivo_mimetype, a.archivo_size,
         a.fecha_creacion, a.fecha_actualizacion,
         u.nombre as autor_nombre,
         u.email as autor_email,
@@ -260,7 +260,7 @@ const crearArticulo = async (req, res) => {
     console.log('Archivo recibido:', req.file);
     console.log('Usuario autenticado:', req.usuario);
     
-    const { titulo, resumen, palabras_clave, area_tematica } = req.body;
+    const { titulo, resumen, palabras_clave } = req.body; // Eliminamos area_tematica
     const usuarioId = req.usuario.id; // Del middleware de autenticación
     const archivo = req.file; // Del middleware de multer
 
