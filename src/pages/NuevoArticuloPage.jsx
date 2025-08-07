@@ -308,7 +308,7 @@ const NuevoArticuloPage = () => {
               <VStack spacing={4} align="stretch">
                 
                 {/* Título */}
-                <FormControl isInvalid={errors.titulo}>
+                <FormControl isInvalid={!!errors.titulo}>
                   <FormLabel>Título del Artículo</FormLabel>
                   <Input
                     value={formData.titulo}
@@ -319,7 +319,7 @@ const NuevoArticuloPage = () => {
                 </FormControl>
 
                 {/* Categoría */}
-                <FormControl isInvalid={errors.categoria}>
+                <FormControl isInvalid={!!errors.categoria}>
                   <FormLabel>Categoría</FormLabel>
                   <Select
                     value={formData.categoria}
@@ -344,7 +344,7 @@ const NuevoArticuloPage = () => {
                 </FormControl>
 
                 {/* Resumen */}
-                <FormControl isInvalid={errors.resumen}>
+                <FormControl isInvalid={!!errors.resumen}>
                   <FormLabel>Resumen</FormLabel>
                   <Textarea
                     value={formData.resumen}
@@ -407,7 +407,7 @@ const NuevoArticuloPage = () => {
                 </Card>
 
                 {/* Carga de Archivo */}
-                <FormControl isInvalid={errors.archivo}>
+                <FormControl isInvalid={!!errors.archivo}>
                   <FormLabel>Archivo del Artículo</FormLabel>
                   <FormHelperText mb={3}>
                     Carga tu artículo en formato PDF, DOC o DOCX (máximo 10MB)
