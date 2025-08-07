@@ -23,7 +23,6 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Icon,
   Flex,
   Badge,
   CloseButton
@@ -430,7 +429,7 @@ const NuevoArticuloPage = () => {
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <VStack spacing={3}>
-                        <Icon as={FiUpload} w={8} h={8} color="gray.400" />
+                        <Box as={FiUpload} w={8} h={8} color="gray.400" />
                         <VStack spacing={1}>
                           <Text fontWeight="medium">
                             Arrastra tu archivo aquí o haz clic para seleccionar
@@ -461,8 +460,8 @@ const NuevoArticuloPage = () => {
                                 {formData.archivo?.name || 'Archivo desconocido'}
                               </Text>
                               <HStack spacing={2}>
-                                <Badge colorScheme="green" size="sm">
-                                  <Icon as={FiCheck} mr={1} />
+                                <Badge colorScheme="green" size="sm" display="flex" alignItems="center">
+                                  <Box as={FiCheck} mr={1} />
                                   Cargado
                                 </Badge>
                                 <Text fontSize="sm" color="gray.500">
