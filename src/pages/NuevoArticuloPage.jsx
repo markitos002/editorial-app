@@ -315,7 +315,7 @@ const NuevoArticuloPage = () => {
                     onChange={(e) => handleChange('titulo', e.target.value)}
                     placeholder="Escribe el título de tu artículo..."
                   />
-                  <FormErrorMessage>{errors.titulo}</FormErrorMessage>
+                  <FormErrorMessage>{errors.titulo || ''}</FormErrorMessage>
                 </FormControl>
 
                 {/* Categoría */}
@@ -330,7 +330,7 @@ const NuevoArticuloPage = () => {
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </Select>
-                  <FormErrorMessage>{errors.categoria}</FormErrorMessage>
+                  <FormErrorMessage>{errors.categoria || ''}</FormErrorMessage>
                 </FormControl>
 
                 {/* Palabras clave */}
@@ -352,7 +352,7 @@ const NuevoArticuloPage = () => {
                     placeholder="Escribe un resumen del artículo..."
                     rows={4}
                   />
-                  <FormErrorMessage>{errors.resumen}</FormErrorMessage>
+                  <FormErrorMessage>{errors.resumen || ''}</FormErrorMessage>
                 </FormControl>
 
                 {/* Lista de comprobación para envíos */}
@@ -477,7 +477,7 @@ const NuevoArticuloPage = () => {
                     </Card>
                   )}
                   
-                  <FormErrorMessage>{errors.archivo}</FormErrorMessage>
+                  <FormErrorMessage>{errors.archivo || ''}</FormErrorMessage>
                 </FormControl>
 
                 <Divider />
