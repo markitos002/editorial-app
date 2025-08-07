@@ -224,16 +224,23 @@ const NuevoArticuloPage = () => {
       // Agregar datos del formulario
       formDataToSend.append('titulo', formData.titulo.trim());
       formDataToSend.append('resumen', formData.resumen.trim());
-      formDataToSend.append('palabras_clave', formData.palabras_clave.trim());
+      
+      // Procesar palabras clave como array JSON
+      const palabrasClaveArray = formData.palabras_clave.trim()
+        .split(',')
+        .map(palabra => palabra.trim())
+        .filter(palabra => palabra.length > 0);
+      formDataToSend.append('palabras_clave', JSON.stringify(palabrasClaveArray));
+      
       formDataToSend.append('area_tematica', formData.categoria); // El backend usa 'area_tematica'
-      formDataToSend.append('archivo', formData.archivo);
+      formDataToSend.append('archivos', formData.archivo); // CORREGIDO: cambiar 'archivo' por 'archivos'
 
       console.log('Enviando artículo con archivo...');
       console.log('Datos del formulario:');
       console.log('- Título:', formData.titulo);
       console.log('- Resumen:', formData.resumen);
       console.log('- Categoría:', formData.categoria);
-      console.log('- Palabras clave:', formData.palabras_clave);
+      console.log('- Palabras clave:', palabrasClaveArray);
       console.log('- Archivo:', formData.archivo?.name || 'Sin nombre', formData.archivo?.size || 0, 'bytes');
 
       // Enviar usando la API configurada
