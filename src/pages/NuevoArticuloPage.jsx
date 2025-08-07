@@ -1,19 +1,5 @@
 // pages/NuevoArticuloPage.jsx - VERSIÓN SIMPLIFICADA PARA ESTABILIDAD
 import React, { useState } from 'react';
-import {
-  Box,
-  VStack,
-  Text,
-  Input,
-  Textarea,
-  Button,
-  Select,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  useToast,
-  Heading
-} from '@chakra-ui/react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { articulosAPI } from '../services/api';
@@ -21,7 +7,7 @@ import { articulosAPI } from '../services/api';
 const NuevoArticuloPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
+  // const toast = useToast(); // Eliminado Chakra UI toast
   
   // Estado del formulario
   const [formData, setFormData] = useState({
@@ -160,87 +146,64 @@ const NuevoArticuloPage = () => {
   };
 
   return (
-    <Box p={6} maxW="4xl" mx="auto">
-      <VStack spacing={6} align="stretch">
-        <Box>
-          <Heading size="lg" mb={2}>Nuevo Artículo</Heading>
-          <Text color="gray.600">
-            Enviado por: {user?.nombre || 'Usuario'} ({user?.email})
-          </Text>
-        </Box>
-
-        <Box as="form" onSubmit={handleSubmit}>
-          <VStack spacing={4} align="stretch">
-            
-            <FormControl isInvalid={!!errors.titulo}>
-              <FormLabel>Título del Artículo</FormLabel>
-              <Input
-                value={formData.titulo}
-                onChange={(e) => handleChange('titulo', e.target.value)}
-                placeholder="Escribe el título de tu artículo..."
-              />
-              <FormErrorMessage>{errors.titulo || ''}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isInvalid={!!errors.categoria}>
-              <FormLabel>Categoría</FormLabel>
-              <Select
-                value={formData.categoria}
-                onChange={(e) => handleChange('categoria', e.target.value)}
-                placeholder="Selecciona una categoría"
-              >
-                {categorias.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.categoria || ''}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Palabras Clave (separadas por comas)</FormLabel>
-              <Input
-                value={formData.palabras_clave}
-                onChange={(e) => handleChange('palabras_clave', e.target.value)}
-                placeholder="palabra1, palabra2, palabra3..."
-              />
-            </FormControl>
-
-            <FormControl isInvalid={!!errors.resumen}>
-              <FormLabel>Resumen</FormLabel>
-              <Textarea
-                value={formData.resumen}
-                onChange={(e) => handleChange('resumen', e.target.value)}
-                placeholder="Escribe un resumen del artículo..."
-                rows={4}
-              />
-              <FormErrorMessage>{errors.resumen || ''}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isInvalid={!!errors.archivo}>
-              <FormLabel>Archivo del Artículo (PDF, DOC, DOCX - Máx 10MB)</FormLabel>
-              <Input
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileChange}
-                p={1} // Estilo para que se vea mejor
-              />
-              <FormErrorMessage>{errors.archivo || ''}</FormErrorMessage>
-            </FormControl>
-
-            <Button
-              mt={4}
-              type="submit"
-              colorScheme="blue"
-              isLoading={isSubmitting}
-              loadingText="Guardando..."
-            >
-              Guardar Artículo
-            </Button>
-            
-          </VStack>
-        </Box>
-      </VStack>
-    </Box>
+    <div style={{ padding: '1rem', maxWidth: '800px', margin: 'auto' }}>
+      <h1>Nuevo Artículo</h1>
+      <p>Enviado por: {user?.nombre || 'Usuario'} ({user?.email})</p>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Título del Artículo</label><br />
+          <input
+            type="text"
+            value={formData.titulo}
+            onChange={(e) => handleChange('titulo', e.target.value)}
+          /><br />
+          {errors.titulo && <span style={{ color: 'red' }}>{errors.titulo}</span>}
+        </div>
+        <div>
+          <label>Categoría</label><br />
+          <select
+            value={formData.categoria}
+            onChange={(e) => handleChange('categoria', e.target.value)}
+          >
+            <option value="">--Selecciona categoría--</option>
+            {categorias.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select><br />
+          {errors.categoria && <span style={{ color: 'red' }}>{errors.categoria}</span>}
+        </div>
+        <div>
+          <label>Palabras Clave</label><br />
+          <input
+            type="text"
+            value={formData.palabras_clave}
+            onChange={(e) => handleChange('palabras_clave', e.target.value)}
+            placeholder="palabra1, palabra2, palabra3..."
+          />
+        </div>
+        <div>
+          <label>Resumen</label><br />
+          <textarea
+            value={formData.resumen}
+            onChange={(e) => handleChange('resumen', e.target.value)}
+            rows={4}
+          /><br />
+          {errors.resumen && <span style={{ color: 'red' }}>{errors.resumen}</span>}
+        </div>
+        <div>
+          <label>Archivo del Artículo (PDF, DOC, DOCX - Máx 10MB)</label><br />
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+          /><br />
+          {errors.archivo && <span style={{ color: 'red' }}>{errors.archivo}</span>}
+        </div>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Guardando...' : 'Guardar Artículo'}
+        </button>
+      </form>
+    </div>
   );
 };
 
