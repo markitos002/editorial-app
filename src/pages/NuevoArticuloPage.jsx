@@ -145,8 +145,11 @@ const NuevoArticuloPage = () => {
     }}>
       <h1 style={{
         textAlign: 'center',
-        color: '#2c3e50',
-        marginBottom: '10px',
+        color: '#2B6CB0', // blue.600 equivalent
+        marginBottom: '0.5rem', // mb={2} equivalent  
+        fontSize: '2.25rem', // size="xl" equivalent
+        fontWeight: 'bold',
+        lineHeight: '1.2',
         borderBottom: '3px solid #3498db',
         paddingBottom: '10px'
       }}>
