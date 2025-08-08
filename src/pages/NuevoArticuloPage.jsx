@@ -137,7 +137,7 @@ const NuevoArticuloPage = () => {
     <div style={{ 
       fontFamily: 'Arial, sans-serif', 
       maxWidth: '800px', 
-      margin: '20px auto', 
+      margin: '0 auto', // Eliminamos el margen superior de 20px
       padding: '20px',
       backgroundColor: '#f9f9f9',
       borderRadius: '8px',
