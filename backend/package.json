@@ -14,16 +14,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "node test-api.js",
-    "test:usuarios": "node test-api.js",
-    "test:articulos": "node test-articulos.js",
-    "test:revisiones": "node test-revisiones.js",
-    "test:notificaciones": "node test-notificaciones.js",
-    "test:auth": "node test-auth.js",
-    "test:protected": "node test-protected-routes.js",
+    "test:upload": "node dev-tools/test-new-upload-system.js",
     "test:endpoints": "echo 'Usa test-endpoints.http con REST Client extension'",
-    "verify:db": "node verify-database.js",
-    "test:connection": "node test-connection.js",
     "setup:db": "echo 'Ejecuta setup-database.sql en tu cliente PostgreSQL'"
   },
   "dependencies": {
