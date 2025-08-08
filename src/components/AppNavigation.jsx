@@ -115,12 +115,17 @@ const AppNavigation = () => {
 
   const NavigationContent = () => (
     <VStack spacing={2} align="stretch">
-      <Box mb={4}>
+      <Box mb={2}> {/* Reducido de mb={4} a mb={2} para menos espacio */}
         <HStack justify="space-between" align="center" mb={2}>
           <VStack align="start" spacing={0}>
-            <Text fontSize="lg" fontWeight="bold" color="purple.600">
-              Revista Manos al Cuidado
-            </Text>
+            <VStack align="start" spacing={0}>
+              <Text fontSize="lg" fontWeight="bold" color="purple.600">
+                Revista
+              </Text>
+              <Text fontSize="lg" fontWeight="bold" color="purple.600">
+                Manos al Cuidado
+              </Text>
+            </VStack>
             <Text fontSize="sm" color="gray.500">
               {usuario?.nombre}
             </Text>
