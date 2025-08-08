@@ -26,8 +26,7 @@ import {
   Textarea,
   Select,
   Alert,
-  AlertIcon,
-  useToast
+  AlertIcon
 } from '@chakra-ui/react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -38,7 +37,7 @@ import { formatDateShort, getStatusColor, getStatusDisplayName } from '../utils/
 const ArticulosPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
+  // const toast = useToast(); // ELIMINADO - usar alert() en su lugar
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDetalleOpen, onOpen: onDetalleOpen, onClose: onDetalleClose } = useDisclosure();
   
@@ -102,24 +101,12 @@ const ArticulosPage = () => {
     e.preventDefault();
     
     if (!formData.titulo.trim() || !formData.resumen.trim()) {
-      toast({
-        title: 'Campos requeridos',
-        description: 'Por favor completa título y resumen',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      });
+      alert('Campos requeridos: Por favor completa título y resumen');
       return;
     }
 
     if (!formData.archivo) {
-      toast({
-        title: 'Archivo requerido',
-        description: 'Por favor selecciona un archivo con el contenido del artículo',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      });
+      alert('Archivo requerido: Por favor selecciona un archivo con el contenido del artículo');
       return;
     }
 
@@ -130,7 +117,7 @@ const ArticulosPage = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('titulo', formData.titulo);
       formDataToSend.append('resumen', formData.resumen);
-      formDataToSend.append('area_tematica', formData.area_tematica);
+      // formDataToSend.append('area_tematica', formData.area_tematica); // DESHABILITADO: columna no existe
       formDataToSend.append('archivo', formData.archivo);
       
       // Procesar palabras clave
@@ -151,13 +138,7 @@ const ArticulosPage = () => {
         throw new Error(errorData.mensaje || 'Error al enviar artículo');
       }
       
-      toast({
-        title: 'Artículo enviado',
-        description: 'Tu artículo ha sido enviado para revisión',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
+      alert('Artículo enviado: Tu artículo ha sido enviado para revisión');
       
       // Limpiar formulario y cerrar modal
       setFormData({
@@ -179,13 +160,7 @@ const ArticulosPage = () => {
       
     } catch (error) {
       console.error('Error enviando artículo:', error);
-      toast({
-        title: 'Error',
-        description: error.message || 'Error al enviar el artículo',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      alert('Error: ' + (error.message || 'Error al enviar el artículo'));
     } finally {
       setIsSubmitting(false);
     }
@@ -199,7 +174,9 @@ const ArticulosPage = () => {
   const descargarArchivo = async (articuloId) => {
     try {
       const token = localStorage.getItem('editorial_token');
-      const response = await fetch(`/api/articulos/${articuloId}/archivo`, {
+      // Usar la misma base URL que las otras API calls
+      const API_BASE_URL = 'https://editorial-app-backend.onrender.com/api'; // Temporal - usar variable del api.js
+      const response = await fetch(`${API_BASE_URL}/articulos/${articuloId}/archivo`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -220,23 +197,11 @@ const ArticulosPage = () => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      toast({
-        title: 'Descarga iniciada',
-        description: 'El archivo se está descargando',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      alert('Descarga iniciada: El archivo se está descargando');
 
     } catch (error) {
       console.error('Error descargando archivo:', error);
-      toast({
-        title: 'Error',
-        description: 'No se pudo descargar el archivo',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      alert('Error: No se pudo descargar el archivo');
     }
   };
 
