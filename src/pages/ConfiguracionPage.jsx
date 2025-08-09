@@ -1,7 +1,8 @@
 // pages/ConfiguracionPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
+  Container,
   VStack,
   HStack,
   Text,
@@ -28,23 +29,35 @@ import {
   Badge,
   Divider,
   Select,
-  Textarea
+  Textarea,
+  useColorModeValue,
+  Spinner,
+  Center
 } from '@chakra-ui/react';
 import { SettingsIcon, LockIcon, BellIcon, EditIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 const ConfiguracionPage = () => {
-  const { user, usuario } = useAuth();
+  const { user, logout } = useAuth();
   const toast = useToast();
+  
+  // Colores para modo claro/oscuro
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const cardBg = useColorModeValue('white', 'gray.800');
+  
+  // Estados de carga
+  const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   
   // Estados para configuración de perfil
   const [perfilData, setPerfilData] = useState({
-    nombre: usuario?.nombre || '',
-    email: usuario?.email || '',
-    afiliacion: usuario?.afiliacion || '',
-    orcid: usuario?.orcid || '',
-    biografia: usuario?.biografia || '',
-    especialidades: usuario?.especialidades || ''
+    nombre: '',
+    email: '',
+    afiliacion: '',
+    orcid: '',
+    biografia: '',
+    especialidades: ''
   });
   
   // Estados para cambio de contraseña
@@ -64,9 +77,63 @@ const ConfiguracionPage = () => {
     frecuenciaResumen: 'diario'
   });
   
-  // Estados de validación
+  // Estados de validación y loading
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  // Cargar datos del perfil al montar el componente
+  useEffect(() => {
+    cargarPerfilUsuario();
+    cargarPreferenciasNotificaciones();
+  }, []);
+
+  const cargarPerfilUsuario = async () => {
+    try {
+      setInitialLoad(true);
+      const response = await api.get('/auth/perfil');
+      
+      if (response.data && response.data.usuario) {
+        const { usuario } = response.data;
+        setPerfilData({
+          nombre: usuario.nombre || '',
+          email: usuario.email || '',
+          afiliacion: usuario.afiliacion || '',
+          orcid: usuario.orcid || '',
+          biografia: usuario.biografia || '',
+          especialidades: usuario.especialidades || ''
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar perfil:', error);
+      toast({
+        title: 'Error al cargar configuración',
+        description: 'No se pudo cargar la información del perfil',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setInitialLoad(false);
+    }
+  };
+
+  const cargarPreferenciasNotificaciones = async () => {
+    try {
+      const response = await api.get('/auth/notificaciones');
+      if (response.data && response.data.preferencias) {
+        setNotificaciones({
+          emailNuevoArticulo: response.data.preferencias.emailNuevoArticulo,
+          emailCambioEstado: response.data.preferencias.emailCambioEstado,
+          emailAsignacionRevision: response.data.preferencias.emailAsignacionRevision,
+          emailMensajesEditor: response.data.preferencias.emailMensajesEditor,
+          pushNotificaciones: response.data.preferencias.pushNotificaciones,
+          frecuenciaResumen: response.data.preferencias.frecuenciaResumen
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar preferencias de notificaciones:', error);
+    }
+  };
   
   const handlePerfilChange = (field, value) => {
     setPerfilData(prev => ({
@@ -151,21 +218,39 @@ const ConfiguracionPage = () => {
     setIsLoading(true);
     
     try {
-      // Aquí iría la lógica para actualizar el perfil
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: 'Perfil actualizado',
-        description: 'Su información de perfil ha sido actualizada exitosamente.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
+      const response = await api.put('/auth/perfil', {
+        nombre: perfilData.nombre,
+        email: perfilData.email,
+        afiliacion: perfilData.afiliacion,
+        orcid: perfilData.orcid,
+        biografia: perfilData.biografia,
+        especialidades: perfilData.especialidades
       });
       
+      if (response.data && response.data.usuario) {
+        // Actualizar el contexto de usuario si es necesario
+        if (user && response.data.usuario) {
+          user.nombre = response.data.usuario.nombre;
+          user.email = response.data.usuario.email;
+          user.biografia = response.data.usuario.biografia;
+          user.orcid = response.data.usuario.orcid;
+          user.afiliacion = response.data.usuario.afiliacion;
+        }
+        
+        toast({
+          title: 'Perfil actualizado',
+          description: 'Su información de perfil ha sido actualizada exitosamente.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Hubo un problema al actualizar su perfil. Inténtelo de nuevo.';
       toast({
         title: 'Error al actualizar perfil',
-        description: 'Hubo un problema al actualizar su perfil. Inténtelo de nuevo.',
+        description: errorMessage,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -181,28 +266,33 @@ const ConfiguracionPage = () => {
     setIsLoading(true);
     
     try {
-      // Aquí iría la lógica para cambiar la contraseña
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: 'Contraseña actualizada',
-        description: 'Su contraseña ha sido cambiada exitosamente.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
+      const response = await api.put('/auth/cambiar-contrasena', {
+        contrasena_actual: passwordData.contrasenaActual,
+        contrasena_nueva: passwordData.contrasenaNueva
       });
       
-      // Limpiar campos
-      setPasswordData({
-        contrasenaActual: '',
-        contrasenaNueva: '',
-        confirmarContrasena: ''
-      });
+    if (response.status === 200) {
+        toast({
+          title: 'Contraseña actualizada',
+      description: response.data?.mensaje || 'Su contraseña ha sido cambiada exitosamente.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        
+        // Limpiar campos
+        setPasswordData({
+          contrasenaActual: '',
+          contrasenaNueva: '',
+          confirmarContrasena: ''
+        });
+      }
       
     } catch (error) {
+      const errorMessage = error.response?.data?.mensaje || error.response?.data?.message || 'Hubo un problema al cambiar su contraseña. Verifique su contraseña actual.';
       toast({
         title: 'Error al cambiar contraseña',
-        description: 'Hubo un problema al cambiar su contraseña. Verifique su contraseña actual.',
+        description: errorMessage,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -216,21 +306,23 @@ const ConfiguracionPage = () => {
     setIsLoading(true);
     
     try {
-      // Aquí iría la lógica para actualizar las preferencias de notificación
-      await new Promise(resolve => setTimeout(resolve, 1000));
+  const response = await api.put('/auth/notificaciones', notificaciones);
       
-      toast({
-        title: 'Preferencias guardadas',
-        description: 'Sus preferencias de notificación han sido actualizadas.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+  if (response.status === 200) {
+        toast({
+          title: 'Preferencias guardadas',
+          description: 'Sus preferencias de notificación han sido actualizadas.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
       
     } catch (error) {
+      const errorMessage = error.response?.data?.mensaje || error.response?.data?.message || 'Hubo un problema al guardar sus preferencias.';
       toast({
         title: 'Error al guardar preferencias',
-        description: 'Hubo un problema al guardar sus preferencias.',
+        description: errorMessage,
         status: 'error',
         duration: 5000,
         isClosable: true,
