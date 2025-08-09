@@ -332,22 +332,32 @@ const ConfiguracionPage = () => {
     }
   };
   
+  // Fallback seguro mientras cargan datos iniciales
+  if (initialLoad) {
+    return (
+      <Box maxW="4xl" mx="auto" p={10} textAlign="center">
+        <Spinner size="lg" color="purple.500" mb={4} />
+        <Text>Cargando configuración...</Text>
+      </Box>
+    );
+  }
+
   return (
     <Box maxW="4xl" mx="auto" p={6}>
       <VStack spacing={6} align="stretch">
         {/* Header */}
         <Box>
           <HStack spacing={4} mb={4}>
-            <Avatar size="lg" name={usuario?.nombre} />
+            <Avatar size="lg" name={perfilData?.nombre || user?.nombre} />
             <VStack align="start" spacing={1}>
               <Text fontSize="2xl" fontWeight="bold" color="purple.600">
                 ⚙️ Configuración de Usuario
               </Text>
               <HStack>
-                <Text color="gray.600">{usuario?.nombre}</Text>
+                <Text color="gray.600">{perfilData?.nombre || user?.nombre}</Text>
                 <Badge colorScheme="purple">{user?.rol}</Badge>
               </HStack>
-              <Text fontSize="sm" color="gray.500">{usuario?.email}</Text>
+              <Text fontSize="sm" color="gray.500">{perfilData?.email || user?.email}</Text>
             </VStack>
           </HStack>
         </Box>

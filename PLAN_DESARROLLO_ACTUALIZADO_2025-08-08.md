@@ -4,7 +4,7 @@
 
 **✅ COMPLETADO AL 100%:** Sistema funcional con presentación al comité exitosa
 **🧪 TESTING SUITE IMPLEMENTADA:** 19 tests pasando, infraestructura completa
-**📅 Última actualización:** 8 de Agosto 2025 - 15:55 (Testing completado)
+**📅 Última actualización:** 8 de Agosto 2025 - 18:40 (Avance Panel Configuración Usuario)
 **🔧 Última limpieza:** Backend completamente reorganizado
 
 ---
@@ -125,12 +125,19 @@
 - **📅 Estado:** ✅ **INFRAESTRUCTURA COMPLETA** - Expandir cobertura
 
 #### 2. **🔧 Panel de Configuración de Usuario (IMPORTANTE)**
-- [ ] **Panel de configuración** de usuario (perfil, preferencias)
-- [ ] **Configuración de sistema** (límites, categorías, plantillas)
-- [ ] **Gestión de plantillas** de documentos
-- [ ] **Configuración de workflows** editoriales
-- **📅 Estimado:** 3-4 días
-- **📅 Estado:** 🎯 **PRÓXIMA TAREA PRIORIDAD**
+- [x] **Sección Perfil** (cargar/editar nombre, email, afiliación, orcid, biografía, especialidades)
+- [x] **Cambio de contraseña** (endpoint /auth/cambiar-contrasena integrado)
+- [x] **Preferencias de notificaciones básicas** (email/push + frecuencia) con endpoints GET/PUT /auth/notificaciones
+- [x] **Persistencia backend** (nuevas columnas y tabla usuario_notificaciones con creación automática)
+- [ ] Validaciones adicionales ORCID lado backend (formato ya validado, falta normalización)
+- [ ] Tests de integración backend para perfil y notificaciones
+- [ ] Refactor para actualizar contexto global tras editar perfil (inmutabilidad + persistir en localStorage)
+- [ ] Mensajes inline de guardado / estados optimistas
+- [ ] **Configuración de sistema** (límites, categorías, plantillas) (NO INICIADO)
+- [ ] **Gestión de plantillas** de documentos (NO INICIADO)
+- [ ] **Configuración de workflows** editoriales (NO INICIADO)
+- **📅 Estimado restante:** 2-3 días para completar sub‑módulo de usuario + 2-3 días configuración sistema
+- **📅 Estado:** 🟡 EN PROGRESO (Base funcional entregada)
 
 #### 3. **📱 Optimización Móvil y UX (IMPORTANTE)**
 - [ ] **Optimización móvil** completa
@@ -263,12 +270,15 @@
 - [x] **Tests para componentes críticos** (Login, NuevoArticulo, Navigation) ✅
 - [x] **Mocking system** para AuthContext ✅
 - [x] **Testing environment** setup completo ✅
+- [x] **Panel Configuración (fase 1)**: Perfil, Cambio Contraseña, Preferencias Notificaciones (frontend + backend endpoints)
+- [x] **Endpoints backend nuevos**: PUT /auth/perfil, GET/PUT /auth/notificaciones, creación segura de columnas/tabla
 
 ### **🎯 PRÓXIMAS TAREAS PRIORITARIAS (9-12 Agosto):**
-- [ ] **Panel de configuración de usuario** - Implementar página de settings
-- [ ] **Gestión de perfil** - Cambio de contraseña, datos personales
-- [ ] **Preferencias de usuario** - Tema, idioma, notificaciones
-- [ ] **Expandir tests** - Agregar tests de integración básicos
+- [ ] **Panel Configuración (fase 2)**: Estado optimista, feedback inline, persistir cambios en contexto/localStorage
+- [ ] **Panel Configuración (fase 3)**: Configuración sistema (límites, categorías, plantillas base)
+- [ ] **Tests integración** backend (perfil, notificaciones, cambio contraseña)
+- [ ] **Tests UI** para ConfiguracionPage (render, envío perfil, toggle notificaciones)
+- [ ] **Preferencias usuario adicionales**: tema (dark mode toggle), idioma (estructura i18n inicial)
 
 ### **Esta Semana (12-16 Agosto):**
 - [ ] **Optimización móvil** - Responsive design completo
@@ -316,4 +326,22 @@
 - 🎯 **Próxima meta:** Panel de configuración de usuario  
 - 📱 **Siguiente:** Optimización móvil y PWA
 
-*Plan actualizado - 8 de Agosto 2025 - 15:55 (Testing completado exitosamente)*
+---
+
+## 🔎 VERIFICACIÓN DE CUMPLIMIENTO (8 Agosto 2025 - 18:40)
+
+| Área | Ítem Plan Original | Estado Código | Evidencia |
+|------|--------------------|--------------|-----------|
+| Panel Usuario | Perfil editable | ✅ | `ConfiguracionPage.jsx` (handleUpdatePerfil + PUT /auth/perfil) |
+| Panel Usuario | Cambio contraseña | ✅ | `ConfiguracionPage.jsx` (handleChangePassword + backend cambiarContrasena) |
+| Panel Usuario | Preferencias notificaciones | ✅ | GET/PUT /auth/notificaciones + tabla `usuario_notificaciones` |
+| Backend | Endpoints actualización perfil | ✅ | `authController.actualizarPerfil`, ruta PUT /auth/perfil |
+| Backend | Persistencia preferencias | ✅ | `authController.actualizarPreferenciasNotificaciones` crea/actualiza |
+| Tests | Cobertura sobre nuevos endpoints | ❌ | Aún no implementados |
+| UX | Estados optimistas / guardado inline | ❌ | Pendiente |
+| Config Sistema | Límites / categorías / plantillas | ❌ | No iniciado |
+| Workflows | Configuración editorial | ❌ | No iniciado |
+
+Resumen: Base funcional del panel entregada (perfil + seguridad + notificaciones). Falta capa de configuración avanzada, pruebas de integración y mejoras UX.
+
+*Plan actualizado - 8 de Agosto 2025 - 18:40 (Avance Panel Configuración Usuario)*
