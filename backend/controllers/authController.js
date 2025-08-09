@@ -168,14 +168,29 @@ const login = async (req, res) => {
   }
 };
 
-// Obtener perfil del usuario autenticado
+// Garantizar columnas adicionales de perfil (ejecuta ALTER solo si faltan)
+async function asegurarColumnasPerfil() {
+  try {
+    await pool.query('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS afiliacion TEXT');
+    await pool.query('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS orcid VARCHAR(50)');
+    await pool.query('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS biografia TEXT');
+    await pool.query('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS especialidades TEXT');
+  } catch (e) {
+    console.error('No se pudieron asegurar columnas de perfil (puede ser benigno en entornos sin permisos):', e.message);
+  }
+}
+
+// Obtener perfil del usuario autenticado (incluye campos extendidos)
 const obtenerPerfil = async (req, res) => {
   try {
     const { id } = req.usuario;
 
+    await asegurarColumnasPerfil();
+
     const resultado = await pool.query(`
       SELECT 
         id, nombre, email, rol, activo, fecha_creacion,
+        afiliacion, orcid, biografia, especialidades,
         (SELECT COUNT(*) FROM articulos WHERE usuario_id = $1) as total_articulos,
         (SELECT COUNT(*) FROM revisiones WHERE revisor_id = $1) as total_revisiones
       FROM usuarios 
@@ -183,9 +198,7 @@ const obtenerPerfil = async (req, res) => {
     `, [id]);
 
     if (resultado.rows.length === 0) {
-      return res.status(404).json({
-        mensaje: 'Usuario no encontrado'
-      });
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
     const usuario = resultado.rows[0];
@@ -198,9 +211,13 @@ const obtenerPerfil = async (req, res) => {
         rol: usuario.rol,
         activo: usuario.activo,
         fecha_creacion: usuario.fecha_creacion,
+        afiliacion: usuario.afiliacion,
+        orcid: usuario.orcid,
+        biografia: usuario.biografia,
+        especialidades: usuario.especialidades,
         estadisticas: {
           total_articulos: parseInt(usuario.total_articulos),
-          total_revisiones: parseInt(usuario.total_revisiones)
+            total_revisiones: parseInt(usuario.total_revisiones)
         }
       }
     });
@@ -211,6 +228,153 @@ const obtenerPerfil = async (req, res) => {
       mensaje: 'Error interno del servidor',
       error: error.message
     });
+  }
+};
+
+// Actualizar perfil del usuario autenticado
+const actualizarPerfil = async (req, res) => {
+  try {
+    const { id } = req.usuario;
+    const { nombre, email, afiliacion, orcid, biografia, especialidades } = req.body;
+
+    await asegurarColumnasPerfil();
+
+    if (!nombre || !email) {
+      return res.status(400).json({ mensaje: 'Nombre y email son requeridos' });
+    }
+
+    // Validar formato email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ mensaje: 'Formato de email inválido' });
+    }
+
+    // Validar ORCID si viene
+    if (orcid && !/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(orcid)) {
+      return res.status(400).json({ mensaje: 'Formato ORCID inválido (0000-0000-0000-0000)' });
+    }
+
+    // Evitar colisión de email con otros usuarios
+    const emailExistente = await pool.query('SELECT id FROM usuarios WHERE email = $1 AND id <> $2', [email.toLowerCase(), id]);
+    if (emailExistente.rows.length > 0) {
+      return res.status(400).json({ mensaje: 'El email ya está en uso por otro usuario' });
+    }
+
+    const update = await pool.query(`
+      UPDATE usuarios
+      SET nombre = $1, email = $2, afiliacion = $3, orcid = $4, biografia = $5, especialidades = $6
+      WHERE id = $7
+      RETURNING id, nombre, email, rol, afiliacion, orcid, biografia, especialidades
+    `, [nombre, email.toLowerCase(), afiliacion || null, orcid || null, biografia || null, especialidades || null, id]);
+
+    res.json({
+      success: true,
+      mensaje: 'Perfil actualizado',
+      usuario: update.rows[0]
+    });
+  } catch (error) {
+    console.error('Error al actualizar perfil:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor', error: error.message });
+  }
+};
+
+// Preferencias de notificaciones
+async function asegurarTablaNotificaciones() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS usuario_notificaciones (
+        id SERIAL PRIMARY KEY,
+        usuario_id INTEGER UNIQUE REFERENCES usuarios(id) ON DELETE CASCADE,
+        email_nuevo_articulo BOOLEAN DEFAULT TRUE,
+        email_cambio_estado BOOLEAN DEFAULT TRUE,
+        email_asignacion_revision BOOLEAN DEFAULT TRUE,
+        email_mensajes_editor BOOLEAN DEFAULT TRUE,
+        push_notificaciones BOOLEAN DEFAULT FALSE,
+        frecuencia_resumen VARCHAR(20) DEFAULT 'diario',
+        creado_en TIMESTAMP DEFAULT NOW(),
+        actualizado_en TIMESTAMP DEFAULT NOW()
+      );
+    `);
+  } catch (e) {
+    console.error('Error asegurando tabla notificaciones:', e.message);
+  }
+}
+
+const obtenerPreferenciasNotificaciones = async (req, res) => {
+  try {
+    const { id } = req.usuario;
+    await asegurarTablaNotificaciones();
+    let pref = await pool.query('SELECT * FROM usuario_notificaciones WHERE usuario_id = $1', [id]);
+    if (pref.rows.length === 0) {
+      // Crear registro por defecto
+      const insert = await pool.query(`
+        INSERT INTO usuario_notificaciones (usuario_id) VALUES ($1)
+        RETURNING *
+      `, [id]);
+      pref = { rows: [insert.rows[0]] };
+    }
+    const p = pref.rows[0];
+    res.json({
+      success: true,
+      preferencias: {
+        emailNuevoArticulo: p.email_nuevo_articulo,
+        emailCambioEstado: p.email_cambio_estado,
+        emailAsignacionRevision: p.email_asignacion_revision,
+        emailMensajesEditor: p.email_mensajes_editor,
+        pushNotificaciones: p.push_notificaciones,
+        frecuenciaResumen: p.frecuencia_resumen
+      }
+    });
+  } catch (error) {
+    console.error('Error obteniendo notificaciones:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor', error: error.message });
+  }
+};
+
+const actualizarPreferenciasNotificaciones = async (req, res) => {
+  try {
+    const { id } = req.usuario;
+    const {
+      emailNuevoArticulo = true,
+      emailCambioEstado = true,
+      emailAsignacionRevision = true,
+      emailMensajesEditor = true,
+      pushNotificaciones = false,
+      frecuenciaResumen = 'diario'
+    } = req.body;
+
+    await asegurarTablaNotificaciones();
+    const upsert = await pool.query(`
+      INSERT INTO usuario_notificaciones (
+        usuario_id, email_nuevo_articulo, email_cambio_estado, email_asignacion_revision, email_mensajes_editor, push_notificaciones, frecuencia_resumen, actualizado_en
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,NOW())
+      ON CONFLICT (usuario_id) DO UPDATE SET
+        email_nuevo_articulo = EXCLUDED.email_nuevo_articulo,
+        email_cambio_estado = EXCLUDED.email_cambio_estado,
+        email_asignacion_revision = EXCLUDED.email_asignacion_revision,
+        email_mensajes_editor = EXCLUDED.email_mensajes_editor,
+        push_notificaciones = EXCLUDED.push_notificaciones,
+        frecuencia_resumen = EXCLUDED.frecuencia_resumen,
+        actualizado_en = NOW()
+      RETURNING *;
+    `, [id, emailNuevoArticulo, emailCambioEstado, emailAsignacionRevision, emailMensajesEditor, pushNotificaciones, frecuenciaResumen]);
+
+    const p = upsert.rows[0];
+    res.json({
+      success: true,
+      mensaje: 'Preferencias de notificación guardadas',
+      preferencias: {
+        emailNuevoArticulo: p.email_nuevo_articulo,
+        emailCambioEstado: p.email_cambio_estado,
+        emailAsignacionRevision: p.email_asignacion_revision,
+        emailMensajesEditor: p.email_mensajes_editor,
+        pushNotificaciones: p.push_notificaciones,
+        frecuenciaResumen: p.frecuencia_resumen
+      }
+    });
+  } catch (error) {
+    console.error('Error actualizando notificaciones:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor', error: error.message });
   }
 };
 
@@ -327,7 +491,10 @@ module.exports = {
   registro,
   login,
   obtenerPerfil,
+  actualizarPerfil,
   cambiarContrasena,
   logout,
-  verificarToken
+  verificarToken,
+  obtenerPreferenciasNotificaciones,
+  actualizarPreferenciasNotificaciones
 };
